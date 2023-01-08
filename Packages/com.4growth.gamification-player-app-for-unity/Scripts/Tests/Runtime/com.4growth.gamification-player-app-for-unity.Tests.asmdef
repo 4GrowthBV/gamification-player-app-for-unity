@@ -1,0 +1,22 @@
+{
+    "name": "com.4growth.gamification-player-app-for-unity.Tests",
+    "rootNamespace": "GamificationPlayer.Tests",
+    "references": [
+        "com.4growth.gamification-player-app-for-unity",
+        "UnityEditor.TestRunner",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

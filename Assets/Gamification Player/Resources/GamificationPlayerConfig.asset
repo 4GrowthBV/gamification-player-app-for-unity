@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 476a270000a52fd4283928c7d578976c, type: 3}
+  m_Name: GamificationPlayerConfig
+  m_EditorClassIdentifier: 
+  devConfig: {fileID: 11400000, guid: 3e311413790052f40bcd525cad5cc7d8, type: 2}
+  stagingConfig: {fileID: 11400000, guid: 6b5a5b2f85bde704888ae53649267a2c, type: 2}
+  productionConfig: {fileID: 11400000, guid: bb68903c99cdc3645a46c5fbd0d01ace, type: 2}

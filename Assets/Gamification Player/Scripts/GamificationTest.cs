@@ -1,35 +1,20 @@
-# Gamification-Player-App-for-Unity
-
-## Installing Gamification Player
-Add the following item to your Unity project's `Packages/manifest.json`:
-```json
-{
-  "dependencies": {
-    "com.4growth.gamification-player-app-for-unity": "https://github.com/InThere/gamification-player-app-for-unity.git?path=/Packages/com.4growth.gamification-player-app-for-unity/",
-  }
-}
-```
-
-## Use the Gamification Player with the Vuplex browser
-```c#
-
 using GamificationPlayer;
 using UnityEngine;
-using Vuplex.WebView;
+//using Vuplex.WebView;
 
 public class GamificationTest : MonoBehaviour
 {
     // Prefab for a Vuplex WebView object
     [SerializeField]
-    private BaseWebViewPrefab baseWebViewPrefab;
+    //private BaseWebViewPrefab baseWebViewPrefab;
 
     async void Start()
     {
         // Wait until the Vuplex WebView object is fully initialized
-        await baseWebViewPrefab.WaitUntilInitialized();
+        //await baseWebViewPrefab.WaitUntilInitialized();
 
         // Register a handler for messages emitted by the Vuplex JavaScript API
-        baseWebViewPrefab.WebView.MessageEmitted += OnMessage;
+        //baseWebViewPrefab.WebView.MessageEmitted += OnMessage;
 
         // Uncomment this for testing with a mock server instead of the production server
         // GamificationPlayerManager.UseMockServer();
@@ -80,24 +65,22 @@ public class GamificationTest : MonoBehaviour
             Debug.Log(loginUrl);
         });
 
-        // Register a handler for when a login URL is received after logging in via a different device
-        GamificationPlayerManager.OnUserLoggedIn += (loginURL) =>
+        // Register a handler for when a user is logged in via a different device
+        GamificationPlayerManager.OnUserLoggedIn += (redirectURL) =>
         {
-            // Opens the loginURL that includes the login token
-            var webpageWithLoginToken = loginURL;
+            // Opens the redirectURL that includes the login token
+            var webpageWithLoginToken = redirectURL;
             
             // Load the webpage in the Vuplex WebView
-            baseWebViewPrefab.WebView.LoadUrl(webpageWithLoginToken);
+            //baseWebViewPrefab.WebView.LoadUrl(webpageWithLoginToken);
         };
     }
 
+    /*
     // Handler for messages emitted by the Vuplex JavaScript API
     private void OnMessage(object sender, EventArgs<string> eventArgs)
     {
         // Process the message by passing it to the Gamification Player
         GamificationPlayerManager.ProcessExternalMessage(eventArgs.Value);
-    }
+    }*/
 }
-
-
-```

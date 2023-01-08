@@ -1,0 +1,12 @@
+{
+  "name": "com.4growth.gamification-player-app-for-unity",
+  "version": "0.1.4",
+  "displayName": "Gamification Player",
+  "description": "API Endpoints of the Gamification Player",
+  "documentationUrl": "https://vdhicts.stoplight.io/docs/gamification-player-api-spec/a8cee59c3d8a9-gamification-player",
+  "author": {
+    "name": "Frank den Uijl",
+    "email": "frank.den.uijl@4growth.com",
+    "url": "https://4growth.com/"
+  }
+}

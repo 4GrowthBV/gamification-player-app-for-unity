@@ -288,11 +288,6 @@ namespace GamificationPlayer
             }));
         }
 
-        private bool GTryGetLatestSubdomain(out string subdomain)
-        {
-            return sessionData.TryGetLatestSubdomain(out subdomain);
-        }
-
         private bool GTryGetLatestMicroGameIdentifier(out string identifier)
         {
             return sessionData.TryGetLatestMicroGameIdentifier(out identifier);
@@ -397,7 +392,8 @@ namespace GamificationPlayer
 
         private bool GIsUserActive()
         {
-            return sessionData.TryGetLatestUserId(out _);
+            return sessionData.TryGetLatestUserId(out _) &&
+                sessionData.TryGetLatestOrganisationId(out _);
         }
 
         private bool GTryGetActiveUserId(out Guid id)
@@ -519,10 +515,10 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestLoginToken(out var loginToken))
             {
                 var redirectURL = string.Format("https://{0}.{1}login?otlToken={2}", subdomain, gamificationPlayerEndpoints.EnviromentConfig.Webpage, loginToken);
-            
-                OnUserLoggedIn?.Invoke(redirectURL);
 
                 isDeviceFlowActive = false;
+                
+                OnUserLoggedIn?.Invoke(redirectURL);
             }
         }
 

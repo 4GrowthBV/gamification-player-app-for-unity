@@ -190,14 +190,30 @@ namespace GamificationPlayer.Tests
                 link = l;
             });
 
+            Assert.IsTrue(GamificationPlayerManager.IsDeviceFlowActive());
+
             if(!onLoginTokenWasCalled)
+            {
+                Assert.IsTrue(GamificationPlayerManager.IsDeviceFlowActive());
+
                 yield return new WaitForSeconds(4f);
+            }
 
             if(!onLoginTokenWasCalled)
+            {
+                Assert.IsTrue(GamificationPlayerManager.IsDeviceFlowActive());
+                
                 yield return new WaitForSeconds(1f);
+            }
 
             if(!onLoginTokenWasCalled)
+            {
+                Assert.IsTrue(GamificationPlayerManager.IsDeviceFlowActive());
+
                 yield return new WaitForSeconds(2f);
+            }
+
+            Assert.IsFalse(GamificationPlayerManager.IsDeviceFlowActive());
 
             Assert.IsTrue(onLoginTokenWasCalled);
             
@@ -218,9 +234,15 @@ namespace GamificationPlayer.Tests
             });
 
             if(!onLoginTokenWasCalled)
-                yield return new WaitForSeconds(3f);
+            {
+                Assert.IsTrue(GamificationPlayerManager.IsDeviceFlowActive());
 
+                yield return new WaitForSeconds(3f);
+            }
+            
             GamificationPlayerManager.StopDeviceFlow();
+
+            Assert.IsFalse(GamificationPlayerManager.IsDeviceFlowActive());
 
             if(!onLoginTokenWasCalled)
                 yield return new WaitForSeconds(2f);

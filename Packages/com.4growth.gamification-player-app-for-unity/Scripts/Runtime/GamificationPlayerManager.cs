@@ -160,6 +160,11 @@ namespace GamificationPlayer
             instance.GStartDeviceFlow(onStart);
         }
 
+        public static bool IsDeviceFlowActive()
+        {
+            return instance.isDeviceFlowActive;
+        }
+
         /// <summary>
         /// Stops the device flow
         /// </summary>
@@ -225,6 +230,8 @@ namespace GamificationPlayer
         private GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
         private SessionLogData sessionData;
+
+        private bool isDeviceFlowActive;
 
         public void Awake()
         {
@@ -406,6 +413,13 @@ namespace GamificationPlayer
 
         private void GStartDeviceFlow(StartDeviceFlowCallback onStart)
         {
+            if(isDeviceFlowActive)
+            {
+                GStopDeviceFlow();
+            }
+
+            isDeviceFlowActive = true;
+
             StartCoroutine(gamificationPlayerEndpoints.CoAnnounceDeviceFlow((result, loginUrl) =>
             {
                 if(result == UnityWebRequest.Result.Success)
@@ -422,6 +436,8 @@ namespace GamificationPlayer
 
         private void GStopDeviceFlow()
         {
+            isDeviceFlowActive = false;
+
             StopAllCoroutines();
         }
 
@@ -476,6 +492,8 @@ namespace GamificationPlayer
                 var redirectURL = string.Format("https://{0}.{1}login?otlToken={2}", subdomain, gamificationPlayerEndpoints.EnviromentConfig.Webpage, loginToken);
             
                 OnUserLoggedIn?.Invoke(redirectURL);
+
+                isDeviceFlowActive = false;
             }
         }
 

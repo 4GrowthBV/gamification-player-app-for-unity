@@ -318,52 +318,81 @@ namespace GamificationPlayer
 
             if(message.data.Type == "moduleSessionStarted")
             {
-                var dto = jsonMessage.FromJson<ModuleSessionStartedDTO>();
-
-                if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
-                {
-                    if(latestModuleSessionId == Guid.Parse(dto.data.attributes.module_session_id))
-                    {
-                        //Already started
-                        return;
-                    }
-                }
-
-                sessionData.AddToLog(dto.data);
-
-                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(dto));
-
-                sessionData.TryGetLatestModuleId(out Guid id);
-                
-                OnModuleStart?.Invoke(id);
+                ModuleSessionStarted(jsonMessage);
             }
 
             if(message.data.Type == "pageView")
             {
-                var dto = jsonMessage.FromJson<PageViewDTO>();
-
-                sessionData.AddToLog(dto.data);
-
-                OnPageView?.Invoke();
+                PageView(jsonMessage);
             }
 
-            if(message.data.Type == "microGameOpened")
+            if (message.data.Type == "microGameOpened")
             {
-                var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
-
-                sessionData.AddToLog(dto.data);
-
-                OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
+                MicroGameOpened(jsonMessage);
             }
 
-            if(message.data.Type == "fitnessContentOpened")
+            if (message.data.Type == "fitnessContentOpened")
             {
-                var dto = jsonMessage.FromJson<FitnessContentOpenedDTO>();
-
-                sessionData.AddToLog(dto.data);
-
-                OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
+                FitnessContentOpened(jsonMessage);
             }
+        }
+
+        private void ModuleSessionStarted(string jsonMessage)
+        {
+            var dto = jsonMessage.FromJson<ModuleSessionStartedDTO>();
+
+            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
+            {
+                if(latestModuleSessionId == Guid.Parse(dto.data.attributes.module_session_id))
+                {
+                    //Already started
+                    return;
+                }
+            }
+
+            sessionData.AddToLog(dto.data);
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(dto));
+
+            sessionData.TryGetLatestModuleId(out Guid id);
+            
+            OnModuleStart?.Invoke(id);
+        }
+
+        private void FitnessContentOpened(string jsonMessage)
+        {
+            var dto = jsonMessage.FromJson<FitnessContentOpenedDTO>();
+
+            sessionData.AddToLog(dto.data);
+
+            OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
+        }
+
+        private void MicroGameOpened(string jsonMessage)
+        {
+            var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
+
+            sessionData.AddToLog(dto.data);
+
+            OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
+        }
+
+        private void PageView(string jsonMessage)
+        {
+            var dto = jsonMessage.FromJson<PageViewDTO>();
+
+            sessionData.AddToLog(dto.data);
+
+            if(isDeviceFlowActive && 
+                sessionData.TryGetLatestOrganisationId(out _) && 
+                sessionData.TryGetLatestUserId(out _))
+            {
+                StopAllCoroutines();
+
+                gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult);
+            }
+
+            OnPageView?.Invoke();
         }
 
         private bool GIsUserActive()

@@ -81,6 +81,21 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestOnMicroGameOpenend()
         {
+            var moduleSessionStartedDTO = new ModuleSessionStartedDTO();
+
+            var moduleId = System.Guid.NewGuid();
+            moduleSessionStartedDTO.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.user_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.module_id = moduleId.ToString();
+            moduleSessionStartedDTO.data.attributes.module_session_id = System.Guid.NewGuid().ToString();
+
+            moduleSessionStartedDTO.data.type = "moduleSessionStarted";
+
+            GamificationPlayerManager.ProcessExternalMessage(moduleSessionStartedDTO.ToJson());
+
             var obj = new MicroGameOpenedDTO();
 
             var microGameId = Guid.NewGuid();
@@ -110,6 +125,21 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestOnFitnessContentOpenend()
         {
+            var moduleSessionStartedDTO = new ModuleSessionStartedDTO();
+
+            var moduleId = System.Guid.NewGuid();
+            moduleSessionStartedDTO.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.user_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
+            moduleSessionStartedDTO.data.attributes.module_id = moduleId.ToString();
+            moduleSessionStartedDTO.data.attributes.module_session_id = System.Guid.NewGuid().ToString();
+
+            moduleSessionStartedDTO.data.type = "moduleSessionStarted";
+
+            GamificationPlayerManager.ProcessExternalMessage(moduleSessionStartedDTO.ToJson());
+
             var obj = new FitnessContentOpenedDTO();
 
             var fitnessContentId = Guid.NewGuid();
@@ -160,6 +190,12 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.OnEvent += (_) => onEventWasCalled = true;
 
             GamificationPlayerManager.ProcessExternalMessage(json);
+
+            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentId = Guid.NewGuid();
+            fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
+            fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(onModuleStartWasCalled);
             Assert.IsTrue(onEventWasCalled);
@@ -272,6 +308,12 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(json);
 
+            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentId = Guid.NewGuid();
+            fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
+            fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
+
             Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
             
             var isDone = false;
@@ -303,6 +345,12 @@ namespace GamificationPlayer.Tests
             var json = obj.ToJson();
 
             GamificationPlayerManager.ProcessExternalMessage(json);
+
+            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentId = Guid.NewGuid();
+            fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
+            fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
             
@@ -337,6 +385,12 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.OnEvent += (_) => onEventWasCalled = true;
 
             GamificationPlayerManager.ProcessExternalMessage(json);
+
+            fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            fitnessContentId = Guid.NewGuid();
+            fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
+            fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(onModuleStartWasCalled);
             Assert.IsTrue(onEventWasCalled);

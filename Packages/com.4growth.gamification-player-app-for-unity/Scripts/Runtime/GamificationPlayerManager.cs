@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -347,8 +348,6 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(dto));
-
             sessionData.TryGetLatestModuleId(out Guid id);
             
             OnModuleStart?.Invoke(id);
@@ -360,6 +359,10 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+
             OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
 
@@ -368,6 +371,10 @@ namespace GamificationPlayer
             var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
 
             sessionData.AddToLog(dto.data);
+
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
 
             OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
         }

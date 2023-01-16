@@ -359,11 +359,14 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            if(!GIsModuleSessionActive())
+            {
+                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-
-            OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
+                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+            
+                OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
+            } 
         }
 
         private void MicroGameOpened(string jsonMessage)
@@ -372,11 +375,14 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            if(!GIsModuleSessionActive())
+            {
+                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-
-            OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
+                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+            
+                OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
+            }            
         }
 
         private void PageView(string jsonMessage)

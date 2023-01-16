@@ -325,6 +325,11 @@ namespace GamificationPlayer.Tests
             yield return new WaitUntil(() => isDone);
 
             Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+
+            GamificationPlayerManager.ProcessExternalMessage(json);
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
+
+            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
         }
 
         [UnityTest]
@@ -361,6 +366,11 @@ namespace GamificationPlayer.Tests
             });
 
             yield return new WaitUntil(() => isDone);
+
+            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+
+            GamificationPlayerManager.ProcessExternalMessage(json);
+            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
 

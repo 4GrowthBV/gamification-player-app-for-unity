@@ -341,7 +341,8 @@ namespace GamificationPlayer
             {
                 if(latestModuleSessionId == Guid.Parse(dto.data.attributes.module_session_id))
                 {
-                    //Already started
+                    sessionData.AddToLog(dto.data);
+
                     return;
                 }
             }
@@ -357,32 +358,54 @@ namespace GamificationPlayer
         {
             var dto = jsonMessage.FromJson<FitnessContentOpenedDTO>();
 
+            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
+            {
+                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
+                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
+                    .Count() > 1;
+
+                if(isAlreadyStarted)
+                {
+                    sessionData.AddToLog(dto.data);
+
+                    return;
+                }
+            }
+
             sessionData.AddToLog(dto.data);
 
-            if(!GIsModuleSessionActive())
-            {
-                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-            
-                OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
-            } 
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+        
+            OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
 
         private void MicroGameOpened(string jsonMessage)
         {
             var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
 
+            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
+            {
+                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
+                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
+                    .Count() > 1;
+
+                if(isAlreadyStarted)
+                {
+                    sessionData.AddToLog(dto.data);
+
+                    return;
+                }
+            }
+
             sessionData.AddToLog(dto.data);
 
-            if(!GIsModuleSessionActive())
-            {
-                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-            
-                OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
-            }            
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+        
+            OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);           
         }
 
         private void PageView(string jsonMessage)

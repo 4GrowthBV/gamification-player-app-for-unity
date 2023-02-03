@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -340,14 +341,13 @@ namespace GamificationPlayer
             {
                 if(latestModuleSessionId == Guid.Parse(dto.data.attributes.module_session_id))
                 {
-                    //Already started
+                    sessionData.AddToLog(dto.data);
+
                     return;
                 }
             }
 
             sessionData.AddToLog(dto.data);
-
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(dto));
 
             sessionData.TryGetLatestModuleId(out Guid id);
             
@@ -358,14 +358,46 @@ namespace GamificationPlayer
         {
             var dto = jsonMessage.FromJson<FitnessContentOpenedDTO>();
 
+            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
+            {
+                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
+                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
+                    .Count() > 1;
+
+                if(isAlreadyStarted)
+                {
+                    sessionData.AddToLog(dto.data);
+
+                    return;
+                }
+            }
+
             sessionData.AddToLog(dto.data);
 
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+        
             OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
 
         private void MicroGameOpened(string jsonMessage)
         {
             var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
+
+            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
+            {
+                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
+                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
+                    .Count() > 1;
+
+                if(isAlreadyStarted)
+                {
+                    sessionData.AddToLog(dto.data);
+
+                    return;
+                }
+            }
 
             sessionData.AddToLog(dto.data);
 
@@ -374,7 +406,11 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(webTokenPayload);
 
-            InvokeMicroGameOpened(webTokenPayload);
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+        
+            InvokeMicroGameOpened(webTokenPayload);          
         }
 
         private void PageView(string jsonMessage)

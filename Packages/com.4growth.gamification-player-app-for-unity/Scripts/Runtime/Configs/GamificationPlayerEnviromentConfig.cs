@@ -29,6 +29,14 @@ namespace GamificationPlayer
             }
         }
 
+        public string JSONWebTokenSecret
+        {
+            get
+            {
+                return jsonWebTokenSecret;
+            }
+        }
+
         public bool IsMockServer
         {
             get
@@ -53,6 +61,9 @@ namespace GamificationPlayer
 
         [SerializeField]
         private string webpage = "gamificationplayer.it/";
+
+        [SerializeField]
+        private string jsonWebTokenSecret = "";
 
         [SerializeField]
         private bool isMockServer;

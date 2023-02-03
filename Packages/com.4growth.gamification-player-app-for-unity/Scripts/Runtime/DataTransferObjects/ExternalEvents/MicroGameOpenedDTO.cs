@@ -26,6 +26,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
         {  
             [MicroGameIdentifier]
             public string identifier;
+
+            [MicroGameJSONWebToken]
+            public string module_data;
         }
 
         public Data data;

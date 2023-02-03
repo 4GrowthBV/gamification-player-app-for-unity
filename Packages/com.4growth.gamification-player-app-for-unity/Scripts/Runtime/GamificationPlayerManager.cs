@@ -53,7 +53,7 @@ namespace GamificationPlayer
     /// Represents a method that is called when a MicroGame is opened via the gamification player.
     /// </summary>
     /// <param name="identifier">The identifier of the MicroGame.</param>
-    public delegate void OnMicroGameOpenedEvent(string identifier);
+    public delegate void OnMicroGameOpenedEvent(MicroGamePayload microGame);
 
     public class GamificationPlayerManager : MonoBehaviour
     {
@@ -203,11 +203,11 @@ namespace GamificationPlayer
         /// <summary>
         /// Attempts to get the identifier of the latest MicroGame.
         /// </summary>
-        /// <param name="identifier">The identifier of the latest MicroGame, if it is available.</param>
+        /// <param name="microGamePayload">The identifier of the latest MicroGame, if it is available.</param>
         /// <returns>true if the latest MicroGame's identifier was successfully retrieved; otherwise, false.</returns>
-        public static bool TryGetLatestMicroGameIdentifier(out string identifier)
+        public static bool TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload)
         {
-            return instance.GTryGetLatestMicroGameIdentifier(out identifier);
+            return instance.GTryGetLatestMicroGamePayload(out microGamePayload);
         }
 
         /// <summary>
@@ -227,9 +227,9 @@ namespace GamificationPlayer
         [Header("Mock settings for testing")]
         private GamificationPlayerEnviromentConfig gamificationPlayerMockConfig;
 
-        private GamificationPlayerEndpoints gamificationPlayerEndpoints;
+        protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
-        private SessionLogData sessionData;
+        protected SessionLogData sessionData;
 
         private bool isDeviceFlowActive;
 
@@ -288,9 +288,9 @@ namespace GamificationPlayer
             }));
         }
 
-        private bool GTryGetLatestMicroGameIdentifier(out string identifier)
+        private bool GTryGetLatestMicroGamePayload(out MicroGamePayload payload)
         {
-            return sessionData.TryGetLatestMicroGameIdentifier(out identifier);
+            return sessionData.TryGetLatestMicroGamePayload(out payload);
         }
 
         private bool GTryGetLatestFitnessContentIdentifier(out string identifier)
@@ -351,7 +351,7 @@ namespace GamificationPlayer
 
             sessionData.TryGetLatestModuleId(out Guid id);
             
-            OnModuleStart?.Invoke(id);
+            InvokeModuleStart(id);
         }
 
         private void FitnessContentOpened(string jsonMessage)
@@ -369,7 +369,12 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            OnMicroGameOpened?.Invoke(dto.data.attributes.identifier);
+            var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, gamificationPlayerEndpoints.EnviromentConfig.JSONWebTokenSecret);
+            var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>();
+
+            sessionData.AddToLog(webTokenPayload);
+
+            InvokeMicroGameOpened(webTokenPayload);
         }
 
         private void PageView(string jsonMessage)
@@ -518,11 +523,26 @@ namespace GamificationPlayer
 
                 isDeviceFlowActive = false;
                 
-                OnUserLoggedIn?.Invoke(redirectURL);
+                InvokeUserLoggedIn(redirectURL);
             }
         }
 
-        private IEnumerator ActionAfterXSeconds(Action action, float seconds)
+        protected void InvokeUserLoggedIn(string redirectURL)
+        {
+            OnUserLoggedIn?.Invoke(redirectURL);
+        }
+
+        protected void InvokeModuleStart(Guid moduleId)
+        {
+            OnModuleStart?.Invoke(moduleId);
+        }
+
+        protected void InvokeMicroGameOpened(MicroGamePayload microGame)
+        {
+            OnMicroGameOpened?.Invoke(microGame);
+        }
+
+        protected IEnumerator ActionAfterXSeconds(Action action, float seconds)
         {
             yield return new WaitForSeconds(seconds);
 

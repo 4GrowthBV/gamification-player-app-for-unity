@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using UnityEngine;
 
@@ -31,6 +32,13 @@ namespace GamificationPlayer
         public bool TryGetLatestMicroGameIdentifier(out string microGameIdentifier)
         {
             return sessionLogData.TryGetLatestQueryableValue<string, MicroGameIdentifier>(out microGameIdentifier);
+        }
+
+        public bool TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload)
+        {
+            microGamePayload = LogData.OfType<MicroGamePayload>().LastOrDefault();
+
+            return microGamePayload != null;
         }
 
         public bool TryGetLatestLoginToken(out string token)

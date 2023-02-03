@@ -15,5 +15,6 @@ MonoBehaviour:
   apiKey: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzE2NDA5MDQsIm5iZiI6MTY3MTY0MDkwNCwiZXhwIjpudWxsLCJqdGkiOiIxYzk0YTQyNC03YzVlLTQ3ZGYtODI5OC1mNWJjYjM3ZGE5NTMiLCJ0eXBlIjoidGhpcmQtcGFydHkiLCJtZXRhIjpbXX0.s8k730fur2qEGWjz7qNboL1PUpFO9y4-9dXCSGrxnKs
   apiURL: https://api.fittarplayground.it/v1
   webpage: fittarplayground.it/
+  jsonWebTokenSecret: 
   isMockServer: 0
   turnOnLogging: 1

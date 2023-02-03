@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using GamificationPlayer.DTO.ExternalEvents;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -87,6 +84,7 @@ namespace GamificationPlayer.Tests
 
             obj.data.type = "microGameOpened";
             obj.data.attributes.identifier = microGameId.ToString();
+            obj.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiNDBiMDQxOTMtOGNhOC00ODY2LThlMWEtYTgyNmVjMGNhNjUzIiwidXNlcl9pZCI6IjdhNzY0ZjA5LTcxNjctNDc3NC04NWMwLWJkODVjMjM5MTdjMSJ9LCJzZXNzaW9uIjp7ImNoYWxsZW5nZV9zZXNzaW9uX2lkIjoiYTQ3Y2JjMzItYTQyOC00NGVhLTliYjItYWNhNzk3MmRmNDkzIiwibW9kdWxlX3Nlc3Npb25faWQiOiJhNjE3ZGJhMy1lYjA5LTQ0NzUtOWUxOC1iYTRjZTYwNzBiYzkifSwibWljcm9fZ2FtZSI6eyJuYW1lIjoiVGVzdCBNaWNyb0dhbWVzIiwiaWRlbnRpZmllciI6InRlc3QtbWljcm9nYW1lcyIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.C4uZkUpqXragKH7-x-SFEud9Pttv9aR_CG_cKEy_gjE";
 
             var json = obj.ToJson();
 
@@ -100,11 +98,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(OnMicroGameOpenedWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGameIdentifier(out _));
-            if(GamificationPlayerManager.TryGetLatestMicroGameIdentifier(out var id))
-            {
-                Assert.AreEqual(obj.data.attributes.identifier, id);
-            }
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
         }
 
         [Test]

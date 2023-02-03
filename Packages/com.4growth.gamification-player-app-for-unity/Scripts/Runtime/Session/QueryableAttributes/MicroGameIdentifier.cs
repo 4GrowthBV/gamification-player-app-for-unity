@@ -5,4 +5,9 @@ namespace GamificationPlayer.Session
     public class MicroGameIdentifier : Attribute, IQueryable
     {
     }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public class MicroGameJSONWebToken : Attribute, IQueryable
+    {
+    }
 }

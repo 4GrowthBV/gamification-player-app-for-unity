@@ -6,9 +6,9 @@ namespace GamificationPlayer
 {
     public static class JSONUtilityHelper
     {
-        public static string ToJson(this object toJSON)
+        public static string ToJson(this object toJSON, bool pretty = false)
         {
-            var json = JsonUtility.ToJson(toJSON);
+            var json = JsonUtility.ToJson(toJSON, pretty);
 
             var newJSON = json.Replace("\"\"", "null");
 

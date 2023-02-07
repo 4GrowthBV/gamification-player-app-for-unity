@@ -44,6 +44,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             public string name;
 
+            [MicroGameIdentifier]
             public string identifier;
 
             public Stars stars;

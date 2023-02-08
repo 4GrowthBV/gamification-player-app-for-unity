@@ -56,6 +56,12 @@ namespace GamificationPlayer
     /// <param name="identifier">The identifier of the MicroGame.</param>
     public delegate void OnMicroGameOpenedEvent(MicroGamePayload microGame);
 
+    /// <summary>
+    /// Represents a method that is called when the language is changed or first time that the languages is set
+    /// </summary>
+    /// <param name="identifier">The identifier of the languages.</param>
+    public delegate void OnLanguageSetEvent(string identifier);
+
     public class GamificationPlayerManager : MonoBehaviour
     {
         /// <summary>
@@ -93,6 +99,11 @@ namespace GamificationPlayer
         /// </summary>
         public static event OnMicroGameOpenedEvent OnMicroGameOpened;
 
+        /// <summary>
+        /// Occurs when a language is changed or first time that the languages is set
+        /// </summary>
+        public static event OnLanguageSetEvent OnLanguageSet;
+
         private static GamificationPlayerManager instance;
         
         /// <summary>
@@ -110,6 +121,16 @@ namespace GamificationPlayer
         public static bool IsUserActive()
         {
             return instance.GIsUserActive();
+        }
+
+        /// <summary>
+        /// Attempts to get the current language
+        /// </summary>
+        /// <param name="language">The identifier of the current language, if it is available.</param>
+        /// <returns>true if the current language was successfully retrieved; otherwise, false.</returns>
+        public static bool TryGetCurrentLanguage(out string language)
+        {
+            return instance.GTryGetCurrentLanguage(out language);
         }
 
         /// <summary>
@@ -317,6 +338,11 @@ namespace GamificationPlayer
             }));
         }
 
+        private bool GTryGetCurrentLanguage(out string language)
+        {
+            return sessionData.TryGetLatestLanguage(out language);
+        }
+
         private bool GTryGetLatestMicroGamePayload(out MicroGamePayload payload)
         {
             return sessionData.TryGetLatestMicroGamePayload(out payload);
@@ -443,6 +469,8 @@ namespace GamificationPlayer
 
         private void PageView(string jsonMessage)
         {
+            sessionData.TryGetLatestLanguage(out var previousLanguage);
+
             var dto = jsonMessage.FromJson<PageViewDTO>();
 
             sessionData.AddToLog(dto.data);
@@ -457,6 +485,14 @@ namespace GamificationPlayer
             }
 
             OnPageView?.Invoke();
+
+            if(sessionData.TryGetLatestLanguage(out var language))
+            {
+                if(previousLanguage != language)
+                {
+                    OnLanguageSet?.Invoke(language);
+                }
+            }
         }
 
         private bool GIsUserActive()

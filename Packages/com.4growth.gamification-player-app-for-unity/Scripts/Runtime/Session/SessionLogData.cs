@@ -19,6 +19,11 @@ namespace GamificationPlayer
 
         private NonPersistentLogData sessionLogData = new NonPersistentLogData();
 
+        public bool TryGetLatestLanguage(out string language)
+        {
+            return sessionLogData.TryGetLatestQueryableValue<string, Language>(out language);
+        }
+
         public bool TryGetLatestSubdomain(out string subdomain)
         {
             return sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out subdomain);

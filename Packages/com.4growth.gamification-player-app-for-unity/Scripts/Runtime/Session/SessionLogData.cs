@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
-using UnityEngine;
 
 namespace GamificationPlayer
 {
@@ -21,7 +20,14 @@ namespace GamificationPlayer
 
         public bool TryGetLatestLanguage(out string language)
         {
-            return sessionLogData.TryGetLatestQueryableValue<string, Language>(out language);
+            if(!sessionLogData.TryGetLatestQueryableValue<string, Language>(out var latestLanguage))
+            {
+                return sessionLogData.TryGetLatestQueryableValue<string, OrganisationDefaultLanguage>(out language);
+            }
+
+            language = latestLanguage;
+
+            return true;
         }
 
         public bool TryGetLatestSubdomain(out string subdomain)

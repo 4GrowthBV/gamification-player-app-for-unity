@@ -281,7 +281,8 @@ namespace GamificationPlayer
 #if UNITY_WEBGL
         public void Start()
         {
-            if(!string.IsNullOrEmpty(Application.absoluteURL))
+            if(!string.IsNullOrEmpty(Application.absoluteURL) && 
+                Application.absoluteURL.Contains("moduleData"))
             {
                 Uri url = new Uri(Application.absoluteURL);
                 var query = System.Web.HttpUtility.ParseQueryString(url.Query);

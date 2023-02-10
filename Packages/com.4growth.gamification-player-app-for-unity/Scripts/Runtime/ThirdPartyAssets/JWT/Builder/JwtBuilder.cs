@@ -482,9 +482,9 @@ namespace JWT.Builder
             var customAttributes = prop.GetCustomAttributes(inherit: true);
             foreach (var attribute in customAttributes)
             {
-                switch (jsonSerializer)
+                switch (jsonSerializer.GetType().Name)
                 {
-                    case JsonNetSerializer:
+                    case "JsonNetSerializer":
                     {
                         if (attribute is JsonPropertyAttribute jsonNetProperty)
                         {
@@ -493,7 +493,7 @@ namespace JWT.Builder
                         break;
                     }
 #if MODERN_DOTNET
-                    case SystemTextSerializer:
+                    case "SystemTextSerializer":
                     {
                         if (attribute is JsonPropertyNameAttribute stjProperty)
                         {

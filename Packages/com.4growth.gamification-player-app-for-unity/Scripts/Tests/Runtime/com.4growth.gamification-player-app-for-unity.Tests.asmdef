@@ -7,7 +7,6 @@
         "UnityEngine.TestRunner"
     ],
     "includePlatforms": [
-        "Android",
         "Editor"
     ],
     "excludePlatforms": [],

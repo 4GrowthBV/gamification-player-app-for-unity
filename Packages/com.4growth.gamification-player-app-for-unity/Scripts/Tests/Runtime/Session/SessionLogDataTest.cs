@@ -85,8 +85,8 @@ namespace GamificationPlayer.Tests
             dto.data.attributes.started_at = startedAt.ToString();
             dto.data.attributes.ended_at = endedAt.ToString();
             dto.data.attributes.completed_at = "null";
-            dto.data.relationships.challenge.data.id = Guid.NewGuid().ToString();
-            dto.data.relationships.user.data.id = Guid.NewGuid().ToString();
+            dto.data.relationships.challenge_session.data.id = Guid.NewGuid().ToString();
+            dto.data.relationships.module.data.id = Guid.NewGuid().ToString();
 
             dto.data.type = "moduleSession";
 
@@ -171,8 +171,8 @@ namespace GamificationPlayer.Tests
             dto4.data.attributes.started_at = new DateTime(2000, 1, 1).ToString();
             dto4.data.attributes.ended_at = new DateTime(2001, 1, 1).ToString();
             dto4.data.attributes.completed_at = "null";
-            dto4.data.relationships.challenge.data.id = Guid.NewGuid().ToString();
-            dto4.data.relationships.user.data.id = Guid.NewGuid().ToString();
+            dto4.data.relationships.challenge_session.data.id = Guid.NewGuid().ToString();
+            dto4.data.relationships.module.data.id = Guid.NewGuid().ToString();
 
             dto4.data.type = "moduleSession";
 
@@ -216,13 +216,13 @@ namespace GamificationPlayer.Tests
             Assert.That(sessionData.TryGetLatestModuleId(out _));
             if(sessionData.TryGetLatestModuleId(out id))
             {
-                Assert.AreEqual(Guid.Parse(dto3.data.attributes.module_id), id);
+                Assert.AreEqual(Guid.Parse(dto4.data.relationships.module.data.id), id);
             }
 
             Assert.That(sessionData.TryGetLatestChallengeSessionId(out _));
             if(sessionData.TryGetLatestChallengeSessionId(out id))
             {
-                Assert.AreEqual(Guid.Parse(dto3.data.attributes.challenge_session_id), id);
+                Assert.AreEqual(Guid.Parse(dto4.data.relationships.challenge_session.data.id), id);
             }
 
             Assert.That(sessionData.TryGetLatestOrganisationId(out _));

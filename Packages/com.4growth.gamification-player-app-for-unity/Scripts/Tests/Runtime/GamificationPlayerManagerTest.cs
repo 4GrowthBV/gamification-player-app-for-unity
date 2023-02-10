@@ -283,6 +283,20 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator EndLatestModuleSession()
         {
+            var pageViewDTO = new PageViewDTO();
+
+            var userId = System.Guid.NewGuid();
+            pageViewDTO.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
+            pageViewDTO.data.attributes.user_id = userId.ToString();
+
+            pageViewDTO.data.type = "pageView";
+
+            var json = pageViewDTO.ToJson();
+
+            GamificationPlayerManager.ProcessExternalMessage(json);
+
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
+
             var obj = new ModuleSessionStartedDTO();
 
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
@@ -293,9 +307,11 @@ namespace GamificationPlayer.Tests
 
             obj.data.type = "moduleSessionStarted";
 
-            var json = obj.ToJson();
+            json = obj.ToJson();
 
             GamificationPlayerManager.ProcessExternalMessage(json);
+
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
             var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
             var fitnessContentId = Guid.NewGuid();
@@ -304,6 +320,8 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
+
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
             
             var isDone = false;
             GamificationPlayerManager.EndLatestModuleSession(777, true, () =>
@@ -313,12 +331,16 @@ namespace GamificationPlayer.Tests
 
             yield return new WaitUntil(() => isDone);
 
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
+
             Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
 
             GamificationPlayerManager.ProcessExternalMessage(json);
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
         }
 
         [UnityTest]

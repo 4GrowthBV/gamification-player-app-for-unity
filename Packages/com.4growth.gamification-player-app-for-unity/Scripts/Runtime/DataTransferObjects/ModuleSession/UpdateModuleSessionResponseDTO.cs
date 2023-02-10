@@ -57,21 +57,21 @@ namespace GamificationPlayer.DTO.ModuleSession
         }
 
         [Serializable]
-        public class Challenge
+        public class ChallengeSession
         {
             [Serializable]
             public class Data
             {
                 public string Type { get => type; }
 
-                [ChallengeId]
+                [ChallengeSessionId]
                 public string id;
                 public string type;  
             }
 
             public Data data;
 
-            public Challenge()
+            public ChallengeSession()
             {
                 data = new Data();
             }
@@ -99,34 +99,34 @@ namespace GamificationPlayer.DTO.ModuleSession
         [Serializable]
         public class Relationships
         {
-            public User user;
-            public Challenge challenge;
+            public Module module;
+            public ChallengeSession challenge_session;
 
             public Relationships()
             {
-                user = new User();
-                challenge = new Challenge();
+                module = new Module();
+                challenge_session = new ChallengeSession();
             }
         }
 
         [Serializable]
-        public class User
+        public class Module
         {
             [Serializable]
             public class Data
             {
                 public string Type { get => type; }
 
-                [UserId]
+                [ModuleId]
                 public string id;
                 public string type;  
             }
 
             public Data data;
 
-            public User()
+            public Module()
             {
-                data = new User.Data();
+                data = new Module.Data();
             }
         }
         

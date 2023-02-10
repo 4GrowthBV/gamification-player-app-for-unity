@@ -24,7 +24,7 @@ namespace GamificationPlayer.Tests
 
                 Assert.That(!string.IsNullOrEmpty(obj.data.id));
 
-                Assert.AreEqual(obj.data.Type, "challenge_session");
+                Assert.AreEqual(obj.data.Type, "module_session");
 
                 Assert.NotNull(obj.data.attributes);
 
@@ -38,11 +38,11 @@ namespace GamificationPlayer.Tests
                 Assert.That(obj.data.attributes.EndedAt != default);
                 Assert.That(obj.data.attributes.CompletedAt != default);
 
-                Assert.AreEqual(obj.data.relationships.user.data.type, "user");
-                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.user.data.id));
+                Assert.AreEqual(obj.data.relationships.module.data.type, "module");
+                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.module.data.id));
 
-                Assert.AreEqual(obj.data.relationships.challenge.data.type, "challenge");
-                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.challenge.data.id));
+                Assert.AreEqual(obj.data.relationships.challenge_session.data.type, "challenge_session");
+                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.challenge_session.data.id));
             });
         }
     }

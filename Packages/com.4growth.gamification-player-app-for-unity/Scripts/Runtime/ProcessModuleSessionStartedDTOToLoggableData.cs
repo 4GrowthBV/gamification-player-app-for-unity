@@ -14,8 +14,8 @@ namespace GamificationPlayer
             newDto.data.attributes.started_at = DateTime.Now.ToString();
             newDto.data.attributes.ended_at = null;
             newDto.data.attributes.completed_at = null;
-            newDto.data.relationships.challenge.data.id = data.attributes.challenge_id;
-            newDto.data.relationships.user.data.id = userId.ToString();
+            newDto.data.relationships.challenge_session.data.id = data.attributes.challenge_id;
+            newDto.data.relationships.module.data.id = userId.ToString();
 
             newDto.data.type = "moduleSession";
 

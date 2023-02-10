@@ -42,8 +42,6 @@ namespace GamificationPlayer.Tests
         {
             var dto = new ModuleSessionStartedDTO();
 
-            dto.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto.data.attributes.user_id = Guid.NewGuid().ToString();
             dto.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
@@ -72,18 +70,6 @@ namespace GamificationPlayer.Tests
             if(sessionData.TryGetLatestChallengeSessionId(out id))
             {
                 Assert.AreEqual(Guid.Parse(dto.data.attributes.challenge_session_id), id);
-            }
-
-            Assert.That(sessionData.TryGetLatestOrganisationId(out _));
-            if(sessionData.TryGetLatestOrganisationId(out id))
-            {
-                Assert.AreEqual(Guid.Parse(dto.data.attributes.organisation_id), id);
-            }
-
-            Assert.That(sessionData.TryGetLatestUserId(out _));
-            if(sessionData.TryGetLatestUserId(out id))
-            {
-                Assert.AreEqual(Guid.Parse(dto.data.attributes.user_id), id);
             }
         }
 
@@ -156,8 +142,6 @@ namespace GamificationPlayer.Tests
 
             var dto1 = new ModuleSessionStartedDTO();
 
-            dto1.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto1.data.attributes.user_id = Guid.NewGuid().ToString();
             dto1.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto1.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto1.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
@@ -173,8 +157,6 @@ namespace GamificationPlayer.Tests
 
             var dto3 = new ModuleSessionStartedDTO();
 
-            dto3.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto3.data.attributes.user_id = Guid.NewGuid().ToString();
             dto3.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto3.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto3.data.attributes.challenge_session_id = Guid.NewGuid().ToString();

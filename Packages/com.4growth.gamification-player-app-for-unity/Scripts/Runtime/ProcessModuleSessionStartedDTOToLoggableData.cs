@@ -6,7 +6,7 @@ namespace GamificationPlayer
 {
     public class ProcessModuleSessionStartedDTOToLoggableData
     {
-        public ILoggableData Process(ModuleSessionStartedDTO.Data data)
+        public ILoggableData Process(ModuleSessionStartedDTO.Data data, Guid userId)
         {
             var newDto = new UpdateModuleSessionResponseDTO();
 
@@ -15,7 +15,7 @@ namespace GamificationPlayer
             newDto.data.attributes.ended_at = null;
             newDto.data.attributes.completed_at = null;
             newDto.data.relationships.challenge.data.id = data.attributes.challenge_id;
-            newDto.data.relationships.user.data.id = data.attributes.user_id;
+            newDto.data.relationships.user.data.id = userId.ToString();
 
             newDto.data.type = "moduleSession";
 

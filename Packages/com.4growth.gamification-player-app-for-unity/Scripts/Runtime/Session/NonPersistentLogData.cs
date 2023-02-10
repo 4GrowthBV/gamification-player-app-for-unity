@@ -40,7 +40,7 @@ namespace GamificationPlayer
         private bool HasLatestQueryableValue<TValue, TAttribute>(object obj)
             where TAttribute : Session.IQueryable
         {
-            if(obj == null)
+            if (obj == null)
             {
                 return false;
             }
@@ -51,11 +51,12 @@ namespace GamificationPlayer
             if (fieldWithAttribute != null)
             {
                 return true;
-            } else
+            }
+            else
             {
-                foreach(var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
+                foreach (var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
                 {
-                    if(HasLatestQueryableValue<TValue, TAttribute>(child.GetValue(obj)))
+                    if (HasLatestQueryableValue<TValue, TAttribute>(child.GetValue(obj)))
                     {
                         return true;
                     }
@@ -68,7 +69,7 @@ namespace GamificationPlayer
         private TValue GetLatestQueryableValue<TValue, TAttribute>(object obj)
             where TAttribute : Session.IQueryable
         {
-            if(obj == null)
+            if (obj == null)
             {
                 return default;
             }
@@ -79,11 +80,15 @@ namespace GamificationPlayer
             if (fieldWithAttribute != null)
             {
                 return (TValue)fieldWithAttribute.GetValue(obj);
-            } else
+            }
+            else
             {
-                foreach(var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
+                foreach (var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
                 {
-                    return GetLatestQueryableValue<TValue, TAttribute>(child.GetValue(obj));
+                    if(HasLatestQueryableValue<TValue, TAttribute>(child.GetValue(obj)))
+                    {
+                        return GetLatestQueryableValue<TValue, TAttribute>(child.GetValue(obj));
+                    }
                 }
             }
 

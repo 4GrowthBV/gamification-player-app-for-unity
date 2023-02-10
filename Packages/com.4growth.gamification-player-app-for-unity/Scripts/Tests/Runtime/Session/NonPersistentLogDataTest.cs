@@ -43,8 +43,6 @@ namespace GamificationPlayer.Tests
         {
             var dto = new ModuleSessionStartedDTO();
 
-            dto.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto.data.attributes.user_id = Guid.NewGuid().ToString();
             dto.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
@@ -57,20 +55,8 @@ namespace GamificationPlayer.Tests
 
             nonPersistentSessionData.AddToLog(dto.data);
 
-            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, OrganisationId>(out _));
-            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, OrganisationId>(out var id))
-            {
-                Assert.AreEqual(dto.data.attributes.organisation_id, id);
-            }
-
-            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, UserId>(out _));
-            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, UserId>(out id))
-            {
-                Assert.AreEqual(dto.data.attributes.user_id, id);
-            }
-
             Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChallengeSessionId>(out _));
-            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChallengeSessionId>(out id))
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChallengeSessionId>(out var id))
             {
                 Assert.AreEqual(dto.data.attributes.challenge_session_id, id);
             }
@@ -106,6 +92,18 @@ namespace GamificationPlayer.Tests
             var nonPersistentSessionData = new NonPersistentLogData();
 
             nonPersistentSessionData.AddToLog(dto.data);
+
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, UserId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, UserId>(out var userId))
+            {
+                Assert.AreEqual(dto.data.relationships.user.data.id, userId);
+            }
+
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChallengeId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChallengeId>(out var challengeId))
+            {
+                Assert.AreEqual(dto.data.relationships.challenge.data.id, challengeId);
+            }
 
             Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ModuleSessionStarted>(out _));
             if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ModuleSessionStarted>(out var dateTime))
@@ -160,8 +158,6 @@ namespace GamificationPlayer.Tests
 
             var dto1 = new ModuleSessionStartedDTO();
 
-            dto1.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto1.data.attributes.user_id = Guid.NewGuid().ToString();
             dto1.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto1.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto1.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
@@ -177,8 +173,6 @@ namespace GamificationPlayer.Tests
 
             var dto3 = new ModuleSessionStartedDTO();
 
-            dto3.data.attributes.organisation_id = Guid.NewGuid().ToString();
-            dto3.data.attributes.user_id = Guid.NewGuid().ToString();
             dto3.data.attributes.campaign_id = Guid.NewGuid().ToString();
             dto3.data.attributes.challenge_id = Guid.NewGuid().ToString();
             dto3.data.attributes.challenge_session_id = Guid.NewGuid().ToString();

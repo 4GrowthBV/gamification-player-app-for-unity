@@ -23,13 +23,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
         [Serializable]
         public class Attributes
-        {
-            [OrganisationId]
-            public string organisation_id;
-
-            [UserId]
-            public string user_id;
-            
+        {            
             [CampaignId]
             public string campaign_id;
 

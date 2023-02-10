@@ -81,8 +81,6 @@ namespace GamificationPlayer.Tests
             var moduleSessionStartedDTO = new ModuleSessionStartedDTO();
 
             var moduleId = System.Guid.NewGuid();
-            moduleSessionStartedDTO.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            moduleSessionStartedDTO.data.attributes.user_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -115,6 +113,8 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onEventWasCalled);
 
             Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
+
+            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
         }
 
         [Test]
@@ -123,8 +123,6 @@ namespace GamificationPlayer.Tests
             var moduleSessionStartedDTO = new ModuleSessionStartedDTO();
 
             var moduleId = System.Guid.NewGuid();
-            moduleSessionStartedDTO.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            moduleSessionStartedDTO.data.attributes.user_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             moduleSessionStartedDTO.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -167,8 +165,6 @@ namespace GamificationPlayer.Tests
             var obj = new ModuleSessionStartedDTO();
 
             var moduleId = System.Guid.NewGuid();
-            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            obj.data.attributes.user_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -289,8 +285,6 @@ namespace GamificationPlayer.Tests
         {
             var obj = new ModuleSessionStartedDTO();
 
-            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            obj.data.attributes.user_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -332,8 +326,6 @@ namespace GamificationPlayer.Tests
         {
             var obj = new ModuleSessionStartedDTO();
 
-            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            obj.data.attributes.user_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -372,8 +364,6 @@ namespace GamificationPlayer.Tests
             obj = new ModuleSessionStartedDTO();
 
             var moduleId = System.Guid.NewGuid();
-            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
-            obj.data.attributes.user_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();

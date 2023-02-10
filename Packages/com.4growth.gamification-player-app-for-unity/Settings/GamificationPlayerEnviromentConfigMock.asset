@@ -15,6 +15,6 @@ MonoBehaviour:
   apiKey: 123
   apiURL: https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676
   webpage: gamificationplayer.it/
-  jsonWebTokenSecret: 
+  jsonWebTokenSecret: dffa5508-db48-48d4-b135-ab80c4716a9c
   isMockServer: 1
   turnOnLogging: 1

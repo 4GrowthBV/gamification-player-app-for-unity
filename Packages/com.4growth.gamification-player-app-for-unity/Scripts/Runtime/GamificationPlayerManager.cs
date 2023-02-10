@@ -431,7 +431,9 @@ namespace GamificationPlayer
 
             var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+            sessionData.TryGetLatestUserId(out var id);
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData, id));
         
             OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
@@ -463,7 +465,9 @@ namespace GamificationPlayer
 
             var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+            sessionData.TryGetLatestUserId(out var id);
+
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData, id));
         
             InvokeMicroGameOpened(webTokenPayload);          
         }

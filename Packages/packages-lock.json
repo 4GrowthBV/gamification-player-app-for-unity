@@ -4,7 +4,9 @@
       "version": "file:com.4growth.gamification-player-app-for-unity",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+      }
     },
     "com.unity.burst": {
       "version": "1.6.6",

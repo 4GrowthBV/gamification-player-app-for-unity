@@ -508,6 +508,12 @@ namespace GamificationPlayer
                     OnLanguageSet?.Invoke(language);
                 }
             }
+
+            if(!sessionData.TryGetLatestSubdomain(out _) && 
+                sessionData.TryGetLatestOrganisationId(out _))
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
+            }
         }
 
         private bool GIsUserActive()

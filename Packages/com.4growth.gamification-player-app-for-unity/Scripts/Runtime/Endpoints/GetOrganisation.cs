@@ -7,7 +7,7 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoGetOrganisation(GetOrganisationCallback onReady)
+        public IEnumerator CoGetOrganisation(GetOrganisationCallback onReady = null)
         {
             if(!sessionData.TryGetLatestOrganisationId(out var organisationId))
             {   
@@ -19,7 +19,7 @@ namespace GamificationPlayer
             yield return CoGetOrganisation(organisationId, onReady);
         }
 
-        private IEnumerator CoGetOrganisation(Guid organisationId, GetOrganisationCallback onReady)
+        private IEnumerator CoGetOrganisation(Guid organisationId, GetOrganisationCallback onReady = null)
         {
             string webRequestString = string.Format("{0}/organisations/{1}", enviromentConfig.API_URL, organisationId);
 

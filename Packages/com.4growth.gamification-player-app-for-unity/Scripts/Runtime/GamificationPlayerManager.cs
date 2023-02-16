@@ -242,6 +242,11 @@ namespace GamificationPlayer
             return instance.GTryGetLatestFitnessContentIdentifier(out identifier);
         }
 
+        public static bool TryGetLatestSubdomain(out string subdomain)
+        {
+            return instance.GTryGetLatestSubdomain(out subdomain);
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
@@ -352,6 +357,11 @@ namespace GamificationPlayer
         private bool GTryGetLatestFitnessContentIdentifier(out string identifier)
         {
             return sessionData.TryGetLatestFitnessContentIdentifier(out identifier);
+        }
+
+        private bool GTryGetLatestSubdomain(out string subdomain)
+        {
+            return sessionData.TryGetLatestSubdomain(out subdomain);
         }
 
         private void GUseMockServer()

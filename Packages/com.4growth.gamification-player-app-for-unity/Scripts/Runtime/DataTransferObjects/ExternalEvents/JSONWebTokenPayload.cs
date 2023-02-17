@@ -61,7 +61,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [Serializable]
         public class Module
         {
-            public int mutiplier;
+            public int multiplier;
 
             public int max_score;
 

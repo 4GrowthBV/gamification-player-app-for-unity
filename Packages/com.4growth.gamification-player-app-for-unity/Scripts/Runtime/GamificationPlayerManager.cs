@@ -439,7 +439,7 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
 
             sessionData.TryGetLatestUserId(out var id);
 
@@ -473,7 +473,7 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(webTokenPayload);
 
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().First();
+            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
 
             sessionData.TryGetLatestUserId(out var id);
 

@@ -443,7 +443,7 @@ namespace GamificationPlayer
 
             sessionData.TryGetLatestUserId(out var id);
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData, id));
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
         
             OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
@@ -477,7 +477,7 @@ namespace GamificationPlayer
 
             sessionData.TryGetLatestUserId(out var id);
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData, id));
+            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
         
             InvokeMicroGameOpened(webTokenPayload);          
         }

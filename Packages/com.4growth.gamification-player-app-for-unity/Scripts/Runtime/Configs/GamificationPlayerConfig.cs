@@ -7,9 +7,6 @@ namespace GamificationPlayer
     {
         public static bool TryGetEnvironmentConfig(string environmentDomain, out EnvironmentConfig gamificationPlayerEnvironmentConfig)
         {
-            Debug.Log(instance);
-            Debug.Log(instance.defaultEnvironmentDomainGroup);
-
             if (instance.defaultEnvironmentDomainGroup != null && instance.defaultEnvironmentDomainGroup.TryGetEnvironmentConfig(environmentDomain, out EnvironmentConfig config))
             {
                 gamificationPlayerEnvironmentConfig = config;
@@ -31,11 +28,6 @@ namespace GamificationPlayer
             return false;
         }
 
-        public static string GetStartingSubdomain()
-        {
-            return instance.startingSubdomain;
-        }
-
         private static GamificationPlayerConfig s_Instance;
 
         private static GamificationPlayerConfig instance
@@ -50,10 +42,6 @@ namespace GamificationPlayer
                 return s_Instance;
             }
         }
-
-        [SerializeField]
-        [Header("Keep empty to make use of the generic login.")]
-        private string startingSubdomain = "";
 
         [SerializeField]
         private EnvironmentDomainGroup defaultEnvironmentDomainGroup;

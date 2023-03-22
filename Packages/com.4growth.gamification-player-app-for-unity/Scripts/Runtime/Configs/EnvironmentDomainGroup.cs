@@ -9,11 +9,16 @@ namespace GamificationPlayer
     {
         public bool TryGetEnvironmentConfig(string environmentDomain, out EnvironmentConfig gamificationPlayerEnvironmentConfig)
         {
+            Debug.Log("SEARCH: " + environmentDomain);
             foreach(var config in configs)
             {
+                Debug.Log("CHECK: " + config.Webpage.ToLower());
+
                 if(environmentDomain.ToLower().Contains(config.Webpage.ToLower()) || 
                     config.Webpage.ToLower().Contains(environmentDomain.ToLower()))
                 {
+                    Debug.Log("FOUND!!: " + config.name);
+
                     gamificationPlayerEnvironmentConfig = config;
 
                     return true; 

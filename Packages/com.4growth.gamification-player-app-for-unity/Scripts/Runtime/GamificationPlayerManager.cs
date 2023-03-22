@@ -247,6 +247,11 @@ namespace GamificationPlayer
             return instance.GTryGetLatestSubdomain(out subdomain);
         }
 
+        public static EnvironmentConfig GetEnvironmentConfig()
+        {
+            return instance.GGetEnvironmentConfig();
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
@@ -293,7 +298,7 @@ namespace GamificationPlayer
             }
 #endif
 
-            gamificationPlayerEndpoints = new GamificationPlayerEndpoints(GetEnvironmentConfig(), sessionData);
+            gamificationPlayerEndpoints = new GamificationPlayerEndpoints(GGetEnvironmentConfig(), sessionData);
             
             if(checkServerTimeOnStartUp)
             {
@@ -301,7 +306,7 @@ namespace GamificationPlayer
             }
         }
 
-        private EnvironmentConfig GetEnvironmentConfig()
+        private EnvironmentConfig GGetEnvironmentConfig()
         {
             EnvironmentConfig environmentConfig;
 

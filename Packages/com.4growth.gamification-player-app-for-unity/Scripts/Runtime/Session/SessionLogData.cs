@@ -57,6 +57,11 @@ namespace GamificationPlayer
             return sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out token);
         }
 
+        public bool TryGetLatestEnvironmentDomain(out string environmentDomain)
+        {
+            return sessionLogData.TryGetLatestQueryableValue<string, EnvironmentDomain>(out environmentDomain);
+        }
+
         public bool TryGetWhenServerTime(out float realtimeSinceStartup)
         {
             return sessionLogData.TryGetLatestQueryableValue<float, TimeNowLogged>(out realtimeSinceStartup);

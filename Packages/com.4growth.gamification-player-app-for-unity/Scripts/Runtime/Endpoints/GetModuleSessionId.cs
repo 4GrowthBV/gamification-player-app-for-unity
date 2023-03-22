@@ -31,12 +31,12 @@ namespace GamificationPlayer
 
         private IEnumerator CoGetModuleSessionId(Guid challengeSessionId, Guid moduleId, GetModuleSessionIdCallback onReady)
         {
-            string webRequestString = string.Format("{0}/module-sessions?filter%5Bmodule_id%5D={1}&filter%5Bchallenge_session_id%5D={2}", enviromentConfig.API_URL, moduleId, challengeSessionId);
+            string webRequestString = string.Format("{0}/module-sessions?filter%5Bmodule_id%5D={1}&filter%5Bchallenge_session_id%5D={2}", environmentConfig.API_URL, moduleId, challengeSessionId);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(webRequestString);
+            if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
             UnityWebRequest webRequest = UnityWebRequest.Get(webRequestString);
-            webRequest.SetRequestHeader("X-Api-Key", enviromentConfig.APIKey);
+            webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.certificateHandler = new ForceAcceptAll();
@@ -55,10 +55,10 @@ namespace GamificationPlayer
                     break;
                 case UnityWebRequest.Result.ProtocolError:
                     Debug.LogError(": HTTP Error: " + webRequest.error);
-                    if(enviromentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                     break;
                 case UnityWebRequest.Result.Success:
-                    if(enviromentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var obj = webRequest.downloadHandler.text.FromJson<GetModuleSessionsResponseDTO>();
                     sessionData.AddToLog(obj.data);
                     moduleSessionId = new Guid(obj.data.First().id);

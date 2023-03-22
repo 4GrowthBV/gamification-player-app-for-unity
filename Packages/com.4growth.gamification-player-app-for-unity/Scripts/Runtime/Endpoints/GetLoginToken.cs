@@ -26,12 +26,12 @@ namespace GamificationPlayer
 
         public IEnumerator CoGetLoginToken(Guid organisations, Guid userId, GetLoginTokenCallback onReady)
         {
-            var url = string.Format("{0}/organisations/{1}/users/{2}/login-token", enviromentConfig.API_URL, organisations, userId);
+            var url = string.Format("{0}/organisations/{1}/users/{2}/login-token", environmentConfig.API_URL, organisations, userId);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(url);
+            if(environmentConfig.TurnOnLogging) Debug.Log(url);
 
             UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("X-Api-Key", enviromentConfig.APIKey);
+            webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.certificateHandler = new ForceAcceptAll();
@@ -50,10 +50,10 @@ namespace GamificationPlayer
                     break;
                 case UnityWebRequest.Result.ProtocolError:
                     Debug.LogError(": HTTP Error: " + webRequest.error);
-                    if(enviromentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                     break;
                 case UnityWebRequest.Result.Success:
-                    if(enviromentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var userDataRoot = webRequest.downloadHandler.text.FromJson<GetLoginTokenResponseDTO>();
                     sessionData.AddToLog(userDataRoot.data);
                     token = userDataRoot.data.attributes.token;

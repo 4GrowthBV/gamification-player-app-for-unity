@@ -21,12 +21,12 @@ namespace GamificationPlayer
 
         private IEnumerator CoGetOrganisation(Guid organisationId, GetOrganisationCallback onReady = null)
         {
-            string webRequestString = string.Format("{0}/organisations/{1}", enviromentConfig.API_URL, organisationId);
+            string webRequestString = string.Format("{0}/organisations/{1}", environmentConfig.API_URL, organisationId);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(webRequestString);
+            if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
             UnityWebRequest webRequest = UnityWebRequest.Get(webRequestString);
-            webRequest.SetRequestHeader("X-Api-Key", enviromentConfig.APIKey);
+            webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.certificateHandler = new ForceAcceptAll();
@@ -45,10 +45,10 @@ namespace GamificationPlayer
                     break;
                 case UnityWebRequest.Result.ProtocolError:
                     Debug.LogError(": HTTP Error: " + webRequest.error);
-                    if(enviromentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                     break;
                 case UnityWebRequest.Result.Success:
-                    if(enviromentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     obj = webRequest.downloadHandler.text.FromJson<GetOrganisationResponseDTO>();
                     sessionData.AddToLog(obj.data);           
                     break;

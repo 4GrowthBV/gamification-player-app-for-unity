@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace GamificationPlayer
 {
-    [CreateAssetMenu(fileName = "GamificationPlayerEnviromentConfig", menuName = "GamificationPlayer/GamificationPlayerEnviromentConfig", order = 1)]
-    public class GamificationPlayerEnviromentConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "EnvironmentConfig", menuName = "GamificationPlayer/EnvironmentConfig", order = 1)]
+    public class EnvironmentConfig : ScriptableObject
     {
         public string APIKey
         {

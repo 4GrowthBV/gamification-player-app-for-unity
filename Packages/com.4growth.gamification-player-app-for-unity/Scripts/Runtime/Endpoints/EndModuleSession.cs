@@ -34,14 +34,14 @@ namespace GamificationPlayer
 
             string data = moduleSession.ToJson();
 
-            string webRequestString = string.Format("{0}/module-sessions/{1}?_method=PATCH", enviromentConfig.API_URL, moduleSessionId);
+            string webRequestString = string.Format("{0}/module-sessions/{1}?_method=PATCH", environmentConfig.API_URL, moduleSessionId);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(data);
+            if(environmentConfig.TurnOnLogging) Debug.Log(data);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(webRequestString);
+            if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
             UnityWebRequest webRequest = GetUnityWebRequestPOST(webRequestString, data);
-            webRequest.SetRequestHeader("X-Api-Key", enviromentConfig.APIKey);
+            webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.certificateHandler = new ForceAcceptAll();
@@ -58,10 +58,10 @@ namespace GamificationPlayer
                     break;
                 case UnityWebRequest.Result.ProtocolError:
                     Debug.LogError(": HTTP Error: " + webRequest.error);
-                    if(enviromentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                     break;
                 case UnityWebRequest.Result.Success:
-                    if(enviromentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                    if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var obj = webRequest.downloadHandler.text.FromJson<UpdateModuleSessionResponseDTO>();
                     sessionData.AddToLog(obj.data);
                     break;

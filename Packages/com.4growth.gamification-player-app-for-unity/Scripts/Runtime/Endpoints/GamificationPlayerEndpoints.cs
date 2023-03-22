@@ -27,28 +27,28 @@ namespace GamificationPlayer
             }
         }
 
-        public GamificationPlayerEnviromentConfig EnviromentConfig
+        public EnvironmentConfig EnvironmentConfig
         {
             get
             {
-                return enviromentConfig;
+                return environmentConfig;
             }
         }
 
-        private GamificationPlayerEnviromentConfig enviromentConfig;
+        private EnvironmentConfig environmentConfig;
         private ISessionLogData sessionData;
 
-        public GamificationPlayerEndpoints(GamificationPlayerEnviromentConfig enviromentConfig,
+        public GamificationPlayerEndpoints(EnvironmentConfig environmentConfig,
             ISessionLogData sessionData)
         {
-            this.enviromentConfig = enviromentConfig;
+            this.environmentConfig = environmentConfig;
             this.sessionData = sessionData;
         }
 
         private UnityWebRequest GetUnityWebRequestPOST(string webRequestString, string data)
         {
             UnityWebRequest webRequest;
-            if(enviromentConfig.IsMockServer)
+            if(environmentConfig.IsMockServer)
             {
                 webRequest = UnityWebRequest.Get(webRequestString);
             } else

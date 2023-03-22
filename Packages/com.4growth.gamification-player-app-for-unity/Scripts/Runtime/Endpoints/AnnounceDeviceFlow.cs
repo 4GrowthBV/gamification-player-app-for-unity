@@ -17,18 +17,18 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(moduleSession.data);
 
-            string webRequestString = string.Format("{0}/device-login", enviromentConfig.API_URL);
+            string webRequestString = string.Format("{0}/device-login", environmentConfig.API_URL);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(data);
+            if(environmentConfig.TurnOnLogging) Debug.Log(data);
 
-            if(enviromentConfig.TurnOnLogging) Debug.Log(webRequestString);
+            if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
             using (UnityWebRequest webRequest = new UnityWebRequest(webRequestString, "POST"))
             {
                 byte[] bodyRaw = Encoding.UTF8.GetBytes(data);
                 webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 webRequest.downloadHandler = new DownloadHandlerBuffer();
-                webRequest.SetRequestHeader("X-Api-Key", enviromentConfig.APIKey);
+                webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
                 webRequest.SetRequestHeader("Content-Type", "application/json");
                 webRequest.SetRequestHeader("Accept", "application/json");
                 webRequest.certificateHandler = new ForceAcceptAll();
@@ -49,7 +49,7 @@ namespace GamificationPlayer
                         Debug.LogError(": HTTP Error: " + webRequest.error);
                         break;
                     case UnityWebRequest.Result.Success:
-                        if(enviromentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                        if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
 
                         var response = webRequest.downloadHandler.text.FromJson<AnnounceDeviceFlowResponseDTO>();
                         sessionData.AddToLog(response.data);

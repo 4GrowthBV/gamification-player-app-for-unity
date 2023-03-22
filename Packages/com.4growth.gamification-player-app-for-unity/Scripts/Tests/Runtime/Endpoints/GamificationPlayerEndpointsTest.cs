@@ -9,18 +9,18 @@ namespace GamificationPlayer.Tests
 {
     public class GamificationPlayerEndpointsTest
     {
-        private GamificationPlayerEnviromentConfig gamificationPlayerEnviromentConfig;
+        private EnvironmentConfig gamificationPlayerEnvironmentConfig;
 
         [SetUp]
         public void SetUp()
         {
-            gamificationPlayerEnviromentConfig = ScriptableObject.CreateInstance<GamificationPlayerEnviromentConfig>();
+            gamificationPlayerEnvironmentConfig = ScriptableObject.CreateInstance<EnvironmentConfig>();
         }
 
         [UnityTest]
         public IEnumerator TestAnnounceDeviceFlow()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoAnnounceDeviceFlow((result, loginUrl) =>
             {
@@ -33,7 +33,7 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator TestGetDeviceFlow()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoGetDeviceFlow((result, isValidated, userId) =>
             {
@@ -48,7 +48,7 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator TestGetLoginToken()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoGetLoginToken((result, token) =>
             {
@@ -61,7 +61,7 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator TestGetModuleSessionId()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoGetModuleSessionId((result, moduleSessionId) =>
             {
@@ -74,7 +74,7 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator TestGetTime()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoGetTime((result, time) =>
             {
@@ -87,7 +87,7 @@ namespace GamificationPlayer.Tests
         [UnityTest]
         public IEnumerator TestGetOrganisation()
         {
-            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnviromentConfig, new SessionLogDataMock());
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
             return gamificationPlayerEndpoints.CoGetOrganisation((result, dto) =>
             {

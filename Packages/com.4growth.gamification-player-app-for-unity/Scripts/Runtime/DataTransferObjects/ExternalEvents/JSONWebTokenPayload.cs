@@ -6,6 +6,16 @@ namespace GamificationPlayer.DTO.ExternalEvents
     public class MicroGamePayload : ILoggableData
     {
         [Serializable]
+        public class Environment
+        {
+            [EnvironmentDomain]
+            public string domain;
+
+            [EnvironmentType]
+            public string type;
+        }
+
+        [Serializable]
         public class Player
         {
             [OrganisationId]
@@ -76,6 +86,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
         public Session session;
         public MicroGame micro_game;
         public Module module;
+        public Environment environment;
 
         public string Type => "moduleData";
 
@@ -87,6 +98,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             session = new Session();
             micro_game = new MicroGame();
             module = new Module();
+            environment = new Environment();
         }
     }
 }

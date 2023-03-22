@@ -252,7 +252,7 @@ namespace GamificationPlayer
 
         [SerializeField]
         [Header("Mock settings for testing")]
-        private GamificationPlayerEnviromentConfig gamificationPlayerMockConfig;
+        private EnvironmentConfig gamificationPlayerMockConfig;
 
         protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
@@ -275,17 +275,7 @@ namespace GamificationPlayer
 
             sessionData = new SessionLogData();
 
-            gamificationPlayerEndpoints = new GamificationPlayerEndpoints(GamificationPlayerConfig.EnviromentConfig, sessionData);
-            
-            if(checkServerTimeOnStartUp)
-            {
-                GGetServerOffSetTime();
-            }
-        }
-
 #if UNITY_WEBGL
-        public void Start()
-        {
             if(!string.IsNullOrEmpty(Application.absoluteURL) && 
                 Application.absoluteURL.Contains("moduleData"))
             {
@@ -293,24 +283,61 @@ namespace GamificationPlayer
                 var query = System.Web.HttpUtility.ParseQueryString(url.Query);
                 string jwt = query["moduleData"];
 
-                var json = JWTHelper.GetJSONWebTokenPayload(jwt, GamificationPlayerConfig.EnviromentConfig.JSONWebTokenSecret);
+                GamificationPlayerConfig.TryGetEnvironmentConfig(Application.absoluteURL, out var environmentConfig);
+
+                var json = JWTHelper.GetJSONWebTokenPayload(jwt, environmentConfig.JSONWebTokenSecret);
 
                 var dto = json.FromJson<MicroGamePayload>();
 
                 sessionData.AddToLog(dto);
+            }
+#endif
 
-                if(sessionData.TryGetLatestModuleId(out Guid id))
-                {
-                    InvokeModuleStart(id);
-                }
-
-                if(sessionData.TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload))
-                {
-                    InvokeMicroGameOpened(microGamePayload);
-                }
+            gamificationPlayerEndpoints = new GamificationPlayerEndpoints(GetEnvironmentConfig(), sessionData);
+            
+            if(checkServerTimeOnStartUp)
+            {
+                GGetServerOffSetTime();
             }
         }
+
+        private EnvironmentConfig GetEnvironmentConfig()
+        {
+            EnvironmentConfig environmentConfig;
+
+            if(sessionData.TryGetLatestEnvironmentDomain(out var env))
+            {
+                if(GamificationPlayerConfig.TryGetEnvironmentConfig(env, out environmentConfig))
+                {
+                    return environmentConfig;
+                }
+            }
+
+            var environment = ".it";
+#if PROD_BUILD
+            environment = ".app";
+#elif STAG_BUILD
+            environment = ".eu";
+#else
+            environment = ".it";
 #endif
+            GamificationPlayerConfig.TryGetEnvironmentConfig(environment, out environmentConfig);
+
+            return environmentConfig;
+        }
+
+        public void Start()
+        {
+            if(sessionData.TryGetLatestModuleId(out Guid id))
+            {
+                InvokeModuleStart(id);
+            }
+
+            if(sessionData.TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload))
+            {
+                InvokeMicroGameOpened(microGamePayload);
+            }
+        }
 
         private bool GTryGetServerTime(out DateTime dateTime)
         {
@@ -468,7 +495,7 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, gamificationPlayerEndpoints.EnviromentConfig.JSONWebTokenSecret);
+            var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, gamificationPlayerEndpoints.EnvironmentConfig.JSONWebTokenSecret);
             var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>();
 
             sessionData.AddToLog(webTokenPayload);
@@ -640,7 +667,7 @@ namespace GamificationPlayer
             if(sessionData.TryGetLatestSubdomain(out var subdomain) &&
                 sessionData.TryGetLatestLoginToken(out var loginToken))
             {
-                var redirectURL = string.Format("https://{0}.{1}login?otlToken={2}", subdomain, gamificationPlayerEndpoints.EnviromentConfig.Webpage, loginToken);
+                var redirectURL = string.Format("https://{0}.{1}login?otlToken={2}", subdomain, gamificationPlayerEndpoints.EnvironmentConfig.Webpage, loginToken);
 
                 isDeviceFlowActive = false;
                 

@@ -10,17 +10,16 @@ namespace GamificationPlayer
             Debug.Log(instance);
             Debug.Log(instance.defaultEnvironmentDomainGroup);
 
-            EnvironmentConfig config = default;
-            if(instance.defaultEnvironmentDomainGroup ?? instance.defaultEnvironmentDomainGroup.TryGetEnvironmentConfig(environmentDomain, out config))
+            if (instance.defaultEnvironmentDomainGroup != null && instance.defaultEnvironmentDomainGroup.TryGetEnvironmentConfig(environmentDomain, out EnvironmentConfig config))
             {
                 gamificationPlayerEnvironmentConfig = config;
 
                 return true;
             }
 
-            foreach(var gamificationPlayerConfig in instance.allEnvironmentDomainGroups)
+            foreach (var gamificationPlayerConfig in instance.allEnvironmentDomainGroups)
             {
-                if(gamificationPlayerConfig ?? gamificationPlayerConfig.TryGetEnvironmentConfig(environmentDomain, out config))
+                if(gamificationPlayerConfig != null && gamificationPlayerConfig.TryGetEnvironmentConfig(environmentDomain, out config))
                 {
                     gamificationPlayerEnvironmentConfig = config;
                     return true;

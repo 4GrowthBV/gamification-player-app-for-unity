@@ -7,6 +7,9 @@ namespace GamificationPlayer
     {
         public static bool TryGetEnvironmentConfig(string environmentDomain, out EnvironmentConfig gamificationPlayerEnvironmentConfig)
         {
+            Debug.Log(instance);
+            Debug.Log(instance.defaultEnvironmentDomainGroup);
+
             EnvironmentConfig config = default;
             if(instance.defaultEnvironmentDomainGroup ?? instance.defaultEnvironmentDomainGroup.TryGetEnvironmentConfig(environmentDomain, out config))
             {

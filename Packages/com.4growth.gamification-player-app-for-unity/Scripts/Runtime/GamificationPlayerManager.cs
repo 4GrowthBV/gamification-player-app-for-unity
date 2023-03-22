@@ -312,6 +312,8 @@ namespace GamificationPlayer
 
             if(sessionData.TryGetLatestEnvironmentDomain(out var env))
             {
+                Debug.Log("ENV FOUND!");
+
                 if(GamificationPlayerConfig.TryGetEnvironmentConfig(env, out environmentConfig))
                 {
                     return environmentConfig;
@@ -326,6 +328,9 @@ namespace GamificationPlayer
 #else
             environment = ".it";
 #endif
+
+            Debug.Log(environment);
+
             GamificationPlayerConfig.TryGetEnvironmentConfig(environment, out environmentConfig);
 
             return environmentConfig;

@@ -37,7 +37,6 @@ namespace GamificationPlayer.DTO.ModuleSession
             #nullable disable
             
             public int score;
-            public ExtraData extra_data;
 
             public Attributes(DateTime endedAt, int score, DateTime? completedAt)
             {
@@ -61,11 +60,6 @@ namespace GamificationPlayer.DTO.ModuleSession
             {
                 this.attributes = new Attributes(endedAt, score, completedAt);
             }
-        }
-
-        [Serializable]
-        public class ExtraData
-        {
         }
 
         public Data data;

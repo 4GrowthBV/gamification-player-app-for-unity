@@ -35,11 +35,6 @@ namespace GamificationPlayer
             return sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out subdomain);
         }
 
-        public bool TryGetLatestFitnessContentIdentifier(out string fitnessContentIdentifier)
-        {
-            return sessionLogData.TryGetLatestQueryableValue<string, FitnessContentIdentifier>(out fitnessContentIdentifier);
-        }
-
         public bool TryGetLatestMicroGameIdentifier(out string microGameIdentifier)
         {
             return sessionLogData.TryGetLatestQueryableValue<string, MicroGameIdentifier>(out microGameIdentifier);

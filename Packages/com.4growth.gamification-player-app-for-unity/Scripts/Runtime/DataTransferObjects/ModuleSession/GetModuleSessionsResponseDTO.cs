@@ -52,7 +52,7 @@ namespace GamificationPlayer.DTO.ModuleSession
             #nullable disable
 
             public int score;
-            public ExtraData extra_data;
+            public Dictionary<string, string> extra_data;
         }
 
         [Serializable]
@@ -81,11 +81,6 @@ namespace GamificationPlayer.DTO.ModuleSession
             public string type;
             public Attributes attributes;
             public Relationships relationships;
-        }
-
-        [Serializable]
-        public class ExtraData
-        {
         }
 
         [Serializable]

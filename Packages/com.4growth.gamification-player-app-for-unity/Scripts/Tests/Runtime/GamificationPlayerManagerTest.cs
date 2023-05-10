@@ -134,18 +134,19 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(moduleSessionStartedDTO.ToJson());
 
-            var obj = new FitnessContentOpenedDTO();
+            var obj = new MicroGameOpenedDTO();
 
             var fitnessContentId = Guid.NewGuid();
 
             obj.data.type = "fitnessContentOpened";
             obj.data.attributes.identifier = fitnessContentId.ToString();
+            obj.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
 
             var json = obj.ToJson();
 
             var OnFitnessContentOpenedWasCalled = false;
             var onEventWasCalled = false;
-            GamificationPlayerManager.OnFitnessContentOpened += (id) => OnFitnessContentOpenedWasCalled = true;
+            GamificationPlayerManager.OnMicroGameOpened += (id) => OnFitnessContentOpenedWasCalled = true;
             GamificationPlayerManager.OnEvent += (_) => onEventWasCalled = true;
 
             GamificationPlayerManager.ProcessExternalMessage(json);
@@ -153,11 +154,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(OnFitnessContentOpenedWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestFitnessContentIdentifier(out _));
-            if(GamificationPlayerManager.TryGetLatestFitnessContentIdentifier(out var id))
-            {
-                Assert.AreEqual(obj.data.attributes.identifier, id);
-            }
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
         }
 
         [Test]
@@ -183,10 +180,11 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(json);
 
-            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentOpenedDTO = new MicroGameOpenedDTO();
             var fitnessContentId = Guid.NewGuid();
             fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
             fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            fitnessContentOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(onModuleStartWasCalled);
@@ -314,10 +312,12 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
-            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentOpenedDTO = new MicroGameOpenedDTO();
             var fitnessContentId = Guid.NewGuid();
             fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
             fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            fitnessContentOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
+
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
@@ -361,10 +361,11 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(json);
 
-            var fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            var fitnessContentOpenedDTO = new MicroGameOpenedDTO();
             var fitnessContentId = Guid.NewGuid();
             fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
             fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            fitnessContentOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
@@ -404,10 +405,11 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(json);
 
-            fitnessContentOpenedDTO = new FitnessContentOpenedDTO();
+            fitnessContentOpenedDTO = new MicroGameOpenedDTO();
             fitnessContentId = Guid.NewGuid();
             fitnessContentOpenedDTO.data.type = "fitnessContentOpened";
             fitnessContentOpenedDTO.data.attributes.identifier = fitnessContentId.ToString();
+            fitnessContentOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsTrue(onModuleStartWasCalled);

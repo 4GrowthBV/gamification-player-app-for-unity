@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace GamificationPlayer
@@ -8,7 +9,7 @@ namespace GamificationPlayer
     {
         public static string ToJson(this object toJSON, bool pretty = false)
         {
-            var json = JsonUtility.ToJson(toJSON, pretty);
+            var json = JsonConvert.SerializeObject(toJSON);
 
             var newJSON = json.Replace("\"\"", "null");
 
@@ -19,7 +20,7 @@ namespace GamificationPlayer
         {
             var newJSON = json.Replace("null", "\"\"");
 
-            var obj = JsonUtility.FromJson<TType>(newJSON);
+            var obj = JsonConvert.DeserializeObject<TType>(newJSON);
 
             return obj;
         }

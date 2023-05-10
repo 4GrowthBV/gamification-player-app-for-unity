@@ -30,7 +30,7 @@ namespace GamificationPlayer.Tests
             obj.data.attributes.identifier = Guid.NewGuid().ToString();
 
             var json = obj.ToJson();
-            var newObj = json.FromJson<FitnessContentOpenedDTO>();
+            var newObj = json.FromJson<MicroGameOpenedDTO>();
 
             Assert.AreEqual(newObj.data.type, obj.data.type);
             Assert.AreEqual(newObj.data.attributes.identifier, obj.data.attributes.identifier);

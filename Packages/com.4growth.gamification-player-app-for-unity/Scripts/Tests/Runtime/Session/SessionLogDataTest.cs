@@ -130,11 +130,6 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestTryGetLatestQueryableValueWithMultiple()
         {
-            var dto00 = new FitnessContentOpenedDTO();
-
-            dto00.data.type = "fitnessContentOpened";
-            dto00.data.attributes.identifier = Guid.NewGuid().ToString();
-
             var dto0 = new MicroGameOpenedDTO();
 
             dto0.data.type = "microGameOpened";
@@ -186,25 +181,18 @@ namespace GamificationPlayer.Tests
             var sessionData = new SessionLogData();
 
             sessionData.AddToLog(dto0.data);
-            sessionData.AddToLog(dto00.data);
             sessionData.AddToLog(dto1.data);
             sessionData.AddToLog(dto2.data);  
             sessionData.AddToLog(dto3.data);  
             sessionData.AddToLog(dto4.data);
             sessionData.AddToLog(lastDTO.data);  
 
-            Assert.That(sessionData.LogData.Count() == 7);
+            Assert.That(sessionData.LogData.Count() == 6);
 
             Assert.That(sessionData.TryGetLatestMicroGameIdentifier(out _));
             if(sessionData.TryGetLatestMicroGameIdentifier(out var identifier))
             {
                 Assert.AreEqual(dto0.data.attributes.identifier, identifier);
-            }
-
-            Assert.That(sessionData.TryGetLatestFitnessContentIdentifier(out _));
-            if(sessionData.TryGetLatestFitnessContentIdentifier(out identifier))
-            {
-                Assert.AreEqual(dto00.data.attributes.identifier, identifier);
             }
 
             Assert.That(sessionData.TryGetLatestModuleSessionId(out _));

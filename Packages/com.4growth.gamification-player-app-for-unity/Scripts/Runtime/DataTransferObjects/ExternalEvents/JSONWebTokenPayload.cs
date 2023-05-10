@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GamificationPlayer.Session;
 
 namespace GamificationPlayer.DTO.ExternalEvents
@@ -61,6 +62,8 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public string identifier;
 
             public Stars stars;
+
+            public Dictionary<string, string> extra_data;
 
             public MicroGame()
             {

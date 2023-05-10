@@ -7,8 +7,6 @@ namespace GamificationPlayer
     {
         public bool TryGetLatestSubdomain(out string subdomain);
 
-        public bool TryGetLatestFitnessContentIdentifier(out string identifier);
-
         public bool TryGetLatestMicroGameIdentifier(out string identifier);
 
         public bool TryGetLatestLoginToken(out string token);

@@ -145,7 +145,7 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestTryGetLatestQueryableValueWithMultiple()
         {
-            var dto00 = new FitnessContentOpenedDTO();
+            var dto00 = new MicroGameOpenedDTO();
 
             dto00.data.type = "fitnessContentOpened";
             dto00.data.attributes.identifier = Guid.NewGuid().ToString();
@@ -209,12 +209,6 @@ namespace GamificationPlayer.Tests
             if(nonPersistentSessionData.TryGetLatestQueryableValue<string, MicroGameIdentifier>(out var id))
             {
                 Assert.AreEqual(dto0.data.attributes.identifier, id);
-            }
-
-            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, FitnessContentIdentifier>(out _));
-            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, FitnessContentIdentifier>(out id))
-            {
-                Assert.AreEqual(dto00.data.attributes.identifier, id);
             }
 
             Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, UserId>(out _));

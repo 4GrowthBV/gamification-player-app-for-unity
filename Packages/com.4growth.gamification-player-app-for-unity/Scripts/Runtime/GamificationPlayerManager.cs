@@ -26,6 +26,11 @@ namespace GamificationPlayer
     public delegate void OnModuleStartEvent(Guid moduleIdentifier);
 
     /// <summary>
+    /// Represents a method that is called when there is an error on the page.
+    /// </summary>
+    public delegate void OnErrorEvent();
+
+    /// <summary>
     /// Represents a method that is called when a page is loaded.
     /// After this method is called, it can be checked if the user is logged in.
     /// </summary>
@@ -43,12 +48,6 @@ namespace GamificationPlayer
     /// </summary>
     /// <param name="dateTime">The date and time of the server.</param>
     public delegate void OnServerTimeEvent(DateTime dateTime);
-
-    /// <summary>
-    /// Represents a method that is called when a fitness content is opened via the gamification player.
-    /// </summary>
-    /// <param name="identifier">The identifier of the fitness content.</param>
-    public delegate void OnFitnessContentOpenedEvent(string identifier);
 
     /// <summary>
     /// Represents a method that is called when a MicroGame is opened via the gamification player.
@@ -75,6 +74,11 @@ namespace GamificationPlayer
         public static event OnModuleStartEvent OnModuleStart;
 
         /// <summary>
+        /// Occurs when a page is loaded with an error
+        /// </summary>
+        public static event OnErrorEvent OnError;
+
+        /// <summary>
         /// Occurs when a page is loaded of the gamification player.
         /// </summary>
         public static event OnPageViewEvent OnPageView;
@@ -88,11 +92,6 @@ namespace GamificationPlayer
         /// Occurs when the server time is received.
         /// </summary>
         public static event OnServerTimeEvent OnServerTime;
-
-        /// <summary>
-        /// Occurs when a fitness content is opened via the gamification player.
-        /// </summary>
-        public static event OnFitnessContentOpenedEvent OnFitnessContentOpened;
 
         /// <summary>
         /// Occurs when a MicroGame is opened via the gamification player.
@@ -232,16 +231,6 @@ namespace GamificationPlayer
             return instance.GTryGetLatestMicroGamePayload(out microGamePayload);
         }
 
-        /// <summary>
-        /// Attempts to get the identifier of the latest fitness content.
-        /// </summary>
-        /// <param name="identifier">The identifier of the latest fitness content, if it is available.</param>
-        /// <returns>true if the latest fitness content's identifier was successfully retrieved; otherwise, false.</returns>
-        public static bool TryGetLatestFitnessContentIdentifier(out string identifier)
-        {
-            return instance.GTryGetLatestFitnessContentIdentifier(out identifier);
-        }
-
         public static bool TryGetLatestSubdomain(out string subdomain)
         {
             return instance.GTryGetLatestSubdomain(out subdomain);
@@ -327,8 +316,6 @@ namespace GamificationPlayer
             environment = ".it";
 #endif
 
-            Debug.Log(environment);
-
             GamificationPlayerConfig.TryGetEnvironmentConfig(environment, out environmentConfig);
 
             return environmentConfig;
@@ -389,11 +376,6 @@ namespace GamificationPlayer
             return sessionData.TryGetLatestMicroGamePayload(out payload);
         }
 
-        private bool GTryGetLatestFitnessContentIdentifier(out string identifier)
-        {
-            return sessionData.TryGetLatestFitnessContentIdentifier(out identifier);
-        }
-
         private bool GTryGetLatestSubdomain(out string subdomain)
         {
             return sessionData.TryGetLatestSubdomain(out subdomain);
@@ -402,6 +384,8 @@ namespace GamificationPlayer
         private void GUseMockServer()
         {
             sessionData = new SessionLogData();
+
+            Debug.Log(gamificationPlayerMockConfig);
 
             gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerMockConfig, sessionData);
         }
@@ -422,15 +406,25 @@ namespace GamificationPlayer
                 PageView(jsonMessage);
             }
 
-            if (message.data.Type == "microGameOpened")
+            if (message.data.Type == "microGameOpened" ||
+                message.data.Type == "fitnessContentOpened")
             {
                 MicroGameOpened(jsonMessage);
             }
 
-            if (message.data.Type == "fitnessContentOpened")
+            if(message.data.Type == "error")
             {
-                FitnessContentOpened(jsonMessage);
+                Error(jsonMessage);
             }
+        }
+
+        private void Error(string jsonMessage)
+        {
+            var dto = jsonMessage.FromJson<ErrorDTO>();
+
+            sessionData.AddToLog(dto.data);
+
+            OnError?.Invoke();
         }
 
         private void ModuleSessionStarted(string jsonMessage)
@@ -452,35 +446,6 @@ namespace GamificationPlayer
             sessionData.TryGetLatestModuleId(out Guid id);
             
             InvokeModuleStart(id);
-        }
-
-        private void FitnessContentOpened(string jsonMessage)
-        {
-            var dto = jsonMessage.FromJson<FitnessContentOpenedDTO>();
-
-            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
-            {
-                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
-                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
-                    .Count() > 1;
-
-                if(isAlreadyStarted)
-                {
-                    sessionData.AddToLog(dto.data);
-
-                    return;
-                }
-            }
-
-            sessionData.AddToLog(dto.data);
-
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
-
-            sessionData.TryGetLatestUserId(out var id);
-
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-        
-            OnFitnessContentOpened?.Invoke(dto.data.attributes.identifier);
         }
 
         private void MicroGameOpened(string jsonMessage)
@@ -697,7 +662,7 @@ namespace GamificationPlayer
         {
             OnMicroGameOpened?.Invoke(microGame);
         }
-
+        
         protected IEnumerator ActionAfterXSeconds(Action action, float seconds)
         {
             yield return new WaitForSeconds(seconds);

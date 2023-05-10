@@ -13,12 +13,16 @@ namespace GamificationPlayer
 
             var newJSON = json.Replace("\"\"", "null");
 
+            newJSON = newJSON.Replace("[]", "{}");
+
             return newJSON;
         }
 
         public static TType FromJson<TType>(this string json)
         {
             var newJSON = json.Replace("null", "\"\"");
+
+            newJSON = newJSON.Replace("[]", "{}");
 
             var obj = JsonConvert.DeserializeObject<TType>(newJSON);
 

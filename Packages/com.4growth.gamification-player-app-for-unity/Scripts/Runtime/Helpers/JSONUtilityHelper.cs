@@ -13,8 +13,6 @@ namespace GamificationPlayer
 
             var newJSON = json.Replace("\"\"", "null");
 
-            newJSON = newJSON.Replace("[]", "{}");
-
             return newJSON;
         }
 

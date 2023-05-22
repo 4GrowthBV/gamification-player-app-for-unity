@@ -117,7 +117,11 @@ namespace GamificationPlayer
                 return true;
             }
 
-            id = Guid.Parse(PlayerPrefs.GetString("OrganisationId"));
+            if(PlayerPrefs.HasKey("OrganisationId"))
+            {
+                id = Guid.Parse(PlayerPrefs.GetString("OrganisationId"));
+            }
+            
 
             return PlayerPrefs.HasKey("OrganisationId");
         }
@@ -129,7 +133,10 @@ namespace GamificationPlayer
                 return true;
             }
 
-            id = Guid.Parse(PlayerPrefs.GetString("UserId"));
+            if(PlayerPrefs.HasKey("UserId"))
+            {
+                id = Guid.Parse(PlayerPrefs.GetString("UserId"));
+            }
 
             return PlayerPrefs.HasKey("UserId");
         }

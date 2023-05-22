@@ -21,6 +21,13 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out organisations);
             }
 
+            if(sessionData.TryGetLatestLoginToken(out var loginToken))
+            {
+                onReady?.Invoke(UnityWebRequest.Result.Success, loginToken);
+
+                yield return null;
+            }
+
             yield return CoGetLoginToken(organisations, userId, onReady);
         }
 

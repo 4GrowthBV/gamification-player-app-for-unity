@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
+using UnityEngine;
 
 namespace GamificationPlayer
 {
@@ -49,7 +50,15 @@ namespace GamificationPlayer
 
         public bool TryGetLatestLoginToken(out string token)
         {
-            return sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out token);
+            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out token))
+            {
+                return true;
+            }
+
+            token = PlayerPrefs.GetString("LoginToken");
+
+            return PlayerPrefs.HasKey("LoginToken");
+
         }
 
         public bool TryGetLatestEnvironmentDomain(out string environmentDomain)
@@ -147,11 +156,26 @@ namespace GamificationPlayer
         public void AddToLog(ILoggableData dto)
         {
             sessionLogData.AddToLog(dto);
+
+            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out string token))
+            {
+                PlayerPrefs.SetString("LoginToken", token);
+            }
         }
 
         public void AddToLog(IEnumerable<ILoggableData> dto)
         {
             sessionLogData.AddToLog(dto);
+
+            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out string token))
+            {
+                PlayerPrefs.SetString("LoginToken", token);
+            }
+        }
+
+        public void ClearPersistentData()
+        {
+            PlayerPrefs.DeleteKey("LoginToken");
         }
     }
 }

@@ -123,6 +123,16 @@ namespace GamificationPlayer
         }
 
         /// <summary>
+        /// Attempts to get the latest login token
+        /// </summary>
+        /// <param name="language">The latest login token, if it is available.</param>
+        /// <returns>true if the latest login token was successfully retrieved; otherwise, false.</returns>
+        public static bool TryGetLatestLoginToken(out string language)
+        {
+            return instance.GTryGetLatestLoginToken(out language);
+        }
+
+        /// <summary>
         /// Attempts to get the current language
         /// </summary>
         /// <param name="language">The identifier of the current language, if it is available.</param>
@@ -366,6 +376,11 @@ namespace GamificationPlayer
             }));
         }
 
+        private bool GTryGetLatestLoginToken(out string language)
+        {
+            return sessionData.TryGetLatestLoginToken(out language);
+        }
+
         private bool GTryGetCurrentLanguage(out string language)
         {
             return sessionData.TryGetLatestLanguage(out language);
@@ -513,6 +528,14 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
+            }
+
+            if(!GIsUserActive())
+            {
+                sessionData.ClearPersistentData();
+            } else
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => {}));
             }
         }
 

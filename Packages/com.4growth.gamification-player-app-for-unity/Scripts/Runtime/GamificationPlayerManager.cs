@@ -234,6 +234,16 @@ namespace GamificationPlayer
         }
 
         /// <summary>
+        /// Returns if the user can login directly via the login token
+        /// </summary>
+        public static bool CanUserLoginViaLoginToken()
+        {
+            return GamificationPlayerManager.TryGetActiveUserId(out _) &&
+                GamificationPlayerManager.TryGetLatestLoginToken(out _) && 
+                GamificationPlayerManager.TryGetLatestSubdomain(out _);
+        }
+
+        /// <summary>
         /// Attempts to get the identifier of the latest MicroGame.
         /// </summary>
         /// <param name="microGamePayload">The identifier of the latest MicroGame, if it is available.</param>

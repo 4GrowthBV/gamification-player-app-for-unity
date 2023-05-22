@@ -52,7 +52,7 @@ namespace GamificationPlayer
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
 
                         var response = webRequest.downloadHandler.text.FromJson<AnnounceDeviceFlowResponseDTO>();
-                        sessionData.AddToLog(response.data);
+                        sessionData.AddToLog(response.data, false);
                         loginUrl = response.data.attributes.url;
                         break;
                 }

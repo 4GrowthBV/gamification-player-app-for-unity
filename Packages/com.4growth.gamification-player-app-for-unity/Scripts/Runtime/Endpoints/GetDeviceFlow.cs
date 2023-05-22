@@ -56,7 +56,7 @@ namespace GamificationPlayer
                     
                     response.data.attributes.is_validated = environmentConfig.IsMockServer || response.data.attributes.is_validated;
                     
-                    sessionData.AddToLog(response.data);
+                    sessionData.AddToLog(response.data, false);
                     isValidated = response.data.attributes.is_validated;
                     userId = response.data.attributes.user_id;
                     break;

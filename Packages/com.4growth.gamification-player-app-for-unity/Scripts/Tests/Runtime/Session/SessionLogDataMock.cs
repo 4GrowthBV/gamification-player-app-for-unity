@@ -8,11 +8,11 @@ namespace GamificationPlayer.Tests
 {
     public class SessionLogDataMock : ISessionLogData
     {
-        public void AddToLog(ILoggableData dto)
+        public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true)
         {
         }
 
-        public void AddToLog(IEnumerable<ILoggableData> dto)
+        public void AddToLog(IEnumerable<ILoggableData> dto, bool clearMissingPersistentData = true)
         {
         }
 

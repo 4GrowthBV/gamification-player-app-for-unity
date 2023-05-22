@@ -38,7 +38,7 @@ namespace GamificationPlayer
                 case UnityWebRequest.Result.Success:
                     if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var obj = webRequest.downloadHandler.text.FromJson<TimeResponseDTO>();
-                    sessionData.AddToLog(obj.data);           
+                    sessionData.AddToLog(obj.data, false);           
                     dateTime = obj.data.attributes.now;
                     break;
             }

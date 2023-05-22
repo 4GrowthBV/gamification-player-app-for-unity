@@ -50,7 +50,7 @@ namespace GamificationPlayer
                 case UnityWebRequest.Result.Success:
                     if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     obj = webRequest.downloadHandler.text.FromJson<GetOrganisationResponseDTO>();
-                    sessionData.AddToLog(obj.data);           
+                    sessionData.AddToLog(obj.data, false);           
                     break;
             }
 

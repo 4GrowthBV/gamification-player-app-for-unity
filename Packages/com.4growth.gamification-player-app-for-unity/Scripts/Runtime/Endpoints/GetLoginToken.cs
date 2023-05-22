@@ -55,7 +55,7 @@ namespace GamificationPlayer
                 case UnityWebRequest.Result.Success:
                     if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var userDataRoot = webRequest.downloadHandler.text.FromJson<GetLoginTokenResponseDTO>();
-                    sessionData.AddToLog(userDataRoot.data);
+                    sessionData.AddToLog(userDataRoot.data, false);
                     token = userDataRoot.data.attributes.token;
                     break;
             }

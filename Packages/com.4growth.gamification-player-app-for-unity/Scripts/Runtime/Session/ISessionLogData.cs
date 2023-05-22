@@ -32,8 +32,8 @@ namespace GamificationPlayer
 
         public bool TryGetLatestUserId(out Guid id);
 
-        public void AddToLog(ILoggableData dto);
+        public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true);
 
-        public void AddToLog(IEnumerable<ILoggableData> dto);
+        public void AddToLog(IEnumerable<ILoggableData> dto, bool clearMissingPersistentData = true);
     }
 }

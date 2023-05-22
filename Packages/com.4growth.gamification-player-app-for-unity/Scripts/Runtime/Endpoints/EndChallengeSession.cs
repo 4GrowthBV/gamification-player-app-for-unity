@@ -64,7 +64,7 @@ namespace GamificationPlayer
                 case UnityWebRequest.Result.Success:
                     if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                     var obj = webRequest.downloadHandler.text.FromJson<UpdateChallengeSessionResponseDTO>();
-                    sessionData.AddToLog(obj.data);
+                    sessionData.AddToLog(obj.data, false);
                     break;
             }
 

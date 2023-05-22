@@ -172,26 +172,26 @@ namespace GamificationPlayer
             return false;
         }
 
-        public void AddToLog(ILoggableData dto)
+        public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true)
         {
             sessionLogData.AddToLog(dto);
 
-            SetPersistentData();
+            SetPersistentData(clearMissingPersistentData);
         }
 
-        public void AddToLog(IEnumerable<ILoggableData> dto)
+        public void AddToLog(IEnumerable<ILoggableData> dto, bool clearMissingPersistentData = true)
         {
             sessionLogData.AddToLog(dto);
 
-            SetPersistentData();
+            SetPersistentData(clearMissingPersistentData);
         }
 
-        private void SetPersistentData()
+        private void SetPersistentData(bool clearMissingPersistentData)
         {
             if(sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out var subdomain))
             {
                 PlayerPrefs.SetString("Subdomain", subdomain);
-            } else
+            } else if(clearMissingPersistentData)
             {
                 PlayerPrefs.DeleteKey("Subdomain");
             }
@@ -199,7 +199,7 @@ namespace GamificationPlayer
             if(TryGetLatestId<OrganisationId>(out Guid organisationId))
             {
                 PlayerPrefs.SetString("OrganisationId", organisationId.ToString());
-            } else
+            } else if(clearMissingPersistentData)
             {
                 PlayerPrefs.DeleteKey("OrganisationId");
             }
@@ -207,7 +207,7 @@ namespace GamificationPlayer
             if(TryGetLatestId<UserId>(out Guid userId))
             {
                 PlayerPrefs.SetString("UserId", userId.ToString());
-            } else
+            } else if(clearMissingPersistentData)
             {               
                 PlayerPrefs.DeleteKey("UserId");
             }

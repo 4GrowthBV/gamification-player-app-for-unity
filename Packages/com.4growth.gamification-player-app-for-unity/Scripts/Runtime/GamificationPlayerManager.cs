@@ -352,7 +352,22 @@ namespace GamificationPlayer
 #if !UNITY_WEBGL
             if(GHaveUserCredentials())
             {
-                StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { isInitialized = true; }));
+                var isGetLoginToken = false;
+                var isGetOrganisation = false;
+                StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { 
+                    isGetLoginToken = true; 
+                    if(isGetLoginToken && isGetOrganisation)
+                    {
+                        isInitialized = true;
+                    }
+                }));
+                StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation((_, __) => { 
+                    isGetOrganisation = true; 
+                    if(isGetLoginToken && isGetOrganisation)
+                    {
+                        isInitialized = true;
+                    }
+                }));
             } else
             {
                 isInitialized = true;

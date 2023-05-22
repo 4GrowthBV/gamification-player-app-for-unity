@@ -238,9 +238,9 @@ namespace GamificationPlayer
         /// </summary>
         public static bool CanUserLoginViaLoginToken()
         {
-            return GamificationPlayerManager.TryGetActiveUserId(out _) &&
-                GamificationPlayerManager.TryGetLatestLoginToken(out _) && 
-                GamificationPlayerManager.TryGetLatestSubdomain(out _);
+            return TryGetActiveUserId(out _) &&
+                TryGetLatestLoginToken(out _) && 
+                TryGetLatestSubdomain(out _);
         }
 
         /// <summary>

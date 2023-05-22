@@ -76,6 +76,40 @@ namespace GamificationPlayer.Tests
         }
 
         [Test]
+        public void TestOnPageViewLogOut()
+        {
+            var obj = new PageViewDTO();
+
+            var userId = System.Guid.NewGuid();
+            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
+            obj.data.attributes.user_id = userId.ToString();
+
+            obj.data.type = "pageView";
+
+            var json = obj.ToJson();
+
+            GamificationPlayerManager.ProcessExternalMessage(json);
+
+            obj = new PageViewDTO();
+
+            obj.data.attributes.organisation_id = System.Guid.NewGuid().ToString();
+            obj.data.attributes.user_id = null;
+
+            obj.data.type = "pageView";
+
+            json = obj.ToJson();
+
+            GamificationPlayerManager.ProcessExternalMessage(json);
+
+            //Assert.IsFalse(GamificationPlayerManager.IsUserActive());
+            if(GamificationPlayerManager.TryGetActiveUserId(out var id))
+            {
+                Debug.Log(id);
+                Assert.AreEqual(id, null);
+            }
+        }
+
+        [Test]
         public void TestOnMicroGameOpenend()
         {
             var moduleSessionStartedDTO = new ModuleSessionStartedDTO();

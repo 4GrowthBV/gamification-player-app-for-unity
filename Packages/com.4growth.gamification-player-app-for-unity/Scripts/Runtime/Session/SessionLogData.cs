@@ -122,7 +122,6 @@ namespace GamificationPlayer
                 id = Guid.Parse(PlayerPrefs.GetString("OrganisationId"));
             }
             
-
             return PlayerPrefs.HasKey("OrganisationId");
         }
 
@@ -177,39 +176,40 @@ namespace GamificationPlayer
         {
             sessionLogData.AddToLog(dto);
 
-            if(TryGetLatestSubdomain(out string subdomain))
-            {
-                PlayerPrefs.SetString("Subdomain", subdomain);
-            }
-
-            if(TryGetLatestOrganisationId(out Guid organisationId))
-            {
-                PlayerPrefs.SetString("OrganisationId", organisationId.ToString());
-            }
-
-            if(TryGetLatestUserId(out Guid userId))
-            {
-                PlayerPrefs.SetString("UserId", userId.ToString());
-            }
+            SetPersistentData();
         }
 
         public void AddToLog(IEnumerable<ILoggableData> dto)
         {
             sessionLogData.AddToLog(dto);
 
-            if(TryGetLatestSubdomain(out string subdomain))
+            SetPersistentData();
+        }
+
+        private void SetPersistentData()
+        {
+            if(sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out var subdomain))
             {
                 PlayerPrefs.SetString("Subdomain", subdomain);
+            } else
+            {
+                PlayerPrefs.DeleteKey("Subdomain");
             }
 
-            if(TryGetLatestOrganisationId(out Guid organisationId))
+            if(TryGetLatestId<OrganisationId>(out Guid organisationId))
             {
                 PlayerPrefs.SetString("OrganisationId", organisationId.ToString());
+            } else
+            {
+                PlayerPrefs.DeleteKey("OrganisationId");
             }
 
-            if(TryGetLatestUserId(out Guid userId))
+            if(TryGetLatestId<UserId>(out Guid userId))
             {
                 PlayerPrefs.SetString("UserId", userId.ToString());
+            } else
+            {               
+                PlayerPrefs.DeleteKey("UserId");
             }
         }
 

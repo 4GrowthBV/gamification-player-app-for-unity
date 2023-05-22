@@ -57,14 +57,7 @@ namespace GamificationPlayer
 
         public bool TryGetLatestLoginToken(out string token)
         {
-            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out token))
-            {
-                return true;
-            }
-
-            token = PlayerPrefs.GetString("LoginToken");
-
-            return PlayerPrefs.HasKey("LoginToken");
+            return sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out token);
         }
 
         public bool TryGetLatestEnvironmentDomain(out string environmentDomain)
@@ -119,12 +112,26 @@ namespace GamificationPlayer
 
         public bool TryGetLatestOrganisationId(out Guid id)
         {
-            return TryGetLatestId<OrganisationId>(out id);
+            if(TryGetLatestId<OrganisationId>(out id))
+            {
+                return true;
+            }
+
+            id = Guid.Parse(PlayerPrefs.GetString("OrganisationId"));
+
+            return PlayerPrefs.HasKey("OrganisationId");
         }
 
         public bool TryGetLatestUserId(out Guid id)
         {
-            return TryGetLatestId<UserId>(out id);
+            if(TryGetLatestId<UserId>(out id))
+            {
+                return true;
+            }
+
+            id = Guid.Parse(PlayerPrefs.GetString("UserId"));
+
+            return PlayerPrefs.HasKey("UserId");
         }
 
         private bool TryGetLatestId<TAttribute>(out Guid id)
@@ -163,14 +170,19 @@ namespace GamificationPlayer
         {
             sessionLogData.AddToLog(dto);
 
-            if(TryGetLatestLoginToken(out string token))
-            {
-                PlayerPrefs.SetString("LoginToken", token);
-            }
-
             if(TryGetLatestSubdomain(out string subdomain))
             {
                 PlayerPrefs.SetString("Subdomain", subdomain);
+            }
+
+            if(TryGetLatestOrganisationId(out Guid organisationId))
+            {
+                PlayerPrefs.SetString("OrganisationId", organisationId.ToString());
+            }
+
+            if(TryGetLatestUserId(out Guid userId))
+            {
+                PlayerPrefs.SetString("UserId", userId.ToString());
             }
         }
 
@@ -178,22 +190,29 @@ namespace GamificationPlayer
         {
             sessionLogData.AddToLog(dto);
 
-            if(TryGetLatestLoginToken(out string token))
-            {
-                PlayerPrefs.SetString("LoginToken", token);
-            }
-
             if(TryGetLatestSubdomain(out string subdomain))
             {
                 PlayerPrefs.SetString("Subdomain", subdomain);
+            }
+
+            if(TryGetLatestOrganisationId(out Guid organisationId))
+            {
+                PlayerPrefs.SetString("OrganisationId", organisationId.ToString());
+            }
+
+            if(TryGetLatestUserId(out Guid userId))
+            {
+                PlayerPrefs.SetString("UserId", userId.ToString());
             }
         }
 
         public void ClearPersistentData()
         {
-            PlayerPrefs.DeleteKey("LoginToken");
-
             PlayerPrefs.DeleteKey("Subdomain");
+
+            PlayerPrefs.DeleteKey("OrganisationId");
+
+            PlayerPrefs.DeleteKey("UserId");
         }
     }
 }

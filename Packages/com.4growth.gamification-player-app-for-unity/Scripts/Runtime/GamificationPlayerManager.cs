@@ -104,6 +104,8 @@ namespace GamificationPlayer
         public static event OnLanguageSetEvent OnLanguageSet;
 
         private static GamificationPlayerManager instance;
+
+        public static bool IsInitialized { get { return instance.isInitialized; } }
         
         /// <summary>
         /// Clears the non-persistence database and configures the class to use the mock server settings and mock requests for the mock server (GET requests instead of PATCH requests).
@@ -264,6 +266,10 @@ namespace GamificationPlayer
 
         private bool isDeviceFlowActive;
 
+        private bool isUserActive = false;
+
+        private bool isInitialized = false;
+
         public void Awake()
         {
             if(instance != null)
@@ -342,6 +348,18 @@ namespace GamificationPlayer
             {
                 InvokeMicroGameOpened(microGamePayload);
             }
+
+#if !UNITY_WEBGL
+            if(GHaveUserCredentials())
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { isInitialized = true; }));
+            } else
+            {
+                isInitialized = true;
+            }
+#else
+            isInitialized = true;
+#endif
         }
 
         private bool GTryGetServerTime(out DateTime dateTime)
@@ -530,16 +548,22 @@ namespace GamificationPlayer
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
             }
 
-            if(!GIsUserActive())
+            if(!GHaveUserCredentials())
             {
+                isUserActive = false;
                 sessionData.ClearPersistentData();
             } else
             {
-                StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => {}));
+                isUserActive = true;
             }
         }
 
         private bool GIsUserActive()
+        {
+            return isUserActive;
+        }
+
+        private bool GHaveUserCredentials()
         {
             return sessionData.TryGetLatestUserId(out _) &&
                 sessionData.TryGetLatestOrganisationId(out _);
@@ -547,7 +571,7 @@ namespace GamificationPlayer
 
         private bool GTryGetActiveUserId(out Guid id)
         {
-            if(GIsUserActive())
+            if(GHaveUserCredentials())
             {
                 return sessionData.TryGetLatestUserId(out id);
             }

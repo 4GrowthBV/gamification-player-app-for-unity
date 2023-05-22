@@ -33,7 +33,14 @@ namespace GamificationPlayer
 
         public bool TryGetLatestSubdomain(out string subdomain)
         {
-            return sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out subdomain);
+            if(sessionLogData.TryGetLatestQueryableValue<string, OrganisationSubdomain>(out subdomain))
+            {
+                return true;
+            }
+
+            subdomain = PlayerPrefs.GetString("Subdomain");
+
+            return PlayerPrefs.HasKey("Subdomain");
         }
 
         public bool TryGetLatestMicroGameIdentifier(out string microGameIdentifier)
@@ -58,7 +65,6 @@ namespace GamificationPlayer
             token = PlayerPrefs.GetString("LoginToken");
 
             return PlayerPrefs.HasKey("LoginToken");
-
         }
 
         public bool TryGetLatestEnvironmentDomain(out string environmentDomain)
@@ -157,9 +163,14 @@ namespace GamificationPlayer
         {
             sessionLogData.AddToLog(dto);
 
-            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out string token))
+            if(TryGetLatestLoginToken(out string token))
             {
                 PlayerPrefs.SetString("LoginToken", token);
+            }
+
+            if(TryGetLatestSubdomain(out string subdomain))
+            {
+                PlayerPrefs.SetString("Subdomain", subdomain);
             }
         }
 
@@ -167,15 +178,22 @@ namespace GamificationPlayer
         {
             sessionLogData.AddToLog(dto);
 
-            if(sessionLogData.TryGetLatestQueryableValue<string, LoginToken>(out string token))
+            if(TryGetLatestLoginToken(out string token))
             {
                 PlayerPrefs.SetString("LoginToken", token);
+            }
+
+            if(TryGetLatestSubdomain(out string subdomain))
+            {
+                PlayerPrefs.SetString("Subdomain", subdomain);
             }
         }
 
         public void ClearPersistentData()
         {
             PlayerPrefs.DeleteKey("LoginToken");
+
+            PlayerPrefs.DeleteKey("Subdomain");
         }
     }
 }

@@ -532,6 +532,15 @@ namespace GamificationPlayer
                 gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult);
             }
 
+            if(!GHaveUserCredentials())
+            {
+                isUserActive = false;
+                sessionData.ClearPersistentData();
+            } else
+            {
+                isUserActive = true;
+            }
+
             OnPageView?.Invoke();
 
             if(sessionData.TryGetLatestLanguage(out var language))
@@ -546,15 +555,6 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
-            }
-
-            if(!GHaveUserCredentials())
-            {
-                isUserActive = false;
-                sessionData.ClearPersistentData();
-            } else
-            {
-                isUserActive = true;
             }
         }
 

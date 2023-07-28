@@ -1,0 +1,13 @@
+{
+  "data": {
+    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "type": "device_login",
+    "attributes": {
+      "is_validated": false,
+      "expired_at": "2019-08-24T14:15:22Z",
+      "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+      "organisation_id": "9ec26450-a51e-40b1-a49f-e04045480fd5",
+      "url": "string"
+    }
+  }
+}

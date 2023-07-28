@@ -18,3 +18,12 @@ MonoBehaviour:
   jsonWebTokenSecret: 
   isMockServer: 1
   turnOnLogging: 1
+  mockDTOs:
+  - {fileID: 4900000, guid: 4cc00927c921abe4c90ac179a33d7d26, type: 3}
+  - {fileID: 4900000, guid: 3da0c3c41b3efa545a04dba31a2491c0, type: 3}
+  - {fileID: 4900000, guid: 35baa6596e8826241aed5bf6e183ee43, type: 3}
+  - {fileID: 4900000, guid: b5e10893a0430634782f591fc08a3475, type: 3}
+  - {fileID: 4900000, guid: 14702e88072a3df49b967ca7fc0d3638, type: 3}
+  - {fileID: 4900000, guid: 1686a034e97d7e74480002e5f67fa042, type: 3}
+  - {fileID: 4900000, guid: 0c9e05e4b75b0b243b24cc807d9e212a, type: 3}
+  - {fileID: 4900000, guid: 799b8338c6027a44b92bdc67ba61864e, type: 3}

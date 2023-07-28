@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace GamificationPlayer
@@ -53,6 +54,35 @@ namespace GamificationPlayer
             }
         }
 
+        public TextAsset[] MockDTOs
+        {
+            get
+            {
+                return mockDTOs;
+            }
+        }
+
+        public bool TryGetMockDTO<TType>(out TType dto)
+        {
+            dto = default;
+            
+            if(mockDTOs == null)
+            {
+                return false;
+            }
+
+            var name = typeof(TType);
+            var json = mockDTOs.FirstOrDefault(t => t.name == typeof(TType).ToString());
+
+            if(json != null)
+            {
+                dto = json.text.FromJson<TType>();
+                return true;
+            }
+            
+            return false;
+        }
+
         [SerializeField]
         private string apiKey = "123";
 
@@ -70,5 +100,8 @@ namespace GamificationPlayer
 
         [SerializeField]
         private bool turnOnLogging;
+
+        [SerializeField]
+        private TextAsset[] mockDTOs;
     }
 }

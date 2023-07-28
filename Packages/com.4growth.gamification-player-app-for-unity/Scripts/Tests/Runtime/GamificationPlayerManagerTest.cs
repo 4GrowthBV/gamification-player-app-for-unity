@@ -26,9 +26,9 @@ namespace GamificationPlayer.Tests
                 serverTime = st;
             };
 
-            GamificationPlayerManager.GetServerTime();
-
             Assert.That(!GamificationPlayerManager.TryGetServerTime(out _));
+
+            GamificationPlayerManager.GetServerTime();
 
             yield return new WaitUntil(() => onServerTimeWasCalled);
 

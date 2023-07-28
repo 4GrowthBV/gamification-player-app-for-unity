@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "type": "challenge_session",
+    "attributes": {
+      "started_at": "2019-08-24T14:15:22Z",
+      "ended_at": "2019-08-24T14:15:22Z",
+      "completed_at": "2019-08-24T14:15:22Z",
+      "score": 0
+    },
+    "relationships": {
+      "user": {
+        "data": {
+          "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+          "type": "user"
+        }
+      },
+      "challenge": {
+        "data": {
+          "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+          "type": "challenge"
+        }
+      }
+    }
+  }
+}

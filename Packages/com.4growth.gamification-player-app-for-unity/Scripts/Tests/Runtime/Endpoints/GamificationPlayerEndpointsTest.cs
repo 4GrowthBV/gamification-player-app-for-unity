@@ -14,7 +14,7 @@ namespace GamificationPlayer.Tests
         [SetUp]
         public void SetUp()
         {
-            gamificationPlayerEnvironmentConfig = ScriptableObject.CreateInstance<EnvironmentConfig>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out gamificationPlayerEnvironmentConfig);
         }
 
         [UnityTest]
@@ -39,7 +39,7 @@ namespace GamificationPlayer.Tests
             {
                 Assert.That(result == UnityWebRequest.Result.Success);
 
-                Assert.That(!isValidated);
+                Assert.That(isValidated);
 
                 Assert.That(!string.IsNullOrEmpty(userId));
             });

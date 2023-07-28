@@ -1,0 +1,9 @@
+{
+  "data": {
+    "type": "login_token",
+    "attributes": {
+      "expired_at": "2019-08-24T14:15:22Z",
+      "token": "string"
+    }
+  }
+}

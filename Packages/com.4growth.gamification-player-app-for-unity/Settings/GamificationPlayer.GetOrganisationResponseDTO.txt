@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "type": "organisation",
+    "attributes": {
+      "name": "string",
+      "subdomain": "string",
+      "webhook_url": "http://example.com",
+      "primary_color": "string",
+      "registration_enabled": false,
+      "anonymous_enabled": false,
+      "introduction": "string",
+      "default_language": "string",
+      "available_languages": [
+        "string"
+      ]
+    }
+  }
+}

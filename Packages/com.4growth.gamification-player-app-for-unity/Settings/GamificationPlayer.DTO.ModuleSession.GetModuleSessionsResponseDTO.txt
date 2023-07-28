@@ -1,0 +1,31 @@
+{
+                "data": [{
+                    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                    "type": "module_session",
+                    "attributes": {
+                        "started_at": "2019-08-24T14:15:22Z",
+                        "ended_at": "2019-08-24T14:15:22Z",
+                        "completed_at": "2019-08-24T14:15:22Z",
+                        "score": 0,
+                        "extra_data": {
+                            "eee": "2",
+                            "test2": "test2",
+                            "test": "test"
+                        }
+                    },
+                    "relationships": {
+                        "challenge_session": {
+                            "data": {
+                                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                                "type": "challenge_session"
+                            }
+                        },
+                        "module": {
+                            "data": {
+                                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                                "type": "module"
+                            }
+                        }
+                    }
+                }]
+            }

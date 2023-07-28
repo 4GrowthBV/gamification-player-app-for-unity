@@ -127,5 +127,13 @@ namespace GamificationPlayer.Tests
 
             return true;
         }
+
+        public bool TryGetLatest<TQueryable>(out string value) 
+            where TQueryable : IQueryable
+        {
+            value = string.Empty;
+
+            return true;
+        }
     }
 }

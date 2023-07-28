@@ -85,8 +85,19 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public int current_total;
         }
 
+        [Serializable]
+        public class Battle
+        {
+            [BattleId]
+            public string battle_id;
+
+            [BattleSessionId]
+            public string battle_session_id;
+        }
+
         public Player player;
         public Session session;
+        public Battle battle;
         public MicroGame micro_game;
         public Module module;
         public Environment environment;
@@ -99,6 +110,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
         {
             player = new Player();
             session = new Session();
+            battle = new Battle();
             micro_game = new MicroGame();
             module = new Module();
             environment = new Environment();

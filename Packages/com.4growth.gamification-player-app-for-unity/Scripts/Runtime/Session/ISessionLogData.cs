@@ -5,6 +5,9 @@ namespace GamificationPlayer
 {
     public interface ISessionLogData
     {
+        public bool TryGetLatest<TQueryable>(out string value)
+            where TQueryable : Session.IQueryable;
+
         public bool TryGetLatestSubdomain(out string subdomain);
 
         public bool TryGetLatestMicroGameIdentifier(out string identifier);

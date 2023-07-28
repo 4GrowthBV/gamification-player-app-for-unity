@@ -226,6 +226,17 @@ namespace GamificationPlayer
         }
 
         /// <summary>
+        /// Attempts to get the latest data that has been sync with the server.
+        /// </summary>
+        /// <param name="dateTime">The current latest data synced with the server, if it is available.</param>
+        /// <returns>true if current latest data synced with the server was already retrieved; otherwise, false.</returns>
+        public static bool TryGetLatestData<TQueryable>(out string value)
+            where TQueryable : Session.IQueryable
+        {
+            return instance.GTryGetLatestData<TQueryable>(out value);
+        }
+
+        /// <summary>
         /// Gets the current server time and raises the OnServerTime when it is received.
         /// </summary>
         public static void GetServerTime()
@@ -385,6 +396,12 @@ namespace GamificationPlayer
 #else
             isInitialized = true;
 #endif
+        }
+
+        private bool GTryGetLatestData<TQueryable>(out string value) 
+            where TQueryable : Session.IQueryable
+        {
+            return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
         private bool GTryGetServerTime(out DateTime dateTime)

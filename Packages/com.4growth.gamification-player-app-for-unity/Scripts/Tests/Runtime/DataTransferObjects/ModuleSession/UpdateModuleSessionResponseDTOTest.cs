@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using GamificationPlayer.DTO.ModuleSession;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace GamificationPlayer.Tests
 {

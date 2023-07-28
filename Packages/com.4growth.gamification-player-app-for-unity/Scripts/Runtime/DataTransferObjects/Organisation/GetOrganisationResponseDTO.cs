@@ -17,18 +17,64 @@ namespace GamificationPlayer
             [OrganisationSubdomain]
             public string subdomain;
 
-            [OrganisationWebhookUrl]
-            public string webhook_url;
+            [OrganisationDefaultLanguage]
+            public string default_language;
+
+            public List<string> available_languages;
+
+            [OrganisationLogo]
+            public string logo;
 
             [OrganisationPrimaryColor]
             public string primary_color;
+
+            [OrganisationSecondaryColor]
+            public string secondary_color;
+
+            [OrganisationAccentColor]
+            public string accent_color;
+
+            [OrganisationPrimaryFontFamily]
+            public string primary_font_family;
+
+            [OrganisationSecondaryFontFamily]
+            public string secondary_font_family;
+
+            [OrganisationPrimaryFontColor]
+            public string primary_font_color;
+
+            [OrganisationSecondaryFontColor]
+            public string secondary_font_color;
+
+            [OrganisationBackgroundColor]
+            public string background_color;
+
+            [OrganisationBackgroundImage]
+            public string background_image;
+
+            [OrganisationCardBackgroundColor]
+            public string card_background_color;
+
+            [OrganisationCardBorderRadius]
+            public string card_border_radius;
+
+            [OrganisationOpenGraphImage]
+            public string open_graph_image;
+
+            [OrganisationOpenGraphDescription]
+            public string open_graph_description;  
+
+            [OrganisationRegistrationEnabled]          
             public bool registration_enabled;
+
+            [OrganisationAnonymousEnabled]
             public bool anonymous_enabled;
+
+            [OrganisationIntroduction]
             public string introduction;
 
-            [OrganisationDefaultLanguage]
-            public string default_language;
-            public List<string> available_languages;
+            [OrganisationWebhookUrl]
+            public string webhook_url;
         }
 
         [Serializable]

@@ -70,6 +70,16 @@ namespace GamificationPlayer
             return sessionLogData.TryGetLatestQueryableValue<float, TimeNowLogged>(out realtimeSinceStartup);
         }
 
+        public bool TryGetLatestBattleId(out Guid id)
+        {
+            return TryGetLatestId<BattleId>(out id);
+        }
+
+        public bool TryGetLatestBattleSessionId(out Guid id)
+        {
+            return TryGetLatestId<BattleSessionId>(out id);
+        }
+
         public bool TryGetLatestModuleSessionId(out Guid id)
         {
             return TryGetLatestId<ModuleSessionId>(out id);
@@ -220,6 +230,12 @@ namespace GamificationPlayer
             PlayerPrefs.DeleteKey("OrganisationId");
 
             PlayerPrefs.DeleteKey("UserId");
+        }
+
+        public bool TryGetLatest<TQueryable>(out string value)
+            where TQueryable : Session.IQueryable
+        {
+            return sessionLogData.TryGetLatestQueryableValue<string, TQueryable>(out value);
         }
     }
 }

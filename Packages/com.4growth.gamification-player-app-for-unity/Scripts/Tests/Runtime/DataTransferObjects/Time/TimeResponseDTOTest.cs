@@ -9,27 +9,24 @@ namespace GamificationPlayer.Tests
 {
     public class TimeResponseDTOTest
     {
-        private readonly string mockServer = "https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676/time";
-
-        [UnityTest]
-        public IEnumerator TestDTO()
+        [Test]
+        public void TestDTO()
         {
-            return GamificationPlayerMockEndPoints.GetMockDTO(mockServer, (dto) =>
-            {
-                var obj = dto.FromJson<TimeResponseDTO>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out var gamificationPlayerEnvironmentConfig);
 
-                Assert.NotNull(obj);
+            gamificationPlayerEnvironmentConfig.TryGetMockDTO<TimeResponseDTO>(out var dto);
 
-                Assert.NotNull(obj.data);
+            Assert.NotNull(dto);
 
-                Assert.AreEqual(obj.data.Type, "time");
+            Assert.NotNull(dto.data);
 
-                Assert.NotNull(obj.data.attributes);
+            Assert.AreEqual(dto.data.Type, "time");
 
-                Assert.NotNull(obj.data.attributes.now);
+            Assert.NotNull(dto.data.attributes);
 
-                Assert.That(DateTime.TryParse(obj.data.attributes.now, out _));
-            });
+            Assert.NotNull(dto.data.attributes.now);
+
+            Assert.That(DateTime.TryParse(dto.data.attributes.now, out _));
         }
     }
 }

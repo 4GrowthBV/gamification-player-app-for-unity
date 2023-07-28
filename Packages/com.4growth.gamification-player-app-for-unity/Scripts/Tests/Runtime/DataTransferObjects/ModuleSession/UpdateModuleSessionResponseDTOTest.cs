@@ -9,41 +9,38 @@ namespace GamificationPlayer.Tests
 {
     public class UpdateModuleSessionResponseDTOTest
     {
-        private readonly string mockServer = "https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676/module-sessions/497f6eca-6276-4993-bfeb-53cbbbba6f08";
-
-        [UnityTest]
-        public IEnumerator TestDTO()
+        [Test]
+        public void TestDTO()
         {
-            return GamificationPlayerMockEndPoints.GetMockDTO(mockServer, (dto) =>
-            {
-                var obj = dto.FromJson<UpdateModuleSessionResponseDTO>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out var gamificationPlayerEnvironmentConfig);
 
-                Assert.NotNull(obj);
+            gamificationPlayerEnvironmentConfig.TryGetMockDTO<UpdateModuleSessionResponseDTO>(out var dto);
 
-                Assert.NotNull(obj.data);
+            Assert.NotNull(dto);
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.id));
+            Assert.NotNull(dto.data);
 
-                Assert.AreEqual(obj.data.Type, "module_session");
+            Assert.That(!string.IsNullOrEmpty(dto.data.id));
 
-                Assert.NotNull(obj.data.attributes);
+            Assert.AreEqual(dto.data.Type, "module_session");
 
-                Assert.NotNull(obj.data.relationships);
+            Assert.NotNull(dto.data.attributes);
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.started_at));
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.ended_at));
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.completed_at));
+            Assert.NotNull(dto.data.relationships);
 
-                Assert.That(obj.data.attributes.StartedAt != default);
-                Assert.That(obj.data.attributes.EndedAt != default);
-                Assert.That(obj.data.attributes.CompletedAt != default);
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.started_at));
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.ended_at));
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.completed_at));
 
-                Assert.AreEqual(obj.data.relationships.module.data.type, "module");
-                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.module.data.id));
+            Assert.That(dto.data.attributes.StartedAt != default);
+            Assert.That(dto.data.attributes.EndedAt != default);
+            Assert.That(dto.data.attributes.CompletedAt != default);
 
-                Assert.AreEqual(obj.data.relationships.challenge_session.data.type, "challenge_session");
-                Assert.That(!string.IsNullOrEmpty(obj.data.relationships.challenge_session.data.id));
-            });
+            Assert.AreEqual(dto.data.relationships.module.data.type, "module");
+            Assert.That(!string.IsNullOrEmpty(dto.data.relationships.module.data.id));
+
+            Assert.AreEqual(dto.data.relationships.challenge_session.data.type, "challenge_session");
+            Assert.That(!string.IsNullOrEmpty(dto.data.relationships.challenge_session.data.id));
         }
     }
 }

@@ -2,7 +2,7 @@
   "data": {
     "type": "login_token",
     "attributes": {
-      "expired_at": "2019-08-24T14:15:22Z",
+      "expired_at": "2023-07-28T11:55:27.657Z",
       "token": "string"
     }
   }

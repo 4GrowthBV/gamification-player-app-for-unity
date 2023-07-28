@@ -9,27 +9,24 @@ namespace GamificationPlayer.Tests
 {
     public class GetLoginTokenResponseDTOTest
     {
-        private readonly string mockServer = "https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676/organisations/497f6eca-6276-4993-bfeb-53cbbbba6f08/users/497f6eca-6276-4993-bfeb-53cbbbba6f08/login-token";
-
-        [UnityTest]
-        public IEnumerator TestDTO()
+        [Test]
+        public void TestDTO()
         {
-            return GamificationPlayerMockEndPoints.GetMockDTO(mockServer, (dto) =>
-            {
-                var obj = dto.FromJson<GetLoginTokenResponseDTO>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out var gamificationPlayerEnvironmentConfig);
 
-                Assert.NotNull(obj);
+            gamificationPlayerEnvironmentConfig.TryGetMockDTO<GetLoginTokenResponseDTO>(out var dto);
 
-                Assert.NotNull(obj.data);
+            Assert.NotNull(dto);
 
-                Assert.AreEqual(obj.data.Type, "login_token");
+            Assert.NotNull(dto.data);
 
-                Assert.NotNull(obj.data.attributes);
+            Assert.AreEqual(dto.data.Type, "login_token");
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.expired_at));
+            Assert.NotNull(dto.data.attributes);
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.token));
-            });
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.expired_at));
+
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.token));
         }
     }
 }

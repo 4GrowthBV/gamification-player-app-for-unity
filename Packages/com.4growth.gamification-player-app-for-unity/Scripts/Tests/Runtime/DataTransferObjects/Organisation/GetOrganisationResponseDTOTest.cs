@@ -8,30 +8,27 @@ namespace GamificationPlayer.Tests
 {
     public class GetOrganisationResponseDTOTest : MonoBehaviour
     {
-        private readonly string mockServer = "https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676/organisations/497f6eca-6276-4993-bfeb-53cbbbba6f08";
-
-        [UnityTest]
-        public IEnumerator TestDTO()
+        [Test]
+        public void Test()
         {
-            return GamificationPlayerMockEndPoints.GetMockDTO(mockServer, (dto) =>
-            {
-                var obj = dto.FromJson<GetOrganisationResponseDTO>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out var gamificationPlayerEnvironmentConfig);
 
-                Assert.NotNull(obj);
+            gamificationPlayerEnvironmentConfig.TryGetMockDTO<GetOrganisationResponseDTO>(out var dto);
 
-                Assert.NotNull(obj.data);
+            Assert.NotNull(dto);
 
-                Assert.AreEqual(obj.data.Type, "organisation");
+            Assert.NotNull(dto.data);
 
-                Assert.NotNull(obj.data.attributes);
+            Assert.AreEqual(dto.data.Type, "organisation");
 
-                Assert.That(obj.data.attributes.default_language != default);
-                Assert.That(obj.data.attributes.introduction != default);
-                Assert.That(obj.data.attributes.name != default);
-                Assert.That(obj.data.attributes.primary_color != default);
-                Assert.That(obj.data.attributes.subdomain != default);
-                Assert.That(obj.data.attributes.webhook_url != default);
-            });
+            Assert.NotNull(dto.data.attributes);
+
+            Assert.That(dto.data.attributes.default_language != default);
+            Assert.That(dto.data.attributes.introduction != default);
+            Assert.That(dto.data.attributes.name != default);
+            Assert.That(dto.data.attributes.primary_color != default);
+            Assert.That(dto.data.attributes.subdomain != default);
+            Assert.That(dto.data.attributes.webhook_url != default);
         }
     }
 }

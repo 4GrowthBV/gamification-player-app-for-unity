@@ -9,33 +9,31 @@ namespace GamificationPlayer.Tests
 {
     public class GetDeviceFlowResponseDTOTest
     {
-        private readonly string mockServer = "https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676/device-login/497f6eca-6276-4993-bfeb-53cbbbba6f08";
-
-        [UnityTest]
-        public IEnumerator TestDTO()
+        [Test]
+        public void TestDTO()
         {
-            return GamificationPlayerMockEndPoints.GetMockDTO(mockServer, (dto) =>
-            {
-                var obj = dto.FromJson<GetDeviceFlowResponseDTO>();
+            GamificationPlayerConfig.TryGetEnvironmentConfig(".it", out var gamificationPlayerEnvironmentConfig);
 
-                Assert.NotNull(obj);
+            gamificationPlayerEnvironmentConfig.TryGetMockDTO<GetDeviceFlowResponseDTO>(out var dto);
 
-                Assert.NotNull(obj.data);
+            Assert.NotNull(dto);
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.id));
+            Assert.NotNull(dto.data);
 
-                Assert.AreEqual(obj.data.Type, "device_login");
+            Assert.That(!string.IsNullOrEmpty(dto.data.id));
 
-                Assert.NotNull(obj.data.attributes);
+            Assert.AreEqual(dto.data.Type, "device_login");
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.expired_at));
+            Assert.NotNull(dto.data.attributes);
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.user_id));
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.expired_at));
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.organisation_id));
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.user_id));
 
-                Assert.That(!string.IsNullOrEmpty(obj.data.attributes.url));
-            });
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.organisation_id));
+
+            Assert.That(!string.IsNullOrEmpty(dto.data.attributes.url));
+
         }
     }
 }

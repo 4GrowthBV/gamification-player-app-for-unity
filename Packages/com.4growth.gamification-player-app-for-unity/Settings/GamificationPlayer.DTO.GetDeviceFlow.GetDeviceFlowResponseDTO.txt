@@ -1,12 +1,12 @@
 {
   "data": {
-    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "type": "device_login",
     "attributes": {
       "is_validated": false,
-      "expired_at": "2019-08-24T14:15:22Z",
-      "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
-      "organisation_id": "9ec26450-a51e-40b1-a49f-e04045480fd5",
+      "expired_at": "2023-07-28T11:53:21.129Z",
+      "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "organisation_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "url": "string"
     }
   }

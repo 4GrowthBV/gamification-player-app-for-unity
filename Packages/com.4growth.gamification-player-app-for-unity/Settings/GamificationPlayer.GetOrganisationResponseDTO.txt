@@ -1,19 +1,32 @@
 {
   "data": {
-    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "type": "organisation",
     "attributes": {
       "name": "string",
       "subdomain": "string",
-      "webhook_url": "http://example.com",
-      "primary_color": "string",
-      "registration_enabled": false,
-      "anonymous_enabled": false,
-      "introduction": "string",
       "default_language": "string",
       "available_languages": [
         "string"
-      ]
+      ],
+      "logo": "string",
+      "primary_color": "string",
+      "secondary_color": "string",
+      "accent_color": "string",
+      "primary_font_family": "string",
+      "secondary_font_family": "string",
+      "primary_font_color": "string",
+      "secondary_font_color": "string",
+      "background_color": "string",
+      "background_image": "string",
+      "card_background_color": "string",
+      "card_border_radius": "string",
+      "open_graph_image": "string",
+      "open_graph_description": "string",
+      "registration_enabled": false,
+      "anonymous_enabled": false,
+      "introduction": "string",
+      "webhook_url": "string"
     }
   }
 }

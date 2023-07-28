@@ -1,24 +1,24 @@
 {
   "data": {
-    "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "type": "module_session",
     "attributes": {
-      "started_at": "2019-08-24T14:15:22Z",
-      "ended_at": "2019-08-24T14:15:22Z",
-      "completed_at": "2019-08-24T14:15:22Z",
+      "started_at": "2023-07-28T12:13:28.159Z",
+      "ended_at": "2023-07-28T12:13:28.159Z",
+      "completed_at": "2023-07-28T12:13:28.159Z",
       "score": 0
     },
     "relationships": {
-      "user": {
-        "data": {
-          "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
-          "type": "user"
-        }
-      },
       "module": {
         "data": {
-          "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           "type": "module"
+        }
+      },
+      "challenge_session": {
+        "data": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "type": "challenge_session"
         }
       }
     }

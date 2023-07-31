@@ -460,8 +460,6 @@ namespace GamificationPlayer
         {
             sessionData = new SessionLogData();
 
-            Debug.Log(gamificationPlayerMockConfig);
-
             gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerMockConfig, sessionData);
         }
 

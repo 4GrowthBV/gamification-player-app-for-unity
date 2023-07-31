@@ -47,8 +47,6 @@ namespace GamificationPlayer.Tests
 
             var json = obj.ToJson();
 
-            Debug.Log(json);
-
             Assert.That(json.Contains(obj.data.type));
             Assert.That(json.Contains(obj.data.attributes.ended_at));
             Assert.That(json.Contains("null"));

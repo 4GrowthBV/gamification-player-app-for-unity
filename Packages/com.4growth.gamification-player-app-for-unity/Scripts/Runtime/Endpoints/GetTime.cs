@@ -19,7 +19,6 @@ namespace GamificationPlayer
                 dto.data.attributes.now = DateTime.Now.ToString();
                 var dateTime = dto.data.attributes.now;
                 DateTime dt = DateTime.Parse(dateTime);
-                Debug.Log(dto.data.attributes.now);
                 onReady?.Invoke(UnityWebRequest.Result.Success, dt);
             } 
             else

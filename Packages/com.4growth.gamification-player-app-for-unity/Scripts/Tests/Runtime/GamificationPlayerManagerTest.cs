@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GamificationPlayer.DTO.ExternalEvents;
+using GamificationPlayer.Session;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -73,6 +74,8 @@ namespace GamificationPlayer.Tests
             {
                 Assert.AreEqual(id, userId);
             }
+
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
         }
 
         [Test]
@@ -107,6 +110,8 @@ namespace GamificationPlayer.Tests
                 Debug.Log(id);
                 Assert.AreEqual(id, null);
             }
+
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
         }
 
         [Test]
@@ -150,6 +155,9 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
+
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out _));
         }
 
         [Test]
@@ -189,6 +197,8 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onEventWasCalled);
 
             Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
+
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out _));
         }
 
         [Test]

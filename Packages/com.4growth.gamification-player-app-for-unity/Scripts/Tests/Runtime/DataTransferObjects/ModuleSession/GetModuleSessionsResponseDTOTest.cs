@@ -91,9 +91,6 @@ namespace GamificationPlayer.Tests
 
             Assert.NotNull(obj.data[0].attributes.extra_data);
 
-            Debug.Log(string.Join(", ", obj.data[0].attributes.extra_data.Values));
-            Debug.Log(string.Join(", ", obj.data[0].attributes.extra_data.Keys));
-
             Assert.AreEqual(obj.data[0].attributes.extra_data["eee"], "2");
             Assert.AreEqual(obj.data[0].attributes.extra_data["test2"], "test2");
             Assert.AreEqual(obj.data[0].attributes.extra_data["test"], "test");

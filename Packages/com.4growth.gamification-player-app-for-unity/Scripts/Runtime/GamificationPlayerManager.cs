@@ -541,16 +541,22 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(dto.data);
 
-            var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, gamificationPlayerEndpoints.EnvironmentConfig.JSONWebTokenSecret);
+            var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, 
+                gamificationPlayerEndpoints.EnvironmentConfig.JSONWebTokenSecret);
             var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>();
 
             sessionData.AddToLog(webTokenPayload);
 
-            var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
+            var isBattle = webTokenPayload.battle != null && string.IsNullOrEmpty(webTokenPayload.battle.battle_id);
 
-            sessionData.TryGetLatestUserId(out var id);
+            if(!isBattle)
+            {
+                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
 
-            sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+                sessionData.TryGetLatestUserId(out var id);
+
+                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
+            }
         
             InvokeMicroGameOpened(webTokenPayload);          
         }

@@ -12,6 +12,59 @@ namespace GamificationPlayer.Tests
     public class NonPersistentLogDataTest
     {
         [Test]
+        public void TestRemoveListener()
+        {
+            var dto = new ModuleSessionStartedDTO();
+
+            dto.data.attributes.campaign_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_session_id = Guid.NewGuid().ToString();
+
+            dto.data.type = "moduleSessionStarted";
+
+            var nonPersistentSessionData = new NonPersistentLogData();
+
+            string testChallengeSessionId = default;
+            string testModuleId = default;
+
+            void challengeSessionIdMethod(object id)
+            {
+                testChallengeSessionId = (string)id;
+            }
+
+            nonPersistentSessionData.ListenTo<ChallengeSessionId>(challengeSessionIdMethod);
+
+            nonPersistentSessionData.ListenTo<ModuleId>((id) =>
+            {
+                testModuleId = (string)id;
+            });
+
+            nonPersistentSessionData.AddToLog(dto.data);
+
+            Assert.AreEqual(testChallengeSessionId, dto.data.attributes.challenge_session_id);
+            Assert.AreEqual(testModuleId, dto.data.attributes.module_id);
+
+            nonPersistentSessionData.RemoveListener(challengeSessionIdMethod);
+
+            dto = new ModuleSessionStartedDTO();
+
+            dto.data.attributes.campaign_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_session_id = Guid.NewGuid().ToString();
+
+            dto.data.type = "moduleSessionStarted";
+
+            nonPersistentSessionData.AddToLog(dto.data);
+
+            Assert.AreNotEqual(testChallengeSessionId, dto.data.attributes.challenge_session_id);
+            Assert.AreEqual(testModuleId, dto.data.attributes.module_id);
+        }
+
+        [Test]
         public void TestListen()
         {
             var dto = new ModuleSessionStartedDTO();

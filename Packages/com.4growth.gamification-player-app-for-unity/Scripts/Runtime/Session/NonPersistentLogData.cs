@@ -207,5 +207,23 @@ namespace GamificationPlayer
                 listeners[typeof(T)] += callback;
             }
         }
+
+        public void RemoveListener(Action<object> callback)
+        {
+            Type keyToRemove = null;
+            foreach (var pair in listeners)
+            {
+                if(pair.Value == callback)
+                {
+                    keyToRemove = pair.Key;
+                    break;
+                }
+            }
+
+            if(keyToRemove != null)
+            {
+                listeners.Remove(keyToRemove);
+            }
+        }
     }
 }

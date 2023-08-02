@@ -243,5 +243,10 @@ namespace GamificationPlayer
         {
             sessionLogData.ListenTo<T>(callback);
         }
+
+        public void RemoveListener(Action<object> callback)
+        {
+            sessionLogData.RemoveListener(callback);
+        }
     }
 }

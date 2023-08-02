@@ -242,6 +242,11 @@ namespace GamificationPlayer
             instance.GListenToData<TQueryable>(callback);
         }
 
+        public static void RemoveListener(Action<object> callback)
+        {
+            instance.GRemoveListener(callback);
+        }
+
         /// <summary>
         /// Gets the current server time and raises the OnServerTime when it is received.
         /// </summary>
@@ -412,6 +417,11 @@ namespace GamificationPlayer
 #else
             isInitialized = true;
 #endif
+        }
+
+        private void GRemoveListener(Action<object> callback)
+        {
+            sessionData.RemoveListener(callback);
         }
 
         private void GListenToData<TQueryable>(Action<object> callback) 

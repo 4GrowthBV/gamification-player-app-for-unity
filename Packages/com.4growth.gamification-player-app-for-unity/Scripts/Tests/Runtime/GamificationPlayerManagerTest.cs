@@ -467,5 +467,37 @@ namespace GamificationPlayer.Tests
                 Assert.AreEqual(id, moduleId);
             }
         }
+
+        [UnityTest]
+        public IEnumerator EndMicroGameAndStartNewOne()
+        {
+            var microGameOpenedDTO = new MicroGameOpenedDTO();
+            var microGameId = Guid.NewGuid();
+            microGameOpenedDTO.data.type = "microGameOpened";
+            microGameOpenedDTO.data.attributes.identifier = microGameId.ToString();
+            microGameOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbnZpcm9ubWVudCI6eyJkb21haW4iOiJnYW1pZmljYXRpb25wbGF5ZXIuZXUiLCJ0eXBlIjoic3RhZ2luZyJ9LCJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoiZW4ifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6bnVsbCwibW9kdWxlX3Nlc3Npb25faWQiOm51bGx9LCJiYXR0bGUiOnsiYmF0dGxlX3Nlc3Npb25faWQiOiI4ZGYyZjE4Zi1lNDkxLTRmZDgtYmJhMS05MTM3OThlY2Y5NzcifSwibWljcm9fZ2FtZSI6eyJuYW1lIjoiUE9QMTAgUG9wIGRlIEJ1YmJlbCIsImlkZW50aWZpZXIiOiJQT1AxMCIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH0sImV4dHJhX2RhdGEiOnt9fSwibW9kdWxlIjpudWxsfQ.MgLLfQMmq1Na2rOHdGsyR0k0jUz4yOvHr4ZGRCKGQoA";
+            GamificationPlayerManager.ProcessExternalMessage(microGameOpenedDTO.ToJson());
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+            
+            var isDone = false;
+            GamificationPlayerManager.StopMicroGame(777, true, () =>
+            {
+                isDone = true;
+            });
+
+            yield return new WaitUntil(() => isDone);
+
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
+
+            microGameOpenedDTO = new MicroGameOpenedDTO();
+            microGameId = Guid.NewGuid();
+            microGameOpenedDTO.data.type = "microGameOpened";
+            microGameOpenedDTO.data.attributes.identifier = microGameId.ToString();
+            microGameOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbnZpcm9ubWVudCI6eyJkb21haW4iOiJnYW1pZmljYXRpb25wbGF5ZXIuZXUiLCJ0eXBlIjoic3RhZ2luZyJ9LCJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoiZW4ifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6bnVsbCwibW9kdWxlX3Nlc3Npb25faWQiOm51bGx9LCJiYXR0bGUiOnsiYmF0dGxlX3Nlc3Npb25faWQiOiI4ZGYyZjE4Zi1lNDkxLTRmZDgtYmJhMS05MTM3OThlY2Y5NzcifSwibWljcm9fZ2FtZSI6eyJuYW1lIjoiUE9QMTAgUG9wIGRlIEJ1YmJlbCIsImlkZW50aWZpZXIiOiJQT1AxMCIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH0sImV4dHJhX2RhdGEiOnt9fSwibW9kdWxlIjpudWxsfQ.MgLLfQMmq1Na2rOHdGsyR0k0jUz4yOvHr4ZGRCKGQoA";
+            GamificationPlayerManager.ProcessExternalMessage(microGameOpenedDTO.ToJson());
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+        }
     }
 }

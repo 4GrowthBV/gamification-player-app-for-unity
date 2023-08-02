@@ -550,7 +550,7 @@ namespace GamificationPlayer
                     return;
                 }
             }
-
+            
             sessionData.AddToLog(dto.data);
 
             var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, 
@@ -559,7 +559,7 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(webTokenPayload);
 
-            var isBattle = webTokenPayload.battle != null && !string.IsNullOrEmpty(webTokenPayload.battle.battle_id);
+            var isBattle = webTokenPayload.battle != null && !string.IsNullOrEmpty(webTokenPayload.battle.battle_session_id);
 
             if(!isBattle)
             {

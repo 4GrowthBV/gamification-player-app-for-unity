@@ -236,6 +236,12 @@ namespace GamificationPlayer
             return instance.GTryGetLatestData<TQueryable>(out value);
         }
 
+        public static void ListenToData<TQueryable>(Action<object> callback)
+            where TQueryable : Session.IQueryable
+        {
+            instance.GListenToData<TQueryable>(callback);
+        }
+
         /// <summary>
         /// Gets the current server time and raises the OnServerTime when it is received.
         /// </summary>
@@ -406,6 +412,12 @@ namespace GamificationPlayer
 #else
             isInitialized = true;
 #endif
+        }
+
+        private void GListenToData<TQueryable>(Action<object> callback) 
+            where TQueryable : Session.IQueryable
+        {
+            sessionData.ListenTo<TQueryable>(callback);
         }
 
         private bool GTryGetLatestData<TQueryable>(out string value) 

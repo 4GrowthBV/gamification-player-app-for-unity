@@ -236,8 +236,8 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetActiveModuleId(out _));
-            if(GamificationPlayerManager.TryGetActiveModuleId(out var id))
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestModuleId(out _));
+            if(GamificationPlayerManager.TryGetLatestModuleId(out var id))
             {
                 Assert.AreEqual(id, moduleId);
             }
@@ -431,7 +431,7 @@ namespace GamificationPlayer.Tests
 
             obj = new ModuleSessionStartedDTO();
 
-            var moduleId = System.Guid.NewGuid();
+            var moduleId = new Guid("0303ee9c-9bd6-4773-8373-8ff9bba8b38f");
             obj.data.attributes.campaign_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_id = System.Guid.NewGuid().ToString();
             obj.data.attributes.challenge_session_id = System.Guid.NewGuid().ToString();
@@ -461,8 +461,8 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetActiveModuleId(out _));
-            if(GamificationPlayerManager.TryGetActiveModuleId(out var id))
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestModuleId(out _));
+            if(GamificationPlayerManager.TryGetLatestModuleId(out var id))
             {
                 Assert.AreEqual(id, moduleId);
             }

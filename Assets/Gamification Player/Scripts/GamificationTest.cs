@@ -31,7 +31,7 @@ public class GamificationTest : MonoBehaviour
             Debug.Log("Module id: " + moduleId);
 
             // Try to get the ID of the currently active module
-            GamificationPlayerManager.TryGetActiveModuleId(out var id);
+            GamificationPlayerManager.TryGetLatestModuleId(out var id);
             Debug.Log("Module id via TryGetActiveModuleId: " + id);
 
             // Check if a module session is currently active

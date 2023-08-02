@@ -168,9 +168,9 @@ namespace GamificationPlayer
         /// </summary>
         /// <param name="id">The identifier of the latest active module session, if it is available.</param>
         /// <returns>true if the latest active module session's identifier was successfully retrieved; otherwise, false.</returns>
-        public static bool TryGetActiveModuleId(out Guid id)
+        public static bool TryGetLatestModuleId(out Guid id)
         {
-            return instance.GTryGetActiveModuleId(out id);
+            return instance.GTryGetLatestModuleId(out id);
         }
 
         /// <summary>
@@ -645,13 +645,9 @@ namespace GamificationPlayer
             return currentMicroGamePayload != null;
         }
 
-        private bool GTryGetActiveModuleId(out Guid id)
+        private bool GTryGetLatestModuleId(out Guid id)
         {
-            var idString = currentMicroGamePayload?.session?.module_session_id;
-
-            id = new Guid(idString);
-
-            return !string.IsNullOrEmpty(currentMicroGamePayload?.session?.module_session_id);
+            return sessionData.TryGetLatestModuleId(out id);
         }
 
         private void GStopMicroGame(int score, bool isCompleted, Action onDone = null)
@@ -666,7 +662,7 @@ namespace GamificationPlayer
 
             if(currentMicroGamePayload?.battle?.battle_session_id != null)
             {
-                StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, currentMicroGamePayload.battle.battle_session_id, score, isCompleted, (_) =>
+                StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, score, isCompleted, (_) =>
                 {
                     currentMicroGamePayload = null;
 

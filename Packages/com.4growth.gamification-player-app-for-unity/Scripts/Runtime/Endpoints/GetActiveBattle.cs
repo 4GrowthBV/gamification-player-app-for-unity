@@ -20,7 +20,7 @@ namespace GamificationPlayer
 
         private IEnumerator CoGetActiveBattle(Guid organisationId, GetActiveBattleCallback onReady)
         {
-            var url = string.Format("{0}/organisations/{1}/Battles/active", environmentConfig.API_URL, organisationId);
+            var url = string.Format("{0}/organisations/{1}/battles/active", environmentConfig.API_URL, organisationId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(url);
 

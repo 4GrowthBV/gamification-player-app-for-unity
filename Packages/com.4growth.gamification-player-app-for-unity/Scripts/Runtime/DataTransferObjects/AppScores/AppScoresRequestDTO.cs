@@ -29,13 +29,10 @@ namespace GamificationPlayer.DTO.AppScores
             }
 
             public string ended_at;
+            
+            public string battle_session_id;
 
             #nullable enable
-            public string? module_session_id;
-            public string? battle_session_id;
-            public string? user_id;
-            public string? organisation_id;
-            public string? micro_game_id;
             public string? completed_at;
             #nullable disable
             

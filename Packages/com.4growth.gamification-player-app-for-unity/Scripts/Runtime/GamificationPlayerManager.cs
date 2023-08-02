@@ -158,9 +158,9 @@ namespace GamificationPlayer
         /// Determines whether a module session is currently active.
         /// </summary>
         /// <returns>true if a module session is active; otherwise, false.</returns>
-        public static bool IsModuleSessionActive()
+        public static bool IsMicroGameActive()
         {
-            return instance.GIsModuleSessionActive();
+            return instance.GIsMicroGameActive();
         }
 
         /// <summary>
@@ -179,9 +179,9 @@ namespace GamificationPlayer
         /// <param name="score">The score of the module session.</param>
         /// <param name="isCompleted">Indicates whether the module session was completed. The module can be ended without completing if the user ends before the end.</param>
         /// <param name="onDone">An optional callback that will be called when the operation is completed. If the operation is successful, the callback will be called without any arguments. If the operation fails, the callback will be called without any arguments.</param>
-        public static void EndLatestModuleSession(int score, bool isCompleted, Action onDone = null)
+        public static void StopMicroGame(int score, bool isCompleted, Action onDone = null)
         {
-            instance.GEndLatestModuleSession(score, isCompleted, onDone);
+            instance.GStopMicroGame(score, isCompleted, onDone);
         }
 
         /// <summary>
@@ -259,9 +259,9 @@ namespace GamificationPlayer
         /// </summary>
         /// <param name="microGamePayload">The identifier of the latest MicroGame, if it is available.</param>
         /// <returns>true if the latest MicroGame's identifier was successfully retrieved; otherwise, false.</returns>
-        public static bool TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload)
+        public static bool TryGetCurrentMicroGamePayload(out MicroGamePayload microGamePayload)
         {
-            return instance.GTryGetLatestMicroGamePayload(out microGamePayload);
+            return instance.GTryGetCurrentMicroGamePayload(out microGamePayload);
         }
 
         public static bool TryGetLatestSubdomain(out string subdomain)
@@ -290,6 +290,8 @@ namespace GamificationPlayer
         private bool isUserActive = false;
 
         private bool isInitialized = false;
+
+        private MicroGamePayload currentMicroGamePayload;
 
         public void Awake()
         {
@@ -375,16 +377,24 @@ namespace GamificationPlayer
             {
                 var isGetLoginToken = false;
                 var isGetOrganisation = false;
+                var isGetActiveBattle = false;
                 StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { 
                     isGetLoginToken = true; 
-                    if(isGetLoginToken && isGetOrganisation)
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
                     {
                         isInitialized = true;
                     }
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation((_, __) => { 
                     isGetOrganisation = true; 
-                    if(isGetLoginToken && isGetOrganisation)
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
+                    {
+                        isInitialized = true;
+                    }
+                }));
+                StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle((_) => { 
+                    isGetActiveBattle = true; 
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
                     {
                         isInitialized = true;
                     }
@@ -446,9 +456,11 @@ namespace GamificationPlayer
             return sessionData.TryGetLatestLanguage(out language);
         }
 
-        private bool GTryGetLatestMicroGamePayload(out MicroGamePayload payload)
+        private bool GTryGetCurrentMicroGamePayload(out MicroGamePayload payload)
         {
-            return sessionData.TryGetLatestMicroGamePayload(out payload);
+            payload = currentMicroGamePayload;
+
+            return currentMicroGamePayload != null;
         }
 
         private bool GTryGetLatestSubdomain(out string subdomain)
@@ -547,7 +559,7 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(webTokenPayload);
 
-            var isBattle = webTokenPayload.battle != null && string.IsNullOrEmpty(webTokenPayload.battle.battle_id);
+            var isBattle = webTokenPayload.battle != null && !string.IsNullOrEmpty(webTokenPayload.battle.battle_id);
 
             if(!isBattle)
             {
@@ -557,7 +569,7 @@ namespace GamificationPlayer
 
                 sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
             }
-        
+
             InvokeMicroGameOpened(webTokenPayload);          
         }
 
@@ -601,6 +613,7 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
+                StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
             }
         }
 
@@ -627,32 +640,48 @@ namespace GamificationPlayer
             return false;
         }
 
-        private bool GIsModuleSessionActive()
+        private bool GIsMicroGameActive()
         {
-            return sessionData.TryGetLatestModuleSessionStarted(out _) && 
-                !sessionData.TryGetLatestModuleSessionEnded(out _);
+            return currentMicroGamePayload != null;
         }
 
         private bool GTryGetActiveModuleId(out Guid id)
         {
-            if(GIsModuleSessionActive())
-            {
-                return sessionData.TryGetLatestModuleId(out id);
-            }
+            var idString = currentMicroGamePayload?.session?.module_session_id;
 
-            id = default;
+            id = new Guid(idString);
 
-            return false;
+            return !string.IsNullOrEmpty(currentMicroGamePayload?.session?.module_session_id);
         }
 
-        private void GEndLatestModuleSession(int score, bool isCompleted, Action onDone = null)
+        private void GStopMicroGame(int score, bool isCompleted, Action onDone = null)
         {
             GTryGetServerTime(out DateTime now);
 
-            StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
+            if(currentMicroGamePayload == null)
             {
-                onDone?.Invoke();
-            }));
+                Debug.LogError("No MicroGame playload to end!!");
+                return;
+            }
+
+            if(currentMicroGamePayload?.battle?.battle_session_id != null)
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, currentMicroGamePayload.battle.battle_session_id, score, isCompleted, (_) =>
+                {
+                    currentMicroGamePayload = null;
+
+                    onDone?.Invoke();
+                }));
+            } 
+            else
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
+                {
+                    currentMicroGamePayload = null;
+
+                    onDone?.Invoke();
+                }));
+            }
         }
 
         private void GStartDeviceFlow(StartDeviceFlowCallback onStart)
@@ -753,6 +782,8 @@ namespace GamificationPlayer
 
         protected void InvokeMicroGameOpened(MicroGamePayload microGame)
         {
+            currentMicroGamePayload = microGame;
+
             OnMicroGameOpened?.Invoke(microGame);
         }
         

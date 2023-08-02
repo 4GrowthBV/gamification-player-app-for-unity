@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GamificationPlayer.DTO.ExternalEvents;
 
 namespace GamificationPlayer
 {
@@ -16,6 +17,10 @@ namespace GamificationPlayer
 
         public bool TryGetLatestModuleSessionId(out Guid id);
 
+        public bool TryGetLatestBattleSessionId(out Guid id);
+
+        public bool TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload);
+
         public bool TryGetLatestModuleSessionStarted(out DateTime dateTime);
 
         public bool TryGetLatestModuleSessionEnded(out DateTime dateTime);
@@ -29,6 +34,7 @@ namespace GamificationPlayer
         public bool TryGetLatestModuleId(out Guid id);
 
         public bool TryGetLatestChallengeSessionId(out Guid id);
+
         public bool TryGetLatestDeviceFlowId(out Guid id);
 
         public bool TryGetLatestOrganisationId(out Guid id);
@@ -38,5 +44,7 @@ namespace GamificationPlayer
         public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true);
 
         public void AddToLog(IEnumerable<ILoggableData> dto, bool clearMissingPersistentData = true);
+
+        public void ListenTo<T>(Action<object> callback) where T : Session.IQueryable;
     }
 }

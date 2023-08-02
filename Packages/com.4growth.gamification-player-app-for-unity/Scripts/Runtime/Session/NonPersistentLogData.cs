@@ -17,6 +17,9 @@ namespace GamificationPlayer
 
         private List<ILoggableData> logData = new List<ILoggableData>();
 
+        // This is the new dictionary that will hold all of the listeners.
+        private Dictionary<Type, Action<object>> listeners = new();
+
         public bool TryGetLatestQueryableValue<TValue, TAttribute>(out TValue value)
             where TAttribute : Session.IQueryable
         {
@@ -95,11 +98,77 @@ namespace GamificationPlayer
             return default;
         }
 
+        private bool HasLatestQueryableValue(Type attributeType, object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            Type itemType = obj.GetType();
+            System.Reflection.FieldInfo[] fields = itemType.GetFields();
+            System.Reflection.FieldInfo fieldWithAttribute = fields.FirstOrDefault(f => Attribute.IsDefined(f, attributeType));
+            if (fieldWithAttribute != null)
+            {
+                return true;
+            }
+            else
+            {
+                foreach (var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
+                {
+                    if (HasLatestQueryableValue(attributeType, child.GetValue(obj)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private object GetLatestQueryableValue(Type attributeType, object obj)
+        {
+            if (obj == null)
+            {
+                return null;
+            }
+
+            Type itemType = obj.GetType();
+            System.Reflection.FieldInfo[] fields = itemType.GetFields();
+            System.Reflection.FieldInfo fieldWithAttribute = fields.FirstOrDefault(f => Attribute.IsDefined(f, attributeType));
+            if (fieldWithAttribute != null)
+            {
+                return fieldWithAttribute.GetValue(obj);
+            }
+            else
+            {
+                foreach (var child in fields.Where(f => f.FieldType.Name != "String" && !f.FieldType.IsPrimitive))
+                {
+                    if(HasLatestQueryableValue(attributeType, child.GetValue(obj)))
+                    {
+                        return GetLatestQueryableValue(attributeType, child.GetValue(obj));
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
         public void AddToLog(ILoggableData dto)
         {
             dto.Time = Time.realtimeSinceStartup;
             
             logData.Add(dto);
+
+            // Check if the newly added dto has any listeners.
+            foreach (var pair in listeners)
+            {
+                if(HasLatestQueryableValue(pair.Key, dto))
+                {   
+                    pair.Value(GetLatestQueryableValue(pair.Key, dto));
+                }
+            }
         }
 
         public void AddToLog(IEnumerable<ILoggableData> dtos)
@@ -110,6 +179,33 @@ namespace GamificationPlayer
             }
 
             logData.AddRange(dtos);
+
+            foreach(var dto in dtos)
+            {
+                // Check if the newly added dto has any listeners.
+                foreach (var pair in listeners)
+                {
+                    if(HasLatestQueryableValue(pair.Key, dto))
+                    {   
+                        pair.Value(GetLatestQueryableValue(pair.Key, dto));
+                    }
+                }
+            }
+        }
+
+        // Method to register listeners.
+        public void ListenTo<T>(Action<object> callback) where T : Session.IQueryable
+        {
+            // If a listener for this IQueryable type doesn't already exist, add it.
+            if (!listeners.ContainsKey(typeof(T)))
+            {
+                listeners.Add(typeof(T), callback);
+            }
+            else
+            {
+                // Otherwise, just update the existing listener.
+                listeners[typeof(T)] += callback;
+            }
         }
     }
 }

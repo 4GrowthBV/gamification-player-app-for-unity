@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.DTO.LoginToken;
 using GamificationPlayer.DTO.ModuleSession;
 using GamificationPlayer.Session;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {

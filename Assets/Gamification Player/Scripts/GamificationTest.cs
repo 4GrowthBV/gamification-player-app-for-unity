@@ -35,10 +35,10 @@ public class GamificationTest : MonoBehaviour
             Debug.Log("Module id via TryGetActiveModuleId: " + id);
 
             // Check if a module session is currently active
-            Debug.Log("Module is active: " + GamificationPlayerManager.IsModuleSessionActive());
+            Debug.Log("Module is active: " + GamificationPlayerManager.IsMicroGameActive());
 
             // End the current module session with a score of 777 and report the score to the Gamification Player
-            GamificationPlayerManager.EndLatestModuleSession(777, true);
+            GamificationPlayerManager.StopMicroGame(777, true);
         };
 
         // Register a handler for when a new page is fully loaded in the WebView

@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
-using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
@@ -134,6 +133,25 @@ namespace GamificationPlayer.Tests
             value = string.Empty;
 
             return true;
+        }
+
+        public bool TryGetLatestBattleSessionId(out Guid id)
+        {
+            id = new Guid("46f1d6fc-36b0-48fe-8ffd-e8dfc1a15eba");
+
+            return true;
+        }
+
+        public bool TryGetLatestMicroGamePayload(out MicroGamePayload microGamePayload)
+        {
+            microGamePayload = new MicroGamePayload();
+
+            return true;
+        }
+
+        public void ListenTo<T>(Action<object> callback) where T : IQueryable
+        {
+            
         }
     }
 }

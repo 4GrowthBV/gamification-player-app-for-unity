@@ -152,7 +152,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(OnMicroGameOpenedWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetCurrentMicroGamePayload(out _));
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
@@ -196,7 +196,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(OnFitnessContentOpenedWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestMicroGamePayload(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetCurrentMicroGamePayload(out _));
 
             Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out _));
         }
@@ -234,7 +234,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onModuleStartWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
 
             Assert.IsTrue(GamificationPlayerManager.TryGetActiveModuleId(out _));
             if(GamificationPlayerManager.TryGetActiveModuleId(out var id))
@@ -364,12 +364,12 @@ namespace GamificationPlayer.Tests
 
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
-            Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
             
             var isDone = false;
-            GamificationPlayerManager.EndLatestModuleSession(777, true, () =>
+            GamificationPlayerManager.StopMicroGame(777, true, () =>
             {
                 isDone = true;
             });
@@ -378,12 +378,12 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
-            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
 
             GamificationPlayerManager.ProcessExternalMessage(json);
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
-            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
         }
@@ -412,22 +412,22 @@ namespace GamificationPlayer.Tests
             fitnessContentOpenedDTO.data.attributes.module_data = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF5ZXIiOnsib3JnYW5pc2F0aW9uX2lkIjoiZWRiNWUxNjUtMWM3NC00NGY4LThkNTctYzI0YjgyZjJmNWYyIiwidXNlcl9pZCI6IjViNDExZGQyLTIwYzEtNDlkZC05MGE1LTU1NWRiYWVhZDVmOCIsImxhbmd1YWdlIjoibmwifSwic2Vzc2lvbiI6eyJjaGFsbGVuZ2Vfc2Vzc2lvbl9pZCI6ImU5YzExOGNlLWU5ZjYtNGE5OS04MGUyLTY1MDg1NjI0ODg2OCIsIm1vZHVsZV9zZXNzaW9uX2lkIjoiN2MxZDJhMWEtZmFkOS00YjZlLThkYWYtNTliYWEwYTYzZGNmIn0sIm1pY3JvX2dhbWUiOnsibmFtZSI6IlBVWjUxIEtlbm5pcyBBbGdlbWVuZSB2b29yem9yZ3NtYWF0cmVnZWxlbiIsImlkZW50aWZpZXIiOiJQVVo1MSIsInN0YXJzIjp7ImZpdmUiOjkwMDAsImZvdXIiOjcwMDAsInRocmVlIjo1MDAwLCJ0d28iOjQwMDAsIm9uZSI6MH19LCJtb2R1bGUiOnsibXVsdGlwbGllciI6MTAwLCJtYXhfc2NvcmUiOjEwMDAwLCJjdXJyZW50X3Njb3JlIjowLCJjdXJyZW50X2JvbnVzIjowLCJjdXJyZW50X3RvdGFsIjowfX0.drHJ7fZxYDQwBY1ntPZEV2tEHzOuyp84nmJkdnlhYJA";
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
-            Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
             
             var isDone = false;
-            GamificationPlayerManager.EndLatestModuleSession(777, true, () =>
+            GamificationPlayerManager.StopMicroGame(777, true, () =>
             {
                 isDone = true;
             });
 
             yield return new WaitUntil(() => isDone);
 
-            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
 
             GamificationPlayerManager.ProcessExternalMessage(json);
             GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
-            Assert.IsFalse(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
 
             obj = new ModuleSessionStartedDTO();
 
@@ -459,7 +459,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onModuleStartWasCalled);
             Assert.IsTrue(onEventWasCalled);
 
-            Assert.IsTrue(GamificationPlayerManager.IsModuleSessionActive());
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
 
             Assert.IsTrue(GamificationPlayerManager.TryGetActiveModuleId(out _));
             if(GamificationPlayerManager.TryGetActiveModuleId(out var id))

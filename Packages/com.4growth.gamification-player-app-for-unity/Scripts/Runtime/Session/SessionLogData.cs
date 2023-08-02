@@ -237,5 +237,11 @@ namespace GamificationPlayer
         {
             return sessionLogData.TryGetLatestQueryableValue<string, TQueryable>(out value);
         }
+
+        public void ListenTo<T>(Action<object> callback) 
+            where T : Session.IQueryable
+        {
+            sessionLogData.ListenTo<T>(callback);
+        }
     }
 }

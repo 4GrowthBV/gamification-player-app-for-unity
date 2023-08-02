@@ -17,10 +17,26 @@ namespace GamificationPlayer
                 yield break;
             }
 
-            yield return CoAppScores(now, battleSessionId, score, isCompleted, onReady);
+            if(!sessionData.TryGetLatestOrganisationId(out var organisationId))
+            {   
+                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
+
+                yield break;
+            }
+
+            if(!sessionData.TryGetLatestUserId(out var userid))
+            {   
+                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
+
+                yield break;
+            }
+
+            yield return CoAppScores(now, userid, organisationId, battleSessionId, score, isCompleted, onReady);
         }
         
         private IEnumerator CoAppScores(DateTime now, 
+            Guid userid,
+            Guid organisationId, 
             Guid battleSessionId, 
             int score, 
             bool isCompleted, 
@@ -32,8 +48,7 @@ namespace GamificationPlayer
                 completedAt = now;
             }
 
-            var moduleSession = new AppScoresRequestDTO(now, score, completedAt);
-            moduleSession.data.attributes.battle_session_id = battleSessionId.ToString();
+            var moduleSession = new AppScoresRequestDTO(now, now, userid, organisationId, battleSessionId, score, completedAt);
             sessionData.AddToLog(moduleSession.data);
 
             string data = moduleSession.ToJson();

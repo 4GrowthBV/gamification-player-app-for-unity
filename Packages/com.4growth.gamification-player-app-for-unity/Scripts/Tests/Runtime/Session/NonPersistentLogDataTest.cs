@@ -5,11 +5,63 @@ using GamificationPlayer.DTO.LoginToken;
 using GamificationPlayer.DTO.ModuleSession;
 using GamificationPlayer.Session;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
     public class NonPersistentLogDataTest
     {
+        [Test]
+        public void TestListen()
+        {
+            var dto = new ModuleSessionStartedDTO();
+
+            dto.data.attributes.campaign_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_id = Guid.NewGuid().ToString();
+            dto.data.attributes.challenge_session_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_id = Guid.NewGuid().ToString();
+            dto.data.attributes.module_session_id = Guid.NewGuid().ToString();
+
+            dto.data.type = "moduleSessionStarted";
+
+            var nonPersistentSessionData = new NonPersistentLogData();
+
+            string testCampaignId = default;
+            string testChallengeSessionId = default;
+            string testModuleId = default;
+            string testBattleAvailableFrom = default;
+
+            nonPersistentSessionData.ListenTo<ChallengeSessionId>((id) =>
+            {
+                testChallengeSessionId = (string)id;
+            });
+
+            nonPersistentSessionData.ListenTo<ModuleId>((id) =>
+            {
+                testModuleId = (string)id;
+            });
+
+            nonPersistentSessionData.ListenTo<CampaignId>((id) =>
+            {
+                testCampaignId = (string)id;
+            });
+
+            nonPersistentSessionData.ListenTo<BattleAvailableFrom>((id) =>
+            {
+                testCampaignId = (string)id;
+                testChallengeSessionId = (string)id;
+                testModuleId = (string)id;
+                testBattleAvailableFrom = (string)id;
+            });
+
+            nonPersistentSessionData.AddToLog(dto.data);
+
+            Assert.AreEqual(testCampaignId, dto.data.attributes.campaign_id);
+            Assert.AreEqual(testChallengeSessionId, dto.data.attributes.challenge_session_id);
+            Assert.AreEqual(testModuleId, dto.data.attributes.module_id);
+            Assert.AreEqual(testBattleAvailableFrom, default);
+        }
+
         [Test]
         public void TestAdd()
         {

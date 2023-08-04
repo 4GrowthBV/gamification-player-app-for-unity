@@ -292,6 +292,9 @@ namespace GamificationPlayer
         [Header("Mock settings for testing")]
         private EnvironmentConfig gamificationPlayerMockConfig;
 
+        [SerializeField]
+        private string absoluteURLTest = string.Empty;
+
         protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
         protected SessionLogData sessionData;
@@ -320,14 +323,15 @@ namespace GamificationPlayer
             sessionData = new SessionLogData();
 
 #if UNITY_WEBGL
-            if(!string.IsNullOrEmpty(Application.absoluteURL) && 
-                Application.absoluteURL.Contains("moduleData"))
+            var absoluteURL = GetAbsoluteURL();
+            if(!string.IsNullOrEmpty(absoluteURL) && 
+                absoluteURL.Contains("moduleData"))
             {
-                Uri url = new Uri(Application.absoluteURL);
+                Uri url = new Uri(absoluteURL);
                 var query = System.Web.HttpUtility.ParseQueryString(url.Query);
                 string jwt = query["moduleData"];
 
-                GamificationPlayerConfig.TryGetEnvironmentConfig(Application.absoluteURL, out var environmentConfig);
+                GamificationPlayerConfig.TryGetEnvironmentConfig(absoluteURL, out var environmentConfig);
 
                 var json = JWTHelper.GetJSONWebTokenPayload(jwt, environmentConfig.JSONWebTokenSecret);
 
@@ -343,6 +347,16 @@ namespace GamificationPlayer
             {
                 GGetServerOffSetTime();
             }
+        }
+
+        private string GetAbsoluteURL()
+        {
+            if(!string.IsNullOrEmpty(absoluteURLTest))
+            {
+                return absoluteURLTest;
+            }
+
+            return Application.absoluteURL;
         }
 
         private EnvironmentConfig GGetEnvironmentConfig()

@@ -615,8 +615,6 @@ namespace GamificationPlayer
 
             var dto = jsonMessage.FromJson<PageViewDTO>();
 
-            Debug.Log("user_id: " + dto.data.attributes.user_id);
-
             sessionData.AddToLog(dto.data);
 
             if(isDeviceFlowActive && 
@@ -628,15 +626,10 @@ namespace GamificationPlayer
                 gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult);
             }
 
-            Debug.Log("GHaveUserCredentials: " + GHaveUserCredentials());
-
             if(!GHaveUserCredentials())
             {
                 isUserActive = false;
                 sessionData.ClearData();
-
-                //R-add the pageview to the log
-                sessionData.AddToLog(dto.data);
             } else
             {
                 isUserActive = true;

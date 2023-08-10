@@ -225,5 +225,10 @@ namespace GamificationPlayer
                 listeners.Remove(keyToRemove);
             }
         }
+
+        public void ClearData()
+        {
+            logData.Clear();
+        }
     }
 }

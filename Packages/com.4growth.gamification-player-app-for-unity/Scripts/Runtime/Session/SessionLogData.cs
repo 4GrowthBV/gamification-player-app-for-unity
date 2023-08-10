@@ -223,13 +223,15 @@ namespace GamificationPlayer
             }
         }
 
-        public void ClearPersistentData()
+        public void ClearData()
         {
             PlayerPrefs.DeleteKey("Subdomain");
 
             PlayerPrefs.DeleteKey("OrganisationId");
 
             PlayerPrefs.DeleteKey("UserId");
+
+            sessionLogData.ClearData();
         }
 
         public bool TryGetLatest<TQueryable>(out string value)

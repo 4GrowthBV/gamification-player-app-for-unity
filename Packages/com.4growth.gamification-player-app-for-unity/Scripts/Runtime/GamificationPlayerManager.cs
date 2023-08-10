@@ -629,7 +629,10 @@ namespace GamificationPlayer
             if(!GHaveUserCredentials())
             {
                 isUserActive = false;
-                sessionData.ClearPersistentData();
+                sessionData.ClearData();
+
+                //R-add the pageview to the log
+                sessionData.AddToLog(dto.data);
             } else
             {
                 isUserActive = true;

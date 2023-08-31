@@ -11,10 +11,11 @@ namespace GamificationPlayer
     {
         public IEnumerator CoEndModuleSession(DateTime now, int score, bool isCompleted, EndModuleSessionCallback onReady = null)
         {
+            Debug.Log("CoEndModuleSession");
             if(!sessionData.TryGetLatestModuleSessionId(out var moduleSessionId))
             {   
                 onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
-
+                Debug.Log("BREAK!@!!!");
                 yield break;
             }
 
@@ -42,6 +43,7 @@ namespace GamificationPlayer
 
             if(environmentConfig.TryGetMockDTO<UpdateModuleSessionResponseDTO>(out var dto))
             {
+                Debug.Log("Mocking");
                 sessionData.AddToLog(dto.data, false);
                 onReady?.Invoke(UnityWebRequest.Result.Success);
             }

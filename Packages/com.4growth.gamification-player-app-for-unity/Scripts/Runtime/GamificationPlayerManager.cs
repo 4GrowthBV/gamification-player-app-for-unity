@@ -688,6 +688,7 @@ namespace GamificationPlayer
 
         private void GStopMicroGame(int score, bool isCompleted, Action onDone = null)
         {
+            Debug.Log("01");
             GTryGetServerTime(out DateTime now);
 
             if(currentMicroGamePayload == null)
@@ -695,11 +696,14 @@ namespace GamificationPlayer
                 Debug.LogError("No MicroGame playload to end!!");
                 return;
             }
+            Debug.Log("02");
 
             if(currentMicroGamePayload?.battle?.battle_session_id != null)
             {
+                Debug.Log("03");
                 StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, score, isCompleted, (_) =>
                 {
+                    Debug.Log("04");
                     currentMicroGamePayload = null;
 
                     onDone?.Invoke();
@@ -707,8 +711,10 @@ namespace GamificationPlayer
             } 
             else
             {
+                Debug.Log("05");
                 StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
                 {
+                    Debug.Log("06");
                     currentMicroGamePayload = null;
 
                     onDone?.Invoke();

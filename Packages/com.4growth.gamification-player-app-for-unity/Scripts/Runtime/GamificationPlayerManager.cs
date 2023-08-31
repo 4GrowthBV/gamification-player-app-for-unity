@@ -698,6 +698,10 @@ namespace GamificationPlayer
             }
             Debug.Log("02");
 
+            Debug.Log(currentMicroGamePayload);
+            Debug.Log(currentMicroGamePayload?.battle);
+            Debug.Log(currentMicroGamePayload?.battle?.battle_session_id);
+
             if(currentMicroGamePayload?.battle?.battle_session_id != null)
             {
                 Debug.Log("03");

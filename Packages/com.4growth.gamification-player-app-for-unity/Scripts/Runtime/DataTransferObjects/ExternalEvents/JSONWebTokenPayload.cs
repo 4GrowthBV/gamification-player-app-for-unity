@@ -88,7 +88,6 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [Serializable]
         public class Battle
         {
-            [BattleId]
             public string battle_id;
 
             [BattleSessionId]

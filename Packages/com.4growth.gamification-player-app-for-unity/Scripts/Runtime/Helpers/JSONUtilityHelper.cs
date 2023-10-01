@@ -18,7 +18,11 @@ namespace GamificationPlayer
 
         public static TType FromJson<TType>(this string json)
         {
-            var newJSON = json.Replace("null", "\"\"");
+            var newJSON = json.Replace("\"user_is_demo\":null,", "\"user_is_demo\":false,");
+
+            newJSON = newJSON.Replace("\"organisation_allow_upgrade_to_registered_user\":null,", "\"organisation_allow_upgrade_to_registered_user\":false,");
+            
+            newJSON = newJSON.Replace("null", "\"\"");
 
             newJSON = newJSON.Replace("[]", "{}");
 

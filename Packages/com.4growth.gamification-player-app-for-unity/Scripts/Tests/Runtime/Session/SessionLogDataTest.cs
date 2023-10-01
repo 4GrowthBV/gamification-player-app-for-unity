@@ -36,6 +36,30 @@ namespace GamificationPlayer.Tests
         }
 
         [Test]
+        public void TestTryGetLatestQueryableBoolSpecialCase()
+        {
+            var json = "{\"data\":{\"type\":\"pageView\",\"attributes\":{\"organisation_id\":\"edb5e165-1c74-44f8-8d57-c24b82f2f5f2\",\"organisation_allow_upgrade_to_registered_user\":null,\"user_id\":null,\"user_is_demo\":null,\"language\":\"nl\"}}}";
+        
+            var dto = json.FromJson<PageViewDTO>();
+
+            var sessionData = new SessionLogData();
+
+            sessionData.AddToLog(dto.data);
+
+            Assert.That(sessionData.TryGetLatest<UserIsDemo>(out bool _));
+            if(sessionData.TryGetLatest<UserIsDemo>(out bool isUserDemo))
+            {
+                Assert.AreEqual(isUserDemo, false);
+            }
+
+            Assert.That(sessionData.TryGetLatest<OrganisationAllowUpgradeToRegisteredUser>(out bool _));
+            if(sessionData.TryGetLatest<OrganisationAllowUpgradeToRegisteredUser>(out bool organisationAllowUpgradeToRegisteredUser))
+            {
+                Assert.AreEqual(organisationAllowUpgradeToRegisteredUser, false);
+            }
+        }
+
+        [Test]
         public void TestTryGetLatestQueryableBoolValue()
         {
             var dto = new PageViewDTO();

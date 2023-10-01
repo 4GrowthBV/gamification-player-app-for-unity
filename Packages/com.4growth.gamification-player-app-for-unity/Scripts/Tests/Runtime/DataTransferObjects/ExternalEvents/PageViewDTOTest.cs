@@ -33,7 +33,7 @@ namespace GamificationPlayer.Tests
             obj.data.attributes.organisation_id = Guid.NewGuid().ToString();
             obj.data.attributes.user_id = Guid.NewGuid().ToString();
 
-            obj.data.attributes.user_is_demo = true;
+            obj.data.attributes.user_is_demo = false;
             obj.data.attributes.organisation_allow_upgrade_to_registered_user = true;
 
             obj.data.type = "pageView";

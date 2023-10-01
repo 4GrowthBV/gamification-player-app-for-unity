@@ -28,8 +28,14 @@ namespace GamificationPlayer.DTO.ExternalEvents
             [OrganisationId]
             public string organisation_id;
 
+            [OrganisationAllowUpgradeToRegisteredUser]
+            public bool organisation_allow_upgrade_to_registered_user;
+
             [UserId]
             public string user_id;
+
+            [UserIsDemo]
+            public bool user_is_demo;
 
             [Language]
             public string language;

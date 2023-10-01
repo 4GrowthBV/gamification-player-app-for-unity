@@ -3,6 +3,7 @@ using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.DTO.LoginToken;
 using GamificationPlayer.DTO.ModuleSession;
+using GamificationPlayer.Session;
 using NUnit.Framework;
 
 namespace GamificationPlayer.Tests
@@ -32,6 +33,33 @@ namespace GamificationPlayer.Tests
             sessionData.AddToLog(new ILoggableData[] { dto1.data, dto2.data });
 
             Assert.That(sessionData.LogData.Count() == 2);
+        }
+
+        [Test]
+        public void TestTryGetLatestQueryableBoolValue()
+        {
+            var dto = new PageViewDTO();
+
+            dto.data.attributes.organisation_allow_upgrade_to_registered_user = true;
+            dto.data.attributes.user_is_demo = false;
+
+            dto.data.type = "pageView";
+
+            var sessionData = new SessionLogData();
+
+            sessionData.AddToLog(dto.data);
+
+            Assert.That(sessionData.TryGetLatest<UserIsDemo>(out bool _));
+            if(sessionData.TryGetLatest<UserIsDemo>(out bool isUserDemo))
+            {
+                Assert.AreEqual(isUserDemo, dto.data.attributes.user_is_demo);
+            }
+
+            Assert.That(sessionData.TryGetLatest<OrganisationAllowUpgradeToRegisteredUser>(out bool _));
+            if(sessionData.TryGetLatest<OrganisationAllowUpgradeToRegisteredUser>(out bool organisationAllowUpgradeToRegisteredUser))
+            {
+                Assert.AreEqual(organisationAllowUpgradeToRegisteredUser, dto.data.attributes.organisation_allow_upgrade_to_registered_user);
+            }
         }
 
         [Test]

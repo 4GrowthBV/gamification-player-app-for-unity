@@ -236,6 +236,12 @@ namespace GamificationPlayer
             return instance.GTryGetLatestData<TQueryable>(out value);
         }
 
+        public static bool TryGetLatestData<TQueryable>(out bool value)
+            where TQueryable : Session.IQueryable
+        {
+            return instance.GTryGetLatestData<TQueryable>(out value);
+        }
+
         public static void ListenToData<TQueryable>(Action<object> callback)
             where TQueryable : Session.IQueryable
         {
@@ -445,6 +451,12 @@ namespace GamificationPlayer
         }
 
         private bool GTryGetLatestData<TQueryable>(out string value) 
+            where TQueryable : Session.IQueryable
+        {
+            return sessionData.TryGetLatest<TQueryable>(out value);
+        }
+
+        private bool GTryGetLatestData<TQueryable>(out bool value) 
             where TQueryable : Session.IQueryable
         {
             return sessionData.TryGetLatest<TQueryable>(out value);

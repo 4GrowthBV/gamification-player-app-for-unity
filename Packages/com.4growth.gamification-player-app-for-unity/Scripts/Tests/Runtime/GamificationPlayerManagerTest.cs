@@ -75,7 +75,7 @@ namespace GamificationPlayer.Tests
                 Assert.AreEqual(id, userId);
             }
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out string _));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.ProcessExternalMessage(json);
 
             Assert.IsFalse(GamificationPlayerManager.IsUserActive());
-            Assert.IsFalse(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
+            Assert.IsFalse(GamificationPlayerManager.TryGetLatestData<UserId>(out string _));
         }
 
         [Test]
@@ -150,8 +150,8 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out _));
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<UserId>(out string _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out string _));
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace GamificationPlayer.Tests
 
             Assert.IsTrue(GamificationPlayerManager.TryGetCurrentMicroGamePayload(out _));
 
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out _));
+            Assert.IsTrue(GamificationPlayerManager.TryGetLatestData<MicroGameIdentifier>(out string _));
         }
 
         [Test]

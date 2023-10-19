@@ -492,6 +492,12 @@ namespace GamificationPlayer
             return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
+        private bool GTryGetLatestData<TQueryable>(out int value) 
+            where TQueryable : Session.IQueryable
+        {
+            return sessionData.TryGetLatest<TQueryable>(out value);
+        }
+
         private bool GTryGetServerTime(out DateTime dateTime)
         {
             dateTime = DateTime.Now;

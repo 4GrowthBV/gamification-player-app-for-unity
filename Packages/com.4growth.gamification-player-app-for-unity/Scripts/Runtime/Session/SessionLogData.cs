@@ -240,6 +240,12 @@ namespace GamificationPlayer
             return sessionLogData.TryGetLatestQueryableValue<string, TQueryable>(out value);
         }
 
+        public bool TryGetLatest<TQueryable>(out int value)
+            where TQueryable : Session.IQueryable
+        {
+            return sessionLogData.TryGetLatestQueryableValue<int, TQueryable>(out value);
+        }
+
         public bool TryGetLatest<TQueryable>(out bool value)
             where TQueryable : Session.IQueryable
         {

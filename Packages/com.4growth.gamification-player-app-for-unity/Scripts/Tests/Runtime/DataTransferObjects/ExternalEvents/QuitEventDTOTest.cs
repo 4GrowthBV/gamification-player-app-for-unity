@@ -3,14 +3,14 @@ using NUnit.Framework;
 
 namespace GamificationPlayer.Tests
 {
-    public class StandardDTOTest
+    public class QuitEventDTOTest
     {
         [Test]
         public void TestToJSON()
         {
-            var obj = new StandardDTO();
+            var obj = new QuitEventDTO();
 
-            obj.data.type = "pageView";
+            obj.data.type = "quitEvent";
 
             var json = obj.ToJson();
 
@@ -20,9 +20,9 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestFromJSON()
         {
-            var obj = new StandardDTO();
+            var obj = new QuitEventDTO();
             
-            obj.data.type = "pageView";
+            obj.data.type = "quitEvent";
 
             var json = obj.ToJson();
             var newObj = json.FromJson<StandardDTO>();

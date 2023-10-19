@@ -61,6 +61,17 @@ namespace GamificationPlayer
     /// <param name="identifier">The identifier of the languages.</param>
     public delegate void OnLanguageSetEvent(string identifier);
 
+    /// <summary>
+    /// Represents a method that is called when a tile click event is fired by the gamification player.
+    /// </summary>
+    /// <param name="identifier">Identifier of the tile being clicked. Example: 'fitness_video'.</param>
+    public delegate void OnTileClickEvent(string identifier);
+
+    /// <summary>
+    /// Represents a method that is called when a quit event is fired by the gamification player.
+    /// </summary>
+    public delegate void OnQuitEvent();
+
     public class GamificationPlayerManager : MonoBehaviour
     {
         /// <summary>
@@ -102,6 +113,16 @@ namespace GamificationPlayer
         /// Occurs when a language is changed or first time that the languages is set
         /// </summary>
         public static event OnLanguageSetEvent OnLanguageSet;
+
+        /// <summary>
+        /// Occurs when a tile click event is fired by the gamification player.
+        /// </summary>
+        public static event OnTileClickEvent OnTileClick;
+
+        /// <summary>
+        /// Occurs when a quit event is fired by the gamification player.
+        /// </summary>
+        public static event OnQuitEvent OnQuit;
 
         private static GamificationPlayerManager instance;
 
@@ -548,6 +569,18 @@ namespace GamificationPlayer
             if(message.data.Type == "error")
             {
                 Error(jsonMessage);
+            }
+
+            if(message.data.Type == "quitEvent")
+            {
+                OnQuit?.Invoke();
+            }
+
+            if(message.data.Type == "tileClick")
+            {
+                var dto = jsonMessage.FromJson<TileClickDTO>();
+
+                OnTileClick?.Invoke(dto.data.attributes.identifier);
             }
         }
 

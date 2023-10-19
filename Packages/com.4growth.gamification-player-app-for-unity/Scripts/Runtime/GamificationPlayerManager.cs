@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
+using GamificationPlayer.Session;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -430,23 +431,31 @@ namespace GamificationPlayer
                 var isGetLoginToken = false;
                 var isGetOrganisation = false;
                 var isGetActiveBattle = false;
+                var isGetUser = false;
                 StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { 
                     isGetLoginToken = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
                     {
                         isInitialized = true;
                     }
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation((_, __) => { 
                     isGetOrganisation = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
+                    {
+                        isInitialized = true;
+                    }
+                }));
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUser((_) => { 
+                    isGetUser = true; 
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
                     {
                         isInitialized = true;
                     }
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle((_) => { 
                     isGetActiveBattle = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle)
+                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
                     {
                         isInitialized = true;
                     }
@@ -694,7 +703,14 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
+
+                //Different check for this??
                 StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
+            }
+
+            if(!sessionData.TryGetLatest<UserName>(out string _))
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUser());
             }
         }
 

@@ -52,6 +52,15 @@ namespace GamificationPlayer
             [OrganisationBackgroundImage]
             public string background_image;
 
+            [OrganisationMobileBackgroundImage]
+            public string background_mobile_image;
+
+            [OrganisationTabletBackgroundImage]
+            public string background_tablet_image;
+
+            [OrganisationDesktopBackgroundImage]
+            public string background_desktop_image;
+
             [OrganisationCardBackgroundColor]
             public string card_background_color;
 

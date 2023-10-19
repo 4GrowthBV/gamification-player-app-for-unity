@@ -85,6 +85,17 @@ namespace GamificationPlayer.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestGetUser()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetUser((result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        [UnityTest]
         public IEnumerator TestGetOrganisation()
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());

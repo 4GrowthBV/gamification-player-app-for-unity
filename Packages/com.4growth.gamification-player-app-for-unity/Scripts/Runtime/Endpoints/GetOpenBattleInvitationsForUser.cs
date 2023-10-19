@@ -30,7 +30,7 @@ namespace GamificationPlayer
 
         private IEnumerator CoGetOpenBattleInvitationsForUser(Guid organisationId, Guid userId, GetOpenBattleInvitationsForUserCallback onReady = null)
         {
-            string webRequestString = string.Format("{0}/organisations/{1}", environmentConfig.API_URL, organisationId);
+            string webRequestString = string.Format("{0}/organisations/{1}/users/{2}/battles/invitations", environmentConfig.API_URL, organisationId, userId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 

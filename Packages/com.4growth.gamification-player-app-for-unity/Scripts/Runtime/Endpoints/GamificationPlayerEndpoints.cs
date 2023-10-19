@@ -21,7 +21,9 @@ namespace GamificationPlayer
 
     public delegate void GetActiveBattleCallback(UnityWebRequest.Result result);
 
-    public delegate void GetUserCallback(UnityWebRequest.Result result);
+    public delegate void GetUserCallback(UnityWebRequest.Result result, GetUserResponseDTO dto);
+
+    public delegate void GetOpenBattleInvitationsForUserCallback(UnityWebRequest.Result result, int total);
 
 
     public partial class GamificationPlayerEndpoints

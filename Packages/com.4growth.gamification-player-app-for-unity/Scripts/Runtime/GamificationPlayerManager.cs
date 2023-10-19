@@ -446,7 +446,7 @@ namespace GamificationPlayer
                         isInitialized = true;
                     }
                 }));
-                StartCoroutine(gamificationPlayerEndpoints.CoGetUser((_) => { 
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUser((_, __) => { 
                     isGetUser = true; 
                     if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
                     {
@@ -708,9 +708,15 @@ namespace GamificationPlayer
                 StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
             }
 
-            if(!sessionData.TryGetLatest<UserName>(out string _))
+            if(!sessionData.TryGetLatest<UserName>(out string _) && 
+                GHaveUserCredentials())
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUser());
+            }
+            
+            if(GHaveUserCredentials())
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetOpenBattleInvitationsForUser());
             }
         }
 

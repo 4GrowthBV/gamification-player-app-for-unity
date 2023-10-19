@@ -1,27 +1,17 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using GamificationPlayer.Session;
+using UnityEngine;
 
 namespace GamificationPlayer.DTO.Battle
 {
-    public class ActiveBattleDTO
+    public class GetOpenBattleInvitationsForUserDTO
     {
         [Serializable]
         public class Attributes
         {
-            [BattleName]
-            public string name;
-
-            //geen idee wat dit is?
-            public string game_id;
-
-            [BattleMicroGameId]
-            public string micro_game_id;
-
-            [BattleAvailableFrom]
-            public string available_from;
-
-            [BattleAvailableTill]
-            public string available_till;
+            
         }
 
         [Serializable]
@@ -34,7 +24,7 @@ namespace GamificationPlayer.DTO.Battle
             [BattleId]
             public string id;
 
-            public string type = "battle";
+            public string type = "battle_session";
         
             public Attributes attributes;
 
@@ -44,11 +34,11 @@ namespace GamificationPlayer.DTO.Battle
             }            
         }
 
-        public Data data;
+        public Data[] data;
 
-        public ActiveBattleDTO()
+        public GetOpenBattleInvitationsForUserDTO()
         {
-            data = new Data();
+            data = new Data[0];
         }
     }
 }

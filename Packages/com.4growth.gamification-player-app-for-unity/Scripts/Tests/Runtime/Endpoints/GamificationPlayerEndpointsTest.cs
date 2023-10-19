@@ -89,9 +89,11 @@ namespace GamificationPlayer.Tests
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
 
-            return gamificationPlayerEndpoints.CoGetUser((result) =>
+            return gamificationPlayerEndpoints.CoGetUser((result, userDTO) =>
             {
                 Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.That(userDTO != default);
             });
         }
 
@@ -105,6 +107,19 @@ namespace GamificationPlayer.Tests
                 Assert.That(result == UnityWebRequest.Result.Success);
 
                 Assert.That(dto != null);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestGetOpenBattleInvitationsForUser()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetOpenBattleInvitationsForUser((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.That(dto == 1);
             });
         }
     }

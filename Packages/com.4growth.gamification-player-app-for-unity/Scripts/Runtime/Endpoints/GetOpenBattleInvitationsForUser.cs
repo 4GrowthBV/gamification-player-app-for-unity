@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Linq;
+using GamificationPlayer.DTO.Battle;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -7,28 +9,39 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoGetUser(GetUserCallback onReady = null)
+        public IEnumerator CoGetOpenBattleInvitationsForUser(GetOpenBattleInvitationsForUserCallback onReady = null)
         {
-            if(!sessionData.TryGetLatestUserId(out var userId))
+            if(!sessionData.TryGetLatestOrganisationId(out var organisationId))
             {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError, new GetUserResponseDTO());
+                onReady?.Invoke(UnityWebRequest.Result.ProtocolError, 0);
 
                 yield break;
             }
 
-            yield return CoGetUser(userId, onReady);
+            if(!sessionData.TryGetLatestUserId(out var userId))
+            {   
+                onReady?.Invoke(UnityWebRequest.Result.ProtocolError, 0);
+
+                yield break;
+            }
+
+            yield return CoGetOpenBattleInvitationsForUser(organisationId, userId, onReady);
         }
 
-        private IEnumerator CoGetUser(Guid userId, GetUserCallback onReady = null)
+        private IEnumerator CoGetOpenBattleInvitationsForUser(Guid organisationId, Guid userId, GetOpenBattleInvitationsForUserCallback onReady = null)
         {
-            string webRequestString = string.Format("{0}/users/{1}", environmentConfig.API_URL, userId);
+            string webRequestString = string.Format("{0}/organisations/{1}", environmentConfig.API_URL, organisationId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
-            if(environmentConfig.TryGetMockDTO<GetUserResponseDTO>(out var dto))
+            if(environmentConfig.TryGetMockDTO<GetOpenBattleInvitationsForUserDTO>(out var dto))
             {
-                sessionData.AddToLog(dto.data, false);
-                onReady?.Invoke(UnityWebRequest.Result.Success, dto);
+                var dummy = new TotalOpenBattleInvitationForUserDTO
+                {
+                    total = dto.data.Count()
+                };
+                sessionData.AddToLog(dummy, false);   
+                onReady?.Invoke(UnityWebRequest.Result.Success, dto.data.Count());
             } 
             else
             {
@@ -40,7 +53,7 @@ namespace GamificationPlayer
 
                 yield return webRequest.SendWebRequest();
 
-                GetUserResponseDTO obj = null;
+                GetOpenBattleInvitationsForUserDTO obj = null;
 
                 switch (webRequest.result)
                 {
@@ -56,12 +69,16 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        obj = webRequest.downloadHandler.text.FromJson<GetUserResponseDTO>();
-                        sessionData.AddToLog(obj.data, false);           
+                        obj = webRequest.downloadHandler.text.FromJson<GetOpenBattleInvitationsForUserDTO>();
+                        var dummy = new TotalOpenBattleInvitationForUserDTO
+                        {
+                            total = obj.data.Count()
+                        };
+                        sessionData.AddToLog(dummy, false);           
                         break;
                 }
-
-                onReady?.Invoke(webRequest.result, obj);
+                var total = obj == null ? 0 : obj.data.Count();
+                onReady?.Invoke(webRequest.result, total);
             }
         }
     }

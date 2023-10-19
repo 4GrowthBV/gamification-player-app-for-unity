@@ -1,6 +1,4 @@
-using GamificationPlayer.DTO.AppScores;
 using GamificationPlayer.DTO.Battle;
-using GamificationPlayer.DTO.ModuleSession;
 using NUnit.Framework;
 
 namespace GamificationPlayer.Tests

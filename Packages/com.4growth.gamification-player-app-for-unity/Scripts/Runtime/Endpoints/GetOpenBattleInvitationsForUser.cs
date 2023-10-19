@@ -69,7 +69,7 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        obj = webRequest.downloadHandler.text.FromJson<GetOpenBattleInvitationsForUserDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<GetOpenBattleInvitationsForUserDTO>(false);
                         var dummy = new TotalOpenBattleInvitationForUserDTO
                         {
                             total = obj.data.Count()

@@ -16,7 +16,7 @@ namespace GamificationPlayer
             return newJSON;
         }
 
-        public static TType FromJson<TType>(this string json)
+        public static TType FromJson<TType>(this string json, bool changeEmptyArrayToObject = true)
         {
             var newJSON = json.Replace("\"user_is_demo\":null,", "\"user_is_demo\":false,");
 
@@ -24,7 +24,10 @@ namespace GamificationPlayer
             
             newJSON = newJSON.Replace("null", "\"\"");
 
-            newJSON = newJSON.Replace("[]", "{}");
+            if(changeEmptyArrayToObject)
+            {
+                newJSON = newJSON.Replace("[]", "{}");
+            }
 
             var obj = JsonConvert.DeserializeObject<TType>(newJSON);
 

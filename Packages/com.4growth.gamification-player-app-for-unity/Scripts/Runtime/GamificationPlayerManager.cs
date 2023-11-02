@@ -215,6 +215,11 @@ namespace GamificationPlayer
             instance.GStartDeviceFlow(onStart);
         }
 
+        /// <summary>
+        /// Determines whether the device flow is currently active.
+        /// Device flow is being used when the user is logging via a QR code.
+        /// </summary>
+        /// <returns>true if the device flow is active; otherwise, false.</returns>
         public static bool IsDeviceFlowActive()
         {
             return instance.isDeviceFlowActive;
@@ -222,6 +227,7 @@ namespace GamificationPlayer
 
         /// <summary>
         /// Stops the device flow
+        /// Device flow is being used when the user is logging via a QR code.
         /// </summary>
         public static void StopDeviceFlow()
         {
@@ -230,6 +236,11 @@ namespace GamificationPlayer
 
         /// <summary>
         /// Processes an external message in JSON format.
+        /// This method is used to process messages from a vuplex webview.
+        /// The message is expected to be in the following format:
+        /// {
+        ///    "data": { "type": "string" }
+        /// }
         /// </summary>
         /// <param name="jsonMessage">The JSON message to be processed.</param>
         public static void ProcessExternalMessage(string jsonMessage)
@@ -258,18 +269,30 @@ namespace GamificationPlayer
             return instance.GTryGetLatestData<TQueryable>(out value);
         }
 
+        /// <summary>
+        /// Attempts to get the latest data that has been sync with the server.
+        /// </summary>
+        /// <typeparam name="TQueryable"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool TryGetLatestData<TQueryable>(out bool value)
             where TQueryable : Session.IQueryable
         {
             return instance.GTryGetLatestData<TQueryable>(out value);
         }
 
+        /// <summary>
+        /// Listen to when data gets synced with the server.
+        /// </summary>
         public static void ListenToData<TQueryable>(Action<object> callback)
             where TQueryable : Session.IQueryable
         {
             instance.GListenToData<TQueryable>(callback);
         }
 
+        /// <summary>
+        /// Remove the event that listen to when data gets synced with the server.
+        /// </summary>
         public static void RemoveListener(Action<object> callback)
         {
             instance.GRemoveListener(callback);
@@ -303,11 +326,20 @@ namespace GamificationPlayer
             return instance.GTryGetCurrentMicroGamePayload(out microGamePayload);
         }
 
+        /// <summary>
+        /// Attempts to get the latest subdomain.
+        /// </summary>
+        /// <param name="subdomain">The latest subdomain, if it is available.</param>
+        /// <returns>true if the latest subdomain was successfully retrieved; otherwise, false.</returns>
         public static bool TryGetLatestSubdomain(out string subdomain)
         {
             return instance.GTryGetLatestSubdomain(out subdomain);
         }
 
+        /// <summary>
+        /// Attempts to get the latest environment config.
+        /// </summary>
+        /// <param name="environmentConfig">The latest environment config, if it is available.</param>
         public static EnvironmentConfig GetEnvironmentConfig()
         {
             return instance.GGetEnvironmentConfig();

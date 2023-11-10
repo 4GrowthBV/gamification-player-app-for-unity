@@ -25,7 +25,6 @@ namespace GamificationPlayer
 
             public float Time { get; set; }
 
-            [OrganisationId]
             public string id;
             
             public string type;

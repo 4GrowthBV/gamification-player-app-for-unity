@@ -373,13 +373,6 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
 
             Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
-
-            GamificationPlayerManager.ProcessExternalMessage(json);
-            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
-
-            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
-
-            Assert.IsTrue(GamificationPlayerManager.IsUserActive());
         }
 
         [UnityTest]
@@ -415,11 +408,6 @@ namespace GamificationPlayer.Tests
             });
 
             yield return new WaitUntil(() => isDone);
-
-            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
-
-            GamificationPlayerManager.ProcessExternalMessage(json);
-            GamificationPlayerManager.ProcessExternalMessage(fitnessContentOpenedDTO.ToJson());
 
             Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
 

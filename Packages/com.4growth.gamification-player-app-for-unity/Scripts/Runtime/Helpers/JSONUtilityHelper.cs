@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace GamificationPlayer
 {
@@ -22,6 +19,8 @@ namespace GamificationPlayer
 
             newJSON = newJSON.Replace("\"organisation_allow_upgrade_to_registered_user\":null,", "\"organisation_allow_upgrade_to_registered_user\":false,");
             
+            newJSON = newJSON.Replace("\"micro_game_id\":null", "\"micro_game_id\":\"\"");
+
             newJSON = newJSON.Replace("null", "\"\"");
 
             if(changeEmptyArrayToObject)

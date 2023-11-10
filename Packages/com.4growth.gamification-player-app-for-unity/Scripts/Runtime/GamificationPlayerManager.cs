@@ -664,20 +664,6 @@ namespace GamificationPlayer
         private void MicroGameOpened(string jsonMessage)
         {
             var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
-
-            if(sessionData.TryGetLatestModuleSessionId(out Guid latestModuleSessionId))
-            {
-                var isAlreadyStarted = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>()
-                    .Where(m => Guid.Parse(m.attributes.module_session_id) == latestModuleSessionId)
-                    .Count() > 1;
-
-                if(isAlreadyStarted)
-                {
-                    sessionData.AddToLog(dto.data);
-
-                    return;
-                }
-            }
             
             sessionData.AddToLog(dto.data);
 
@@ -686,17 +672,6 @@ namespace GamificationPlayer
             var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>();
 
             sessionData.AddToLog(webTokenPayload);
-
-            var isBattle = webTokenPayload.battle != null && !string.IsNullOrEmpty(webTokenPayload.battle.battle_session_id);
-
-            if(!isBattle)
-            {
-                var moduleSessionStartedData = sessionData.LogData.OfType<ModuleSessionStartedDTO.Data>().Last();
-
-                sessionData.TryGetLatestUserId(out var id);
-
-                sessionData.AddToLog(new ProcessModuleSessionStartedDTOToLoggableData().Process(moduleSessionStartedData));
-            }
 
             InvokeMicroGameOpened(webTokenPayload);          
         }
@@ -801,26 +776,12 @@ namespace GamificationPlayer
                 return;
             }
             
-            var isBattle = currentMicroGamePayload.battle != null && !string.IsNullOrEmpty(currentMicroGamePayload.battle.battle_session_id);
-
-            if(isBattle)
+            StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
             {
-                StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, score, isCompleted, (_) =>
-                {
-                    currentMicroGamePayload = null;
+                currentMicroGamePayload = null;
 
-                    onDone?.Invoke();
-                }));
-            } 
-            else
-            {
-                StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
-                {
-                    currentMicroGamePayload = null;
-
-                    onDone?.Invoke();
-                }));
-            }
+                onDone?.Invoke();
+            }));
         }
 
         private void GStartDeviceFlow(StartDeviceFlowCallback onStart)

@@ -10,34 +10,21 @@ namespace GamificationPlayer
     {
         public IEnumerator CoAppScores(DateTime now, int score, bool isCompleted, AppScoresCallback onReady = null)
         {
-            if(!sessionData.TryGetLatestBattleSessionId(out var battleSessionId))
-            {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
+            sessionData.TryGetLatestModuleSessionId(out var moduleSessionId);
+            sessionData.TryGetLatestBattleSessionId(out var battleSessionId);
+            sessionData.TryGetLatestUserId(out var userId);
+            sessionData.TryGetLatestOrganisationId(out var organisationId);
+            sessionData.TryGetLatestMicroGameIdentifier(out var microGameId);
 
-                yield break;
-            }
-
-            if(!sessionData.TryGetLatestOrganisationId(out var organisationId))
-            {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
-
-                yield break;
-            }
-
-            if(!sessionData.TryGetLatestUserId(out var userid))
-            {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
-
-                yield break;
-            }
-
-            yield return CoAppScores(now, userid, organisationId, battleSessionId, score, isCompleted, onReady);
+            yield return CoAppScores(now, moduleSessionId, battleSessionId, userId, organisationId, microGameId, score, isCompleted, onReady);
         }
         
         private IEnumerator CoAppScores(DateTime now, 
-            Guid userid,
-            Guid organisationId, 
-            Guid battleSessionId, 
+            Guid moduleSessionId,
+            Guid battleSessionId,
+            Guid userId,
+            Guid organisationId,
+            string microGameId,
             int score, 
             bool isCompleted, 
             AppScoresCallback onReady = null)
@@ -48,7 +35,7 @@ namespace GamificationPlayer
                 completedAt = now;
             }
 
-            var moduleSession = new AppScoresRequestDTO(now, now, userid, organisationId, battleSessionId, score, completedAt);
+            var moduleSession = new AppScoresRequestDTO(now, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
             sessionData.AddToLog(moduleSession.data);
 
             string data = moduleSession.ToJson();

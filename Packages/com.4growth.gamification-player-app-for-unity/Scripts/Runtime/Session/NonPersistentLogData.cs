@@ -204,7 +204,7 @@ namespace GamificationPlayer
             else
             {
                 // Otherwise, just update the existing listener.
-                listeners[typeof(T)] += callback;
+                listeners[typeof(T)] = callback;
             }
         }
 

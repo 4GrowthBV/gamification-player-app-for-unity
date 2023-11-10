@@ -12,13 +12,9 @@ namespace GamificationPlayer.Tests
             Guid battleSessionId, 
             bool hasCompleted = true)
         {
-            return new AppScoresRequestDTO(date, 
-                score,
-                Guid.Empty,
+            return AppScoresRequestDTO.GetAppScoresBattleRequest(date, 
+                score, 
                 battleSessionId,
-                Guid.Empty,
-                Guid.Empty,
-                string.Empty,
                 hasCompleted ? date : null);
         }
 
@@ -27,13 +23,9 @@ namespace GamificationPlayer.Tests
             Guid moduleSessionId, 
             bool hasCompleted = true)
         {           
-            return new AppScoresRequestDTO(date, 
-                score,
+            return AppScoresRequestDTO.GetAppScoresModuleRequest(date, 
+                score, 
                 moduleSessionId,
-                Guid.Empty,
-                Guid.Empty,
-                Guid.Empty,
-                string.Empty,
                 hasCompleted ? date : null);
         }
 
@@ -41,13 +33,11 @@ namespace GamificationPlayer.Tests
             int score, 
             Guid userId,
             Guid organisationId,
-            string microGameId, 
+            Guid microGameId, 
             bool hasCompleted = true)
         {
-            return new AppScoresRequestDTO(date, 
-                score,
-                Guid.Empty,
-                Guid.Empty,
+            return AppScoresRequestDTO.GetAppScoresRequest(date, 
+                score, 
                 userId,
                 organisationId,
                 microGameId,
@@ -61,7 +51,7 @@ namespace GamificationPlayer.Tests
             var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var organisationId = Guid.NewGuid();
-            var microGameId = "PUZ72";
+            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
@@ -84,7 +74,7 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
             Assert.AreEqual(organisationId.ToString(), obj.data.attributes.organisation_id);
-            Assert.AreEqual(microGameId, obj.data.attributes.micro_game_id);
+            Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
         }
@@ -96,7 +86,7 @@ namespace GamificationPlayer.Tests
             var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var organisationId = Guid.NewGuid();
-            var microGameId = "PUZ72";
+            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
@@ -119,7 +109,7 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
             Assert.AreEqual(organisationId.ToString(), obj.data.attributes.organisation_id);
-            Assert.AreEqual(microGameId, obj.data.attributes.micro_game_id);
+            Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
         }
@@ -131,7 +121,7 @@ namespace GamificationPlayer.Tests
             var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var organisationId = Guid.NewGuid();
-            var microGameId = "PUZ72";
+            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
@@ -172,7 +162,7 @@ namespace GamificationPlayer.Tests
             var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var organisationId = Guid.NewGuid();
-            var microGameId = "PUZ72";
+            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 

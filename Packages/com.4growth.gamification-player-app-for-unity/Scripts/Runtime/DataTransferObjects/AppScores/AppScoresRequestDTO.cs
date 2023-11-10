@@ -49,7 +49,7 @@ namespace GamificationPlayer.DTO.AppScores
                 Guid battleSessionId,
                 Guid userId,
                 Guid organisationId,
-                string microGameId,
+                Guid microGameId,
                 DateTime? completedAt)
             {
                 this.ended_at = endedAt.ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -60,7 +60,8 @@ namespace GamificationPlayer.DTO.AppScores
                 this.battle_session_id = battleSessionId == Guid.Empty ? string.Empty : battleSessionId.ToString();
                 this.user_id = userId == Guid.Empty ? string.Empty : userId.ToString();
                 this.organisation_id = organisationId == Guid.Empty ? string.Empty : organisationId.ToString();
-                this.micro_game_id = microGameId.ToString();                
+                this.micro_game_id = microGameId == Guid.Empty ? string.Empty : microGameId.ToString();     
+
                 this.completed_at = ended_at == null ? string.Empty : completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
                 Valid();
@@ -105,7 +106,7 @@ namespace GamificationPlayer.DTO.AppScores
                 Guid battleSessionId,
                 Guid userId,
                 Guid organisationId,
-                string microGameId,
+                Guid microGameId,
                 DateTime? completedAt)
             {
                 attributes = new Attributes(endedAt, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
@@ -120,10 +121,36 @@ namespace GamificationPlayer.DTO.AppScores
             Guid battleSessionId,
             Guid userId,
             Guid organisationId,
-            string microGameId,
+            Guid microGameId,
             DateTime? completedAt)
         {
             data = new Data(endedAt, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
+        }
+
+        public static AppScoresRequestDTO GetAppScoresBattleRequest(DateTime endedAt, 
+            int score, 
+            Guid battelSessionId,
+            DateTime? completedAt)
+        {
+            return new AppScoresRequestDTO(endedAt, score, Guid.Empty, battelSessionId, Guid.Empty, Guid.Empty, Guid.Empty, completedAt);
+        }
+
+        public static AppScoresRequestDTO GetAppScoresModuleRequest(DateTime endedAt, 
+            int score, 
+            Guid moduleSessionId,
+            DateTime? completedAt)
+        {
+            return new AppScoresRequestDTO(endedAt, score, moduleSessionId, Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty, completedAt);
+        }
+
+        public static AppScoresRequestDTO GetAppScoresRequest(DateTime endedAt, 
+            int score, 
+            Guid userId,
+            Guid organisationId,
+            Guid microGameId,
+            DateTime? completedAt)
+        {
+            return new AppScoresRequestDTO(endedAt, score, Guid.Empty, Guid.Empty, userId, organisationId, microGameId, completedAt);
         }
     }
 }

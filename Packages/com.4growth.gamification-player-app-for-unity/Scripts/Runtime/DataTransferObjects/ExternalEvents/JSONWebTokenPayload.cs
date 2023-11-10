@@ -40,6 +40,15 @@ namespace GamificationPlayer.DTO.ExternalEvents
         }
 
         [Serializable]
+        public class Battle
+        {
+            public string battle_id;
+
+            [BattleSessionId]
+            public string battle_session_id;
+        }
+
+        [Serializable]
         public class MicroGame
         {
             [Serializable]
@@ -83,16 +92,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public int current_bonus;
 
             public int current_total;
-        }
-
-        [Serializable]
-        public class Battle
-        {
-            public string battle_id;
-
-            [BattleSessionId]
-            public string battle_session_id;
-        }
+        }        
 
         public Player player;
         public Session session;

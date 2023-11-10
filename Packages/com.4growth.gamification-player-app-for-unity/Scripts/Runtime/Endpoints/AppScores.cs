@@ -10,35 +10,36 @@ namespace GamificationPlayer
     {
         public IEnumerator CoAppScores(DateTime now, int score, bool isCompleted, AppScoresCallback onReady = null)
         {
-            sessionData.TryGetLatestModuleSessionId(out var moduleSessionId);
-            sessionData.TryGetLatestBattleSessionId(out var battleSessionId);
-            sessionData.TryGetLatestUserId(out var userId);
-            sessionData.TryGetLatestOrganisationId(out var organisationId);
-            sessionData.TryGetLatestMicroGameIdentifier(out var microGameId);
-
-            yield return CoAppScores(now, moduleSessionId, battleSessionId, userId, organisationId, microGameId, score, isCompleted, onReady);
-        }
-        
-        private IEnumerator CoAppScores(DateTime now, 
-            Guid moduleSessionId,
-            Guid battleSessionId,
-            Guid userId,
-            Guid organisationId,
-            string microGameId,
-            int score, 
-            bool isCompleted, 
-            AppScoresCallback onReady = null)
-        {
+            AppScoresRequestDTO appScoresRequestDTO;
             DateTime? completedAt = null;
             if(isCompleted)
             {
                 completedAt = now;
             }
 
-            var moduleSession = new AppScoresRequestDTO(now, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
-            sessionData.AddToLog(moduleSession.data);
+            if(sessionData.TryGetLatestModuleSessionId(out var moduleSessionId))
+            {
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(now, score, moduleSessionId, completedAt);
+            } 
+            else if(sessionData.TryGetLatestBattleSessionId(out var battleSessionId))
+            {
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(now, score, battleSessionId, completedAt);
+            } else
+            {
+                sessionData.TryGetLatestUserId(out var userId);
+                sessionData.TryGetLatestOrganisationId(out var organisationId);
+                var micro_game_id = Guid.Empty;
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresRequest(now, score, userId, organisationId, micro_game_id, completedAt);
+            }            
 
-            string data = moduleSession.ToJson();
+            yield return CoAppScores(appScoresRequestDTO, onReady);
+        }
+        
+        private IEnumerator CoAppScores(AppScoresRequestDTO appScoresRequestDTO, AppScoresCallback onReady = null)
+        {
+            sessionData.AddToLog(appScoresRequestDTO.data);
+
+            string data = appScoresRequestDTO.ToJson();
 
             string webRequestString = string.Format("{0}/app-scores", environmentConfig.API_URL);
 

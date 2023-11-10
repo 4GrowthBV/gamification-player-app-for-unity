@@ -18,6 +18,18 @@ namespace GamificationPlayer.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestAppScores()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+            var dateTime = DateTime.Now;
+
+            return gamificationPlayerEndpoints.CoAppScores(dateTime, 888, true, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        [UnityTest]
         public IEnumerator TestAnnounceDeviceFlow()
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());

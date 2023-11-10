@@ -3,19 +3,19 @@ using GamificationPlayer.Session;
 
 namespace GamificationPlayer
 {
-    public class GetUserResponseDTO
+    public class GetUserStatisticsDTO
     {
         [Serializable]
         public class Attributes
         {
-            [UserName]
-            public string name;
+            [UserScore]
+            public int score;
 
-            [UserEmail]
-            public string email;
+            [UserBonusScore]
+            public int bonus_score;
 
-            [UserAvatar]
-            public string avatar;
+            [UserBattleScore]
+            public int battle_score;
         }
 
         [Serializable]
@@ -25,7 +25,7 @@ namespace GamificationPlayer
 
             public float Time { get; set; }
 
-            [OrganisationId]
+            [UserId]
             public string id;
             
             public string type;
@@ -39,7 +39,7 @@ namespace GamificationPlayer
 
         public Data data;
 
-        public GetUserResponseDTO()
+        public GetUserStatisticsDTO()
         {
             data = new Data();
         }

@@ -11,6 +11,8 @@ namespace GamificationPlayer
 
     public delegate void GetOrganisationCallback(UnityWebRequest.Result result, GetOrganisationResponseDTO dto);
 
+    public delegate void GetUserStatisticsCallback(UnityWebRequest.Result result);
+
     public delegate void EndModuleSessionCallback(UnityWebRequest.Result result);
 
     public delegate void AppScoresCallback(UnityWebRequest.Result result);

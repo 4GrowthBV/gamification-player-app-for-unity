@@ -355,6 +355,11 @@ namespace GamificationPlayer
         [SerializeField]
         private string absoluteURLTest = string.Empty;
 
+        [SerializeField]
+        private float refreshDataEveryXSeconds = 60f;
+
+        private float refreshDataTimer = 0f;
+
         protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
         protected SessionLogData sessionData;
@@ -717,7 +722,6 @@ namespace GamificationPlayer
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());
 
-                //Different check for this??
                 StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
             }
 
@@ -726,10 +730,40 @@ namespace GamificationPlayer
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUser());
             }
-            
+
+            if(!sessionData.TryGetLatest<UserScore>(out int _) && 
+                GHaveUserCredentials())
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUserStatistics());
+            }
+        }
+
+        private void Update()
+        {
+            refreshDataTimer+= Time.deltaTime;
+
+            if(refreshDataTimer > refreshDataEveryXSeconds)
+            {
+                refreshDataTimer = 0f;
+
+                RefreshData();
+            }
+        }
+
+        private void RefreshData()
+        {
+            if(sessionData.TryGetLatestOrganisationId(out _))
+            {
+                StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
+            }
+
             if(GHaveUserCredentials())
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOpenBattleInvitationsForUser());
+
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUser());
+
+                StartCoroutine(gamificationPlayerEndpoints.CoGetUserStatistics());
             }
         }
 

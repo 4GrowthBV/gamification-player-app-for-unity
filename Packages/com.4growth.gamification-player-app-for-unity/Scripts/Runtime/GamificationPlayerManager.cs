@@ -282,6 +282,18 @@ namespace GamificationPlayer
         }
 
         /// <summary>
+        /// Attempts to get the latest data that has been sync with the server.
+        /// </summary>
+        /// <typeparam name="TQueryable"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool TryGetLatestData<TQueryable>(out int value)
+            where TQueryable : Session.IQueryable
+        {
+            return instance.GTryGetLatestData<TQueryable>(out value);
+        }
+
+        /// <summary>
         /// Listen to when data gets synced with the server.
         /// </summary>
         public static void ListenToData<TQueryable>(Action<object> callback)

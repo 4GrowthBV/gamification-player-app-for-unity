@@ -822,7 +822,7 @@ namespace GamificationPlayer
                 return;
             }
             
-            StartCoroutine(gamificationPlayerEndpoints.CoEndModuleSession(now, score, isCompleted, (_) =>
+            StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, score, isCompleted, (_) =>
             {
                 currentMicroGamePayload = null;
 

@@ -17,11 +17,14 @@ namespace GamificationPlayer
                 completedAt = now;
             }
 
-            if(sessionData.TryGetLatestModuleSessionId(out var moduleSessionId))
+            sessionData.TryGetLatestModuleSessionId(out var moduleSessionId);
+            sessionData.TryGetLatestBattleSessionId(out var battleSessionId);
+
+            if(moduleSessionId != null && moduleSessionId != Guid.Empty)
             {
                 appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(now, score, moduleSessionId, completedAt);
             } 
-            else if(sessionData.TryGetLatestBattleSessionId(out var battleSessionId))
+            else if(battleSessionId != null && battleSessionId != Guid.Empty)
             {
                 appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(now, score, battleSessionId, completedAt);
             } else

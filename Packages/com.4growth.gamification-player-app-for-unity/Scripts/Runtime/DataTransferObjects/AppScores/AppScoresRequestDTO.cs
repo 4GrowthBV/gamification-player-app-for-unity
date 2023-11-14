@@ -174,11 +174,10 @@ namespace GamificationPlayer.DTO.AppScores
             DateTime endedAt, 
             int score, 
             Guid userId,
-            Guid organisationId,
             Guid battelSessionId,
             DateTime? completedAt)
         {
-            return new AppScoresRequestDTO(startedAt, endedAt, score, Guid.Empty, battelSessionId, userId, organisationId, Guid.Empty, completedAt);
+            return new AppScoresRequestDTO(startedAt, endedAt, score, Guid.Empty, battelSessionId, userId, Guid.Empty, Guid.Empty, completedAt);
         }
 
         public static AppScoresRequestDTO GetAppScoresModuleRequest(DateTime startedAt,

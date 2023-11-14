@@ -18,7 +18,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, date);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
@@ -53,7 +53,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, null);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, null);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
@@ -88,7 +88,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, date);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date);
 
             var json = obj.ToJson();
 
@@ -129,7 +129,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, null);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, null);
 
             var json = obj.ToJson();
 

@@ -31,7 +31,7 @@ namespace GamificationPlayer
             } 
             else if(battleSessionId != null && battleSessionId != Guid.Empty)
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresBattleRequest(started, now, score, userId, organisationId, battleSessionId, completedAt);
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresBattleRequest(started, now, score, userId, battleSessionId, completedAt);
             } else
             {
                 appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresRequest(started, now, score, userId, organisationId, microGameId, completedAt);

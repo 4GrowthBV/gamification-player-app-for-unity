@@ -7,43 +7,6 @@ namespace GamificationPlayer.Tests
 {
     public class AppScoresRequestDTOTest
     {
-        private AppScoresRequestDTO GetAppScoresRequestBattleDTO(DateTime date, 
-            int score, 
-            Guid battleSessionId, 
-            bool hasCompleted = true)
-        {
-            return AppScoresRequestDTO.GetAppScoresBattleRequest(date, 
-                score, 
-                battleSessionId,
-                hasCompleted ? date : null);
-        }
-
-        private AppScoresRequestDTO GetAppScoresRequestModuleDTO(DateTime date, 
-            int score, 
-            Guid moduleSessionId, 
-            bool hasCompleted = true)
-        {           
-            return AppScoresRequestDTO.GetAppScoresModuleRequest(date, 
-                score, 
-                moduleSessionId,
-                hasCompleted ? date : null);
-        }
-
-        private AppScoresRequestDTO GetAppScoresRequestMicroGameDTO(DateTime date, 
-            int score, 
-            Guid userId,
-            Guid organisationId,
-            Guid microGameId, 
-            bool hasCompleted = true)
-        {
-            return AppScoresRequestDTO.GetAppScoresRequest(date, 
-                score, 
-                userId,
-                organisationId,
-                microGameId,
-                hasCompleted ? date : null);
-        }
-
         [Test]
         public void TestConstructor()
         {
@@ -55,21 +18,21 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = GetAppScoresRequestBattleDTO(date, score, battleSessionId);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, date);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
 
-            obj = GetAppScoresRequestModuleDTO(date, score, moduleSessionId);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
 
-            obj = GetAppScoresRequestMicroGameDTO(date, score, userId, organisationId, microGameId);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
@@ -90,21 +53,21 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = GetAppScoresRequestBattleDTO(date, score, battleSessionId, false);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, null);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
 
-            obj = GetAppScoresRequestModuleDTO(date, score, moduleSessionId, false);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, null);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
 
-            obj = GetAppScoresRequestMicroGameDTO(date, score, userId, organisationId, microGameId, false);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, null);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
@@ -125,7 +88,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = GetAppScoresRequestBattleDTO(date, score, battleSessionId);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, date);
 
             var json = obj.ToJson();
 
@@ -134,7 +97,7 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.attributes.ended_at));
             Assert.That(json.Contains(obj.data.attributes.battle_session_id));
 
-            obj = GetAppScoresRequestModuleDTO(date, score, moduleSessionId);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date);
 
             json = obj.ToJson();
 
@@ -143,7 +106,7 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.attributes.ended_at));
             Assert.That(json.Contains(obj.data.attributes.module_session_id));
 
-            obj = GetAppScoresRequestMicroGameDTO(date, score, userId, organisationId, microGameId);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date);
 
             json = obj.ToJson();
 
@@ -166,7 +129,7 @@ namespace GamificationPlayer.Tests
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = GetAppScoresRequestBattleDTO(date, score, battleSessionId, false);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, organisationId, battleSessionId, null);
 
             var json = obj.ToJson();
 
@@ -176,7 +139,7 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.attributes.battle_session_id));
             Assert.That(json.Contains("null"));
 
-            obj = GetAppScoresRequestModuleDTO(date, score, moduleSessionId, false);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, null);
 
             json = obj.ToJson();
 
@@ -186,7 +149,7 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.attributes.module_session_id));
             Assert.That(json.Contains("null"));
 
-            obj = GetAppScoresRequestMicroGameDTO(date, score, userId, organisationId, microGameId, false);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, null);
 
             json = obj.ToJson();
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GamificationPlayer.DTO.AppScores;
+using GamificationPlayer.Session;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -8,7 +9,7 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoAppScores(DateTime now, int score, bool isCompleted, AppScoresCallback onReady = null)
+        public IEnumerator CoAppScores(DateTime started, DateTime now, int score, bool isCompleted, AppScoresCallback onReady = null)
         {
             AppScoresRequestDTO appScoresRequestDTO;
             DateTime? completedAt = null;
@@ -20,19 +21,20 @@ namespace GamificationPlayer
             sessionData.TryGetLatestModuleSessionId(out var moduleSessionId);
             sessionData.TryGetLatestBattleSessionId(out var battleSessionId);
 
+            sessionData.TryGetLatestUserId(out var userId);
+            sessionData.TryGetLatestOrganisationId(out var organisationId);
+            sessionData.TryGetLatestMicroGameId(out var microGameId);
+
             if(moduleSessionId != null && moduleSessionId != Guid.Empty)
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(now, score, moduleSessionId, completedAt);
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(started, now, score, moduleSessionId, completedAt);
             } 
             else if(battleSessionId != null && battleSessionId != Guid.Empty)
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresBattleRequest(now, score, battleSessionId, completedAt);
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresBattleRequest(started, now, score, userId, organisationId, battleSessionId, completedAt);
             } else
             {
-                sessionData.TryGetLatestUserId(out var userId);
-                sessionData.TryGetLatestOrganisationId(out var organisationId);
-                var micro_game_id = Guid.Empty;
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresRequest(now, score, userId, organisationId, micro_game_id, completedAt);
+                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresRequest(started, now, score, userId, organisationId, microGameId, completedAt);
             }            
 
             yield return CoAppScores(appScoresRequestDTO, onReady);

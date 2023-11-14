@@ -23,7 +23,7 @@ namespace GamificationPlayer.Tests
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
             var dateTime = DateTime.Now;
 
-            return gamificationPlayerEndpoints.CoAppScores(dateTime, 888, true, (result) =>
+            return gamificationPlayerEndpoints.CoAppScores(dateTime, dateTime, 888, true, (result) =>
             {
                 Assert.That(result == UnityWebRequest.Result.Success);
             });

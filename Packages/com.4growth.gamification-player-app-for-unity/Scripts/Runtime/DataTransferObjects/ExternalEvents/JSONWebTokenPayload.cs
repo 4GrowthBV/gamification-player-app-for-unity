@@ -65,6 +65,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
                 public int one;
             }
 
+            [MicroGameId]
+            public string id;
+
             public string name;
 
             [MicroGameIdentifier]

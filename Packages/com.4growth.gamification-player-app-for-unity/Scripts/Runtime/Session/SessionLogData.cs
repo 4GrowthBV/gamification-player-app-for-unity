@@ -262,5 +262,10 @@ namespace GamificationPlayer
         {
             sessionLogData.RemoveListener(callback);
         }
+
+        public bool TryGetLatestMicroGameId(out Guid id)
+        {
+            return TryGetLatestId<MicroGameId>(out id);
+        }
     }
 }

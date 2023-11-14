@@ -384,6 +384,8 @@ namespace GamificationPlayer
 
         private MicroGamePayload currentMicroGamePayload;
 
+        private DateTime latestStartedGame;
+
         public void Awake()
         {
             if(instance != null)
@@ -690,7 +692,9 @@ namespace GamificationPlayer
 
             sessionData.AddToLog(webTokenPayload);
 
-            InvokeMicroGameOpened(webTokenPayload);          
+            InvokeMicroGameOpened(webTokenPayload);    
+
+            GTryGetServerTime(out latestStartedGame);
         }
 
         private void PageView(string jsonMessage)
@@ -822,7 +826,7 @@ namespace GamificationPlayer
                 return;
             }
             
-            StartCoroutine(gamificationPlayerEndpoints.CoAppScores(now, score, isCompleted, (_) =>
+            StartCoroutine(gamificationPlayerEndpoints.CoAppScores(latestStartedGame, now, score, isCompleted, (_) =>
             {
                 currentMicroGamePayload = null;
 

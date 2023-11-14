@@ -39,6 +39,8 @@ namespace GamificationPlayer
 
         public bool TryGetLatestOrganisationId(out Guid id);
 
+        public bool TryGetLatestMicroGameId(out Guid id);
+
         public bool TryGetLatestUserId(out Guid id);
 
         public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true);

@@ -153,5 +153,12 @@ namespace GamificationPlayer.Tests
         {
             
         }
+
+        public bool TryGetLatestMicroGameId(out Guid id)
+        {
+            id = Guid.NewGuid();
+
+            return true;
+        }
     }
 }

@@ -754,6 +754,7 @@ namespace GamificationPlayer
             }
         }
 
+#if !UNITY_WEBGL
         private void Update()
         {
             refreshDataTimer+= Time.deltaTime;
@@ -765,6 +766,7 @@ namespace GamificationPlayer
                 RefreshData();
             }
         }
+#endif
 
         private void RefreshData()
         {

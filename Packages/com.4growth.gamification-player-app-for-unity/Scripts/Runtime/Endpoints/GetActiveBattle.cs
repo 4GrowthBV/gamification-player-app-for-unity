@@ -50,6 +50,16 @@ namespace GamificationPlayer
                         Debug.LogError(": Error: " + webRequest.error);
                         break;
                     case UnityWebRequest.Result.ProtocolError:
+                        
+                        //check if error is 404
+                        if(webRequest.responseCode == 404)
+                        {
+                            // When there is no active battle, we return a 404
+                            // this is not an error, so we return success
+                            onReady?.Invoke(UnityWebRequest.Result.Success);
+                            yield break;
+                        }
+                        
                         Debug.LogError(": HTTP Error: " + webRequest.error);
                         if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                         break;

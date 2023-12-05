@@ -37,8 +37,26 @@ namespace GamificationPlayer.DTO.ExternalEvents
             [UserIsDemo]
             public bool user_is_demo;
 
+            [UserAvatar]
+            public bool user_avatar;
+
             [Language]
             public string language;
+
+            [UserScore]
+            public int user_score;
+
+            [UserBonusScore]
+            public int user_score_bonus;
+
+            [UserBattleScore]
+            public int user_score_battle;
+
+            [OrganisationBattleActive]
+            public bool organisation_battle_active;
+
+            [TotalOpenBattleInvitationForUser]
+            public int user_battle_invitations;
         }
 
         public Data data;

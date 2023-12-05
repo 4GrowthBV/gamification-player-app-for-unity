@@ -25,6 +25,12 @@ namespace GamificationPlayer.DTO.ExternalEvents
             [UserId]
             public string user_id;
 
+            [UserAvatar]
+            public bool user_avatar;
+
+            [UserName]
+            public string user_name;
+
             [Language]
             public string language;
         }

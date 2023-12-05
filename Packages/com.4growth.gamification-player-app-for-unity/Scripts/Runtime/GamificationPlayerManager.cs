@@ -127,7 +127,18 @@ namespace GamificationPlayer
 
         private static GamificationPlayerManager instance;
 
-        public static bool IsInitialized { get { return instance.isInitialized; } }
+        public static bool IsInitialized 
+        { 
+            get 
+            { 
+                if(instance == null)
+                {
+                    return false;
+                }
+                
+                return instance.isInitialized; 
+            } 
+        }
         
         /// <summary>
         /// Clears the non-persistence database and configures the class to use the mock server settings and mock requests for the mock server (GET requests instead of PATCH requests).

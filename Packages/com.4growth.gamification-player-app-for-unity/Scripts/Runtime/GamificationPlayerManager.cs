@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using UnityEngine;
@@ -378,11 +377,6 @@ namespace GamificationPlayer
         [SerializeField]
         private string absoluteURLTest = string.Empty;
 
-        [SerializeField]
-        private float refreshDataEveryXSeconds = 60f;
-
-        private float refreshDataTimer = 0f;
-
         protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
         protected SessionLogData sessionData;
@@ -492,32 +486,24 @@ namespace GamificationPlayer
             {
                 var isGetLoginToken = false;
                 var isGetOrganisation = false;
-                var isGetActiveBattle = false;
                 var isGetUser = false;
                 StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken((_, __) => { 
                     isGetLoginToken = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
+                    if(isGetLoginToken && isGetOrganisation && isGetUser)
                     {
                         isInitialized = true;
                     }
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation((_, __) => { 
                     isGetOrganisation = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
+                    if(isGetLoginToken && isGetOrganisation && isGetUser)
                     {
                         isInitialized = true;
                     }
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUser((_, __) => { 
                     isGetUser = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
-                    {
-                        isInitialized = true;
-                    }
-                }));
-                StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle((_) => { 
-                    isGetActiveBattle = true; 
-                    if(isGetLoginToken && isGetOrganisation && isGetActiveBattle && isGetUser)
+                    if(isGetLoginToken && isGetOrganisation && isGetUser)
                     {
                         isInitialized = true;
                     }
@@ -761,37 +747,6 @@ namespace GamificationPlayer
             if(!sessionData.TryGetLatest<UserScore>(out int _) && 
                 GHaveUserCredentials())
             {
-                StartCoroutine(gamificationPlayerEndpoints.CoGetUserStatistics());
-            }
-        }
-
-#if !UNITY_WEBGL
-        private void Update()
-        {
-            refreshDataTimer+= Time.deltaTime;
-
-            if(refreshDataTimer > refreshDataEveryXSeconds)
-            {
-                refreshDataTimer = 0f;
-
-                RefreshData();
-            }
-        }
-#endif
-
-        private void RefreshData()
-        {
-            if(sessionData.TryGetLatestOrganisationId(out _))
-            {
-                StartCoroutine(gamificationPlayerEndpoints.CoGetActiveBattle()); 
-            }
-
-            if(GHaveUserCredentials())
-            {
-                StartCoroutine(gamificationPlayerEndpoints.CoGetOpenBattleInvitationsForUser());
-
-                StartCoroutine(gamificationPlayerEndpoints.CoGetUser());
-
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUserStatistics());
             }
         }

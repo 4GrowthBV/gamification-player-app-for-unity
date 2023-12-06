@@ -33,24 +33,30 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public bool organisation_allow_upgrade_to_registered_user;
 
             [UserId]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string user_id;
 
             [UserIsDemo]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public bool user_is_demo;
 
             [UserAvatar]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string user_avatar;
 
             [Language]
             public string language;
 
             [UserScore]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_score;
 
             [UserBonusScore]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_score_bonus;
 
             [UserBattleScore]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_score_battle;
 
             [OrganisationBattleActive]

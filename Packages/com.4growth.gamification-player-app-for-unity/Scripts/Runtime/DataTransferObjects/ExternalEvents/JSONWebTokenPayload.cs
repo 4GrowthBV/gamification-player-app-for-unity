@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GamificationPlayer.Session;
+using Newtonsoft.Json;
 
 namespace GamificationPlayer.DTO.ExternalEvents
 {
@@ -23,9 +24,11 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public string organisation_id;
 
             [UserId]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string user_id;
 
             [UserAvatar]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public bool user_avatar;
 
             [UserName]

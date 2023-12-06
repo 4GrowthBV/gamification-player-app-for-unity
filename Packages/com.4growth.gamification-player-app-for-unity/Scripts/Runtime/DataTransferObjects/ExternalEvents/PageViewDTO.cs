@@ -1,6 +1,7 @@
 using System;
 using GamificationPlayer.DTO.AnnounceDeviceFlow;
 using GamificationPlayer.Session;
+using Newtonsoft.Json;
 
 namespace GamificationPlayer.DTO.ExternalEvents
 {
@@ -56,6 +57,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public bool organisation_battle_active;
 
             [TotalOpenBattleInvitationForUser]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_battle_invitations;
         }
 

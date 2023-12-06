@@ -29,7 +29,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             [UserAvatar]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public bool user_avatar;
+            public string user_avatar;
 
             [UserName]
             public string user_name;

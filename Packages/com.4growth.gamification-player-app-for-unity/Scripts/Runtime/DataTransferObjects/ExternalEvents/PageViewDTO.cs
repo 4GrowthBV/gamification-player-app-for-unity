@@ -38,7 +38,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public bool user_is_demo;
 
             [UserAvatar]
-            public bool user_avatar;
+            public string user_avatar;
 
             [Language]
             public string language;

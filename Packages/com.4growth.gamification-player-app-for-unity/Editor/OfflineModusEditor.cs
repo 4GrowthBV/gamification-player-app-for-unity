@@ -80,7 +80,7 @@ namespace GamificationPlayer.Editor
         // Method to execute the shell script
         public static void RunShellScript(string url = "https://csm.learnstrike.app/anonymous")
         {
-            var arguments = $"--mirror --directory-prefix=Assets --exclude-directories=profile --content-disposition --page-requisites --convert-links --adjust-extension --compression=auto --reject-regex \"/search|/rss\" --no-if-modified-since --no-check-certificate --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36 learnstrike-mobile-app\" {url}";
+            var arguments = $"--mirror --directory-prefix=Assets/StreamingAssets --exclude-directories=profile --content-disposition --page-requisites --convert-links --adjust-extension --compression=auto --reject-regex \"/search|/rss\" --no-if-modified-since --no-check-certificate --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36 learnstrike-mobile-app\" {url}";
             
             var processInfo = new System.Diagnostics.ProcessStartInfo
             {

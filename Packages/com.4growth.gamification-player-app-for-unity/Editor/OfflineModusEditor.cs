@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 namespace GamificationPlayer.Editor
@@ -35,16 +36,11 @@ namespace GamificationPlayer.Editor
             // Replace 'YourScriptClass' with the actual class name of your editor script
             MonoScript monoScript = MonoScript.FromScriptableObject(CreateInstance<OfflineModusEditor>());
             string scriptPath = AssetDatabase.GetAssetPath(monoScript);
-            // Trimming the path to get the root folder of the package
-            string packageRootPath = System.IO.Path.GetDirectoryName(scriptPath);
-            // Additional trimming may be required based on your folder structure
 
-            // remove folder Editor from path
-            packageRootPath = packageRootPath.Replace("Editor", "");
+            var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(scriptPath);
+            var absolutePath = packageInfo.resolvedPath;
 
-            packageRootPath.Replace("\\", "/");
-
-            return packageRootPath;
+            return absolutePath;
         }
 
         private void OnGUI()
@@ -102,7 +98,7 @@ namespace GamificationPlayer.Editor
 
             var processInfo = new System.Diagnostics.ProcessStartInfo
             {
-                FileName = path + "Tools/wget.exe",
+                FileName = path + "/Tools/wget.exe",
                 Arguments = arguments,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,

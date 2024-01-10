@@ -30,6 +30,23 @@ namespace GamificationPlayer.Editor
             GetWindow<OfflineModusEditor>("Offline Modus");
         }
 
+        private string GetPackageRootPath()
+        {
+            // Replace 'YourScriptClass' with the actual class name of your editor script
+            MonoScript monoScript = MonoScript.FromScriptableObject(CreateInstance<OfflineModusEditor>());
+            string scriptPath = AssetDatabase.GetAssetPath(monoScript);
+            // Trimming the path to get the root folder of the package
+            string packageRootPath = System.IO.Path.GetDirectoryName(scriptPath);
+            // Additional trimming may be required based on your folder structure
+
+            // remove folder Editor from path
+            packageRootPath = packageRootPath.Replace("Editor", "");
+
+            packageRootPath.Replace("\\", "/");
+
+            return packageRootPath;
+        }
+
         private void OnGUI()
         {
             var sessionData = new SessionLogData();
@@ -78,13 +95,14 @@ namespace GamificationPlayer.Editor
         }
 
         // Method to execute the shell script
-        public static void RunShellScript(string url = "https://csm.learnstrike.app/anonymous")
+        public void RunShellScript(string url = "https://csm.learnstrike.app/anonymous")
         {
             var arguments = $"--mirror --directory-prefix=Assets/StreamingAssets --exclude-directories=profile --content-disposition --page-requisites --convert-links --adjust-extension --compression=auto --reject-regex \"/search|/rss\" --no-if-modified-since --no-check-certificate --user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36 learnstrike-mobile-app\" {url}";
-            
+            var path = GetPackageRootPath();
+
             var processInfo = new System.Diagnostics.ProcessStartInfo
             {
-                FileName = "Packages/com.4growth.gamification-player-app-for-unity/Tools/wget.exe",
+                FileName = path + "Tools/wget.exe",
                 Arguments = arguments,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,

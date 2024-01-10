@@ -1,0 +1,18 @@
+{
+    "name": "com.4growth.gamification-player-app-for-unity.Editor",
+    "rootNamespace": "GamificationPlayer.Editor",
+    "references": [
+        "GUID:72f9de2e4474d5a45b650c9cd4f3944c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

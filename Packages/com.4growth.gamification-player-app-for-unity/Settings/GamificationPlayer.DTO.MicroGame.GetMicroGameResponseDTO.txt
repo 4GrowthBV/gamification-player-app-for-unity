@@ -1,0 +1,20 @@
+{
+  "data": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "type": "micro_game",
+    "attributes": {
+      "name": "string",
+      "description": "string",
+      "identifier": "string",
+      "star_thresholds": [
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "web_gl_location": "string",
+      "extra_data": {}
+    }
+  }
+}

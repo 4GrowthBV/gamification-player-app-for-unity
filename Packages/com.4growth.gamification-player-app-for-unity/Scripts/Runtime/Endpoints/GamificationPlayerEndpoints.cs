@@ -1,4 +1,5 @@
 using System;
+using GamificationPlayer.DTO.MicroGame;
 using UnityEngine.Networking;
 
 namespace GamificationPlayer
@@ -10,6 +11,8 @@ namespace GamificationPlayer
     public delegate void GetModuleSessionIdCallback(UnityWebRequest.Result result, Guid moduleSessionId);
 
     public delegate void GetOrganisationCallback(UnityWebRequest.Result result, GetOrganisationResponseDTO dto);
+
+    public delegate void GetMicroGameCallback(UnityWebRequest.Result result, GetMicroGameResponseDTO dto);
 
     public delegate void GetUserStatisticsCallback(UnityWebRequest.Result result);
 

@@ -17,6 +17,16 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.UseMockServer();
         }
 
+        [Test]
+        public void TestStartMicroGame()
+        {
+            var guid = Guid.NewGuid();
+
+            GamificationPlayerManager.OnMicroGameOpened += (payload) => Assert.AreEqual(payload.micro_game.id, guid.ToString());
+
+            GamificationPlayerManager.StartMicroGame(guid);
+        }
+
         [UnityTest]
         public IEnumerator TestGetServerTime()
         {

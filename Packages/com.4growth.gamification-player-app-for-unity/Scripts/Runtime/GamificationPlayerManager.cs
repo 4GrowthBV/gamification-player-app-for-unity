@@ -367,6 +367,19 @@ namespace GamificationPlayer
             return instance.GGetEnvironmentConfig();
         }
 
+        /// <summary>
+        /// Attempts to start a MicroGame, if successvol it will fires the OnMicroGameOpened event.
+        /// </summary>
+        /// <param name="guid">The identifier of the MicroGame to start.</param>
+        /// <param name="player">The player data to be used for the MicroGame, keep empty if user already logged in</param>
+        /// <param name="environment">The environment data to be used for the MicroGame, keep empty if user already logged in</param>
+        public static void StartMicroGame(Guid guid,
+            MicroGamePayload.Player player = null, 
+            MicroGamePayload.Environment environment = null)
+        {
+            instance.GStartMicroGame(guid, player, environment);
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
@@ -675,6 +688,71 @@ namespace GamificationPlayer
             sessionData.TryGetLatestModuleId(out Guid id);
             
             InvokeModuleStart(id);
+        }
+
+        private void GStartMicroGame(Guid guid, 
+            MicroGamePayload.Player player = null, 
+            MicroGamePayload.Environment environment = null)
+        {
+            StartCoroutine(gamificationPlayerEndpoints.CoGetMicroGame(guid, (result, dto) =>
+            {
+                if(result == UnityWebRequest.Result.Success)
+                {
+                    sessionData.TryGetLatestOrganisationId(out Guid organisationId);
+                    sessionData.TryGetLatestUserId(out Guid userId);
+
+                    sessionData.TryGetLatest<UserAvatar>(out string userAvatar);
+                    sessionData.TryGetLatest<UserName>(out string userName);
+                    sessionData.TryGetLatest<Language>(out string language);
+                    sessionData.TryGetLatest<EnvironmentDomain>(out string environmentDomain);
+                    sessionData.TryGetLatest<EnvironmentType>(out string environmentType);
+
+                    var webTokenPayload = new MicroGamePayload
+                    {
+                        player = player ?? new MicroGamePayload.Player
+                        {
+                            organisation_id = organisationId.ToString(),
+                            user_id = userId.ToString(),
+                            user_avatar = userAvatar,
+                            user_name = userName,
+                            language = language
+                        },
+
+                        session = new MicroGamePayload.Session(),
+
+                        battle = new MicroGamePayload.Battle(),
+
+                        micro_game = new MicroGamePayload.MicroGame
+                        {
+                            name = dto.data.attributes.name,
+                            id = guid.ToString(),
+                            identifier = dto.data.attributes.identifier,
+                            extra_data = dto.data.attributes.extra_data
+                        },
+
+                        module = new MicroGamePayload.Module(),
+
+                        environment = environment ?? new MicroGamePayload.Environment
+                        {
+                            domain = environmentDomain,
+                            type = environmentType
+                        }
+                    };
+
+                    webTokenPayload.micro_game.stars = new MicroGamePayload.MicroGame.Stars
+                    {
+                        one = dto.data.attributes.star_thresholds[0],
+                        two = dto.data.attributes.star_thresholds[1],
+                        three = dto.data.attributes.star_thresholds[2],
+                        four = dto.data.attributes.star_thresholds[3],
+                        five = dto.data.attributes.star_thresholds[4]
+                    };
+
+                    InvokeMicroGameOpened(webTokenPayload);   
+
+                    GTryGetServerTime(out latestStartedGame); 
+                }
+            }));
         }
 
         private void MicroGameOpened(string jsonMessage)

@@ -18,6 +18,20 @@ namespace GamificationPlayer.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestGetMicroGame()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+            var dateTime = DateTime.Now;
+
+            return gamificationPlayerEndpoints.CoGetMicroGame(Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
         public IEnumerator TestAppScores()
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());

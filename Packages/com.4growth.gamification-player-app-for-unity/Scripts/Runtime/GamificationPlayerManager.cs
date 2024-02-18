@@ -694,6 +694,8 @@ namespace GamificationPlayer
             MicroGamePayload.Player player = null, 
             MicroGamePayload.Environment environment = null)
         {
+            //We set the currentMicroGamePayload to NOT null to make sure that the program knows there is a MicroGame active before the server responds
+            currentMicroGamePayload = new MicroGamePayload();
             StartCoroutine(gamificationPlayerEndpoints.CoGetMicroGame(guid, (result, dto) =>
             {
                 if(result == UnityWebRequest.Result.Success)
@@ -751,6 +753,9 @@ namespace GamificationPlayer
                     InvokeMicroGameOpened(webTokenPayload);   
 
                     GTryGetServerTime(out latestStartedGame); 
+                } else
+                {
+                    currentMicroGamePayload = null;
                 }
             }));
         }

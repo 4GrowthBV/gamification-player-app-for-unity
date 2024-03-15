@@ -88,7 +88,7 @@ namespace GamificationPlayer
                         break;
                 }
 
-                var gotoPageUrl = obj != null ? obj.data.links.show : string.Empty;
+                var gotoPageUrl = obj?.data?.links != null ? obj.data.links.show : string.Empty;
                 onReady?.Invoke(webRequest.result, gotoPageUrl);
             }
         }

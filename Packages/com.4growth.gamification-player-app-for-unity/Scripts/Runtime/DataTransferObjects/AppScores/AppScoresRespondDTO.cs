@@ -1,4 +1,5 @@
 using System;
+using GamificationPlayer.Session;
 
 namespace GamificationPlayer.DTO.AppScores
 {
@@ -52,6 +53,13 @@ namespace GamificationPlayer.DTO.AppScores
         }
 
         [Serializable]
+        public class Link
+        {
+            [GotoLinkUrl]
+            public string show;
+        }
+
+        [Serializable]
         public class Data : ILoggableData
         {
             public string Type { get => type; }
@@ -60,6 +68,7 @@ namespace GamificationPlayer.DTO.AppScores
             public string id;
             public string type;
             public Attributes attributes;
+            public Link links;
         }
 
         public Data data;

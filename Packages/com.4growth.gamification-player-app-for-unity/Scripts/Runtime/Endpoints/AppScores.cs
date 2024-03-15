@@ -55,7 +55,7 @@ namespace GamificationPlayer
             if(environmentConfig.TryGetMockDTO<AppScoresRespondDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
-                onReady?.Invoke(UnityWebRequest.Result.Success);
+                onReady?.Invoke(UnityWebRequest.Result.Success, string.Empty);
             }
             else
             {
@@ -66,6 +66,8 @@ namespace GamificationPlayer
                 webRequest.certificateHandler = new ForceAcceptAll();
 
                 yield return webRequest.SendWebRequest();
+
+                AppScoresRespondDTO obj = null;
 
                 switch (webRequest.result)
                 {
@@ -81,12 +83,13 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        var obj = webRequest.downloadHandler.text.FromJson<AppScoresRespondDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<AppScoresRespondDTO>();
                         sessionData.AddToLog(obj.data, false);
                         break;
                 }
 
-                onReady?.Invoke(webRequest.result);
+                var gotoPageUrl = obj != null ? obj.data.links.show : string.Empty;
+                onReady?.Invoke(webRequest.result, gotoPageUrl);
             }
         }
     }

@@ -72,6 +72,7 @@ namespace GamificationPlayer
     /// </summary>
     public delegate void OnQuitEvent();
 
+
     public class GamificationPlayerManager : MonoBehaviour
     {
         /// <summary>
@@ -211,9 +212,9 @@ namespace GamificationPlayer
         /// <param name="score">The score of the module session.</param>
         /// <param name="isCompleted">Indicates whether the module session was completed. The module can be ended without completing if the user ends before the end.</param>
         /// <param name="onDone">An optional callback that will be called when the operation is completed. If the operation is successful, the callback will be called without any arguments. If the operation fails, the callback will be called without any arguments.</param>
-        public static void StopMicroGame(int score, bool isCompleted, Action onDone = null)
+        public static void StopMicroGame(int score, bool isCompleted, AppScoresCallback appScoresCallback = null)
         {
-            instance.GStopMicroGame(score, isCompleted, onDone);
+            instance.GStopMicroGame(score, isCompleted, appScoresCallback);
         }
 
         /// <summary>
@@ -867,7 +868,7 @@ namespace GamificationPlayer
             return sessionData.TryGetLatestModuleId(out id);
         }
 
-        private void GStopMicroGame(int score, bool isCompleted, Action onDone = null)
+        private void GStopMicroGame(int score, bool isCompleted, AppScoresCallback onDone = null)
         {
             GTryGetServerTime(out DateTime now);
 
@@ -877,11 +878,11 @@ namespace GamificationPlayer
                 return;
             }
             
-            StartCoroutine(gamificationPlayerEndpoints.CoAppScores(latestStartedGame, now, score, isCompleted, (_) =>
+            StartCoroutine(gamificationPlayerEndpoints.CoAppScores(latestStartedGame, now, score, isCompleted, (result, gotoLinkUrl) =>
             {
                 currentMicroGamePayload = null;
 
-                onDone?.Invoke();
+                onDone?.Invoke(result, gotoLinkUrl);
             }));
         }
 

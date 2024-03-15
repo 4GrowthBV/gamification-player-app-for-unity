@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GamificationPlayer.Session;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -37,7 +38,7 @@ namespace GamificationPlayer.Tests
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
             var dateTime = DateTime.Now;
 
-            return gamificationPlayerEndpoints.CoAppScores(dateTime, dateTime, 888, true, (result) =>
+            return gamificationPlayerEndpoints.CoAppScores(dateTime, dateTime, 888, true, (result, GotoLinkUrl) =>
             {
                 Assert.That(result == UnityWebRequest.Result.Success);
             });

@@ -373,7 +373,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(GamificationPlayerManager.IsUserActive());
             
             var isDone = false;
-            GamificationPlayerManager.StopMicroGame(777, true, () =>
+            GamificationPlayerManager.StopMicroGame(777, true, (result, GotoLinkUrl) =>
             {
                 isDone = true;
             });
@@ -412,7 +412,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
             
             var isDone = false;
-            GamificationPlayerManager.StopMicroGame(777, true, () =>
+            GamificationPlayerManager.StopMicroGame(777, true, (result, gotoLinkUrl) =>
             {
                 isDone = true;
             });
@@ -473,7 +473,7 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
             
             var isDone = false;
-            GamificationPlayerManager.StopMicroGame(777, true, () =>
+            GamificationPlayerManager.StopMicroGame(777, true, (result, gotoLinkUrl) =>
             {
                 isDone = true;
             });

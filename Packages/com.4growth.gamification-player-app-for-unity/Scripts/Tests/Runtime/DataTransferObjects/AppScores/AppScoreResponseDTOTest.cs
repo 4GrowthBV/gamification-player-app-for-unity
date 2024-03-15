@@ -22,10 +22,12 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(dto.data.Type, "app_score");
 
             Assert.NotNull(dto.data.attributes);
+            Assert.NotNull(dto.data.links);
 
             Assert.That(!string.IsNullOrEmpty(dto.data.attributes.started_at));
             Assert.That(!string.IsNullOrEmpty(dto.data.attributes.ended_at));
             Assert.That(!string.IsNullOrEmpty(dto.data.attributes.completed_at));
+            Assert.That(!string.IsNullOrEmpty(dto.data.links.show));
 
             Assert.That(dto.data.attributes.StartedAt != default);
             Assert.That(dto.data.attributes.EndedAt != default);

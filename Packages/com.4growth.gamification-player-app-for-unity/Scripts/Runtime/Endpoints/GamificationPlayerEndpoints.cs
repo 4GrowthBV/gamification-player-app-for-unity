@@ -18,7 +18,7 @@ namespace GamificationPlayer
 
     public delegate void EndModuleSessionCallback(UnityWebRequest.Result result);
 
-    public delegate void AppScoresCallback(UnityWebRequest.Result result);
+    public delegate void AppScoresCallback(UnityWebRequest.Result result, string gotoPageUrl);
 
     public delegate void EndChallengeSessionCallback(UnityWebRequest.Result result);
 

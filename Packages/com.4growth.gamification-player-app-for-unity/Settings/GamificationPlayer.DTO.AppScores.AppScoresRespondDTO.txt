@@ -4,10 +4,13 @@
     "type": "app_score",
     "attributes": {
       "score": 0,
-      "started_at": "2023-11-10T09:28:34.966Z",
-      "ended_at": "2023-11-10T09:28:34.966Z",
-      "completed_at": "2023-11-10T09:28:34.966Z",
+      "started_at": "2024-03-15T09:44:21.884Z",
+      "ended_at": "2024-03-15T09:44:21.884Z",
+      "completed_at": "2024-03-15T09:44:21.884Z",
       "extra_data": {}
+    },
+    "links": {
+      "show": "string"
     }
   }
 }

@@ -18,7 +18,7 @@ namespace GamificationPlayer
         private List<ILoggableData> logData = new List<ILoggableData>();
 
         // This is the new dictionary that will hold all of the listeners.
-        private Dictionary<Type, Action<object>> listeners = new();
+        private Dictionary<Type, List<Action<object>>> listeners = new();
 
         public bool TryGetLatestQueryableValue<TValue, TAttribute>(out TValue value)
             where TAttribute : Session.IQueryable
@@ -166,7 +166,10 @@ namespace GamificationPlayer
             {
                 if(HasLatestQueryableValue(pair.Key, dto))
                 {   
-                    pair.Value(GetLatestQueryableValue(pair.Key, dto));
+                    foreach(var listener in pair.Value)
+                    {
+                        listener(GetLatestQueryableValue(pair.Key, dto));
+                    }
                 }
             }
         }
@@ -187,7 +190,10 @@ namespace GamificationPlayer
                 {
                     if(HasLatestQueryableValue(pair.Key, dto))
                     {   
-                        pair.Value(GetLatestQueryableValue(pair.Key, dto));
+                        foreach(var listener in pair.Value)
+                        {
+                            listener(GetLatestQueryableValue(pair.Key, dto));
+                        }
                     }
                 }
             }
@@ -199,30 +205,24 @@ namespace GamificationPlayer
             // If a listener for this IQueryable type doesn't already exist, add it.
             if (!listeners.ContainsKey(typeof(T)))
             {
-                listeners.Add(typeof(T), callback);
+                listeners.Add(typeof(T), new List<Action<object>>() { callback });
             }
             else
             {
                 // Otherwise, just update the existing listener.
-                listeners[typeof(T)] = callback;
+                listeners[typeof(T)].Add(callback);
             }
         }
 
         public void RemoveListener(Action<object> callback)
         {
-            Type keyToRemove = null;
             foreach (var pair in listeners)
             {
-                if(pair.Value == callback)
+                if(pair.Value.Contains(callback))
                 {
-                    keyToRemove = pair.Key;
+                    pair.Value.Remove(callback);
                     break;
                 }
-            }
-
-            if(keyToRemove != null)
-            {
-                listeners.Remove(keyToRemove);
             }
         }
 

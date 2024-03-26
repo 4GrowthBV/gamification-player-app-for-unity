@@ -799,6 +799,9 @@ namespace GamificationPlayer
             {
                 isUserActive = false;
                 sessionData.ClearData();
+
+                //re-add the page view to the log
+                sessionData.AddToLog(dto.data);
             } else
             {
                 isUserActive = true;

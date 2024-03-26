@@ -814,7 +814,7 @@ namespace GamificationPlayer
                 }
             }
 
-            if(!sessionData.TryGetLatestSubdomain(out _) && 
+            if(!sessionData.TryGetLatest<OrganisationPrimaryColor>(out string _) && 
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());

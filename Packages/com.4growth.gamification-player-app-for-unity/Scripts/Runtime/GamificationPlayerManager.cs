@@ -369,6 +369,14 @@ namespace GamificationPlayer
         }
 
         /// <summary>
+        /// Clear data from the session log data.
+        /// </summary>
+        public static void ClearData()
+        {
+            instance.GClearData();
+        }
+
+        /// <summary>
         /// Attempts to start a MicroGame, if successvol it will fires the OnMicroGameOpened event.
         /// </summary>
         /// <param name="guid">The identifier of the MicroGame to start.</param>
@@ -836,6 +844,11 @@ namespace GamificationPlayer
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUserStatistics());
             }
+        }
+
+        private void GClearData()
+        {
+            sessionData.ClearData();
         }
 
         private bool GIsUserActive()

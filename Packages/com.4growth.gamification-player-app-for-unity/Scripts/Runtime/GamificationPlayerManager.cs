@@ -814,10 +814,7 @@ namespace GamificationPlayer
                 }
             }
 
-            Debug.Log("OrganisationPrimaryColor: " + sessionData.TryGetLatest<OrganisationPrimaryColor>(out string _));
-            Debug.Log("OrganisationId: " + sessionData.TryGetLatestOrganisationId(out _));
-
-            if(!sessionData.TryGetLatest<OrganisationPrimaryColor>(out string _) && 
+            if(!sessionData.TryGetLatestSubdomain(out _) && 
                 sessionData.TryGetLatestOrganisationId(out _))
             {
                 StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation());

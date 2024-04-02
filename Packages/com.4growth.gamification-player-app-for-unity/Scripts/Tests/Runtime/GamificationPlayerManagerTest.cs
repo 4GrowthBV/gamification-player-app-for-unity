@@ -115,7 +115,7 @@ namespace GamificationPlayer.Tests
             GamificationPlayerManager.ProcessExternalMessage(json);
 
             Assert.IsFalse(GamificationPlayerManager.IsUserActive());
-            Assert.IsFalse(GamificationPlayerManager.TryGetLatestData<UserId>(out string _));
+            Assert.IsFalse(GamificationPlayerManager.TryGetActiveUserId(out var _));
         }
 
         [Test]

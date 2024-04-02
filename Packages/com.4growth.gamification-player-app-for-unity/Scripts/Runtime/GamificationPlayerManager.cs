@@ -759,6 +759,8 @@ namespace GamificationPlayer
                         five = dto.data.attributes.star_thresholds[4]
                     };
 
+                    sessionData.AddToLog(webTokenPayload);
+
                     InvokeMicroGameOpened(webTokenPayload);   
 
                     GTryGetServerTime(out latestStartedGame); 

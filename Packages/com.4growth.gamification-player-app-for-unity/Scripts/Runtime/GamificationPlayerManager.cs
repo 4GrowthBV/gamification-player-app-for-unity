@@ -389,6 +389,16 @@ namespace GamificationPlayer
             instance.GStartMicroGame(guid, player, environment);
         }
 
+        /// <summary>
+        /// Open a MicroGame based on the MicroGamePayload.
+        /// This method is used to open a MicroGame based on the MicroGamePayload that can be configured in Unity Editor for testing purposes.
+        /// </summary>
+        /// <param name="microGamePayload">The MicroGamePayload to be used to open the MicroGame.</param>
+        public static void OpenMicroGameBasedOnMicroGamePayload(MicroGamePayload microGamePayload)
+        {
+            instance.GOpenMicroGameBasedOnMicroGamePayload(microGamePayload);
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
@@ -769,6 +779,15 @@ namespace GamificationPlayer
                     currentMicroGamePayload = null;
                 }
             }));
+        }
+
+        private void GOpenMicroGameBasedOnMicroGamePayload(MicroGamePayload microGamePayload)
+        {
+            sessionData.AddToLog(microGamePayload);
+
+            InvokeMicroGameOpened(microGamePayload);    
+
+            GTryGetServerTime(out latestStartedGame);
         }
 
         private void MicroGameOpened(string jsonMessage)

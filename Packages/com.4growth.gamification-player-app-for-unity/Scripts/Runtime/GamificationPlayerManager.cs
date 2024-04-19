@@ -772,8 +772,6 @@ namespace GamificationPlayer
                     sessionData.AddToLog(webTokenPayload);
 
                     InvokeMicroGameOpened(webTokenPayload);   
-
-                    GTryGetServerTime(out latestStartedGame); 
                 } else
                 {
                     currentMicroGamePayload = null;
@@ -786,8 +784,6 @@ namespace GamificationPlayer
             sessionData.AddToLog(microGamePayload);
 
             InvokeMicroGameOpened(microGamePayload);    
-
-            GTryGetServerTime(out latestStartedGame);
         }
 
         private void MicroGameOpened(string jsonMessage)
@@ -803,8 +799,6 @@ namespace GamificationPlayer
             sessionData.AddToLog(webTokenPayload);
 
             InvokeMicroGameOpened(webTokenPayload);    
-
-            GTryGetServerTime(out latestStartedGame);
         }
 
         private void PageView(string jsonMessage)
@@ -1021,6 +1015,8 @@ namespace GamificationPlayer
 
         protected void InvokeMicroGameOpened(MicroGamePayload microGame)
         {
+            GTryGetServerTime(out latestStartedGame);
+
             currentMicroGamePayload = microGame;
 
             OnMicroGameOpened?.Invoke(microGame);

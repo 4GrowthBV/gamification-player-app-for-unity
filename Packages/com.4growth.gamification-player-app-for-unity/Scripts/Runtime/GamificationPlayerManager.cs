@@ -403,6 +403,9 @@ namespace GamificationPlayer
         private bool checkServerTimeOnStartUp = false;
 
         [SerializeField]
+        private string defaultEnvironment = ".it";
+
+        [SerializeField]
         [Header("Mock settings for testing")]
         private EnvironmentConfig gamificationPlayerMockConfig;
 
@@ -487,13 +490,12 @@ namespace GamificationPlayer
                 }
             }
 
-            var environment = ".it";
 #if PROD_BUILD
-            environment = ".app";
+            var environment = ".app";
 #elif STAG_BUILD
-            environment = ".eu";
+            var environment = ".eu";
 #else
-            environment = ".it";
+            var environment = defaultEnvironment;
 #endif
 
             GamificationPlayerConfig.TryGetEnvironmentConfig(environment, out environmentConfig);

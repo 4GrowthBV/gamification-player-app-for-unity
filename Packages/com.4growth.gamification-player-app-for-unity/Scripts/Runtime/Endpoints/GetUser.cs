@@ -28,6 +28,7 @@ namespace GamificationPlayer
             if(environmentConfig.TryGetMockDTO<GetUserResponseDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
+                sessionData.AddToLog(new UserTagsDataHelper(dto), false);
                 onReady?.Invoke(UnityWebRequest.Result.Success, dto);
             } 
             else
@@ -58,7 +59,7 @@ namespace GamificationPlayer
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                         obj = webRequest.downloadHandler.text.FromJson<GetUserResponseDTO>();
                         sessionData.AddToLog(obj.data, false);           
-                        sessionData.AddToLog(new UserTagsDataHelper(dto), false);
+                        sessionData.AddToLog(new UserTagsDataHelper(obj), false);
                         break;
                 }
 

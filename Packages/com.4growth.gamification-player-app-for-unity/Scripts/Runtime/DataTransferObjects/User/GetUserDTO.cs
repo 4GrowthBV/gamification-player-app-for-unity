@@ -19,22 +19,18 @@ namespace GamificationPlayer
         }
 
         [Serializable]
-        public class Relationships
+        public class Tags
         {
             [Serializable]
-            public class Tags
+            public class Attributes
             {
-                [Serializable]
-                public class Data
-                {
-                    public string name;
-                }
-
-                [UserTags]
-                public Data[] data;
+                public string name;
             }
 
-            public Tags tags;
+            public string id;
+            
+            public string type;
+            public Attributes attributes;
         }
 
         [Serializable]
@@ -48,7 +44,6 @@ namespace GamificationPlayer
             
             public string type;
             public Attributes attributes;
-            public Relationships relationships;
 
             public Data()
             {
@@ -57,6 +52,9 @@ namespace GamificationPlayer
         }
 
         public Data data;
+
+        [UserTags]
+        public Tags[] included;
 
         public GetUserResponseDTO()
         {

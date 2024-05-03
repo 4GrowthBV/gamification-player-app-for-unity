@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -24,11 +25,9 @@ namespace GamificationPlayer.Tests
             Assert.That(dto.data.attributes.email != default);
             Assert.That(dto.data.attributes.avatar != default);
 
-            Assert.NotNull(dto.data.relationships);
-            Assert.NotNull(dto.data.relationships.tags);
-            Assert.NotNull(dto.data.relationships.tags.data);
-            Assert.That(dto.data.relationships.tags.data.Length > 0);
-            Assert.That(dto.data.relationships.tags.data[0].name != default);
+            Assert.NotNull(dto.included);
+            Assert.That(dto.included.Length > 0);
+            Assert.That(dto.included[0].attributes.name != default);
         }
     }
 }

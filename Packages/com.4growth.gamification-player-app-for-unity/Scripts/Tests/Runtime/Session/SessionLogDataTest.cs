@@ -67,17 +67,24 @@ namespace GamificationPlayer.Tests
 
             dto.data.attributes.name = "John Doe";
 
-            dto.data.relationships = new GetUserResponseDTO.Relationships
+            dto.included = new GetUserResponseDTO.Tags[]
             {
-                tags = new GetUserResponseDTO.Relationships.Tags
+                new GetUserResponseDTO.Tags
                 {
-                    data = new GetUserResponseDTO.Relationships.Tags.Data[]
+                    attributes = new GetUserResponseDTO.Tags.Attributes
                     {
-                        new GetUserResponseDTO.Relationships.Tags.Data { name = "tag1" },
-                        new GetUserResponseDTO.Relationships.Tags.Data { name = "tag2" }
+                        name = "tag1"
+                    }
+                },
+                new GetUserResponseDTO.Tags
+                {
+                    attributes = new GetUserResponseDTO.Tags.Attributes
+                    {
+                        name = "tag2"
                     }
                 }
             };
+
 
             dto.data.type = "user";
             
@@ -91,7 +98,7 @@ namespace GamificationPlayer.Tests
                 var index = 0;
                 foreach (var tag in tags)
                 {
-                    Assert.That(tag == dto.data.relationships.tags.data[index].name);
+                    Assert.That(tag == dto.included[index].attributes.name);
                     index++;
                 }
             }

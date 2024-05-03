@@ -236,7 +236,7 @@ namespace GamificationPlayer
 
         public bool TryGetLatestUserTags(out string[] value)
         {
-            sessionLogData.TryGetLatestQueryableValue<GetUserResponseDTO.Relationships.Tags.Data[], UserTags>(out var tags);
+            sessionLogData.TryGetLatestQueryableValue<GetUserResponseDTO.Tags[], UserTags>(out var tags);
 
             if(tags == null)
             {
@@ -245,7 +245,7 @@ namespace GamificationPlayer
                 return false;
             }
 
-            value = tags.Select(t => t.name).ToArray();
+            value = tags.Select(t => t.attributes.name).ToArray();
 
             return true;
         }

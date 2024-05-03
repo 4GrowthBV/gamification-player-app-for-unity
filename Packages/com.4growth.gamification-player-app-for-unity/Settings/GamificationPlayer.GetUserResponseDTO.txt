@@ -1,30 +1,31 @@
 {
   "data": {
-    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "id": "5b411dd2-20c1-49dd-90a5-555dbaead5f8",
     "type": "user",
     "attributes": {
       "name": "string",
-      "email": "user@example.com",
+      "email": "string",
       "language": [
-        "string"
+        "nl"
       ],
-      "login_token": "string",
-      "sso_identities": [
-        {
-          "sso_configuration_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "idp_id": "string"
-        }
-      ],
+      "login_token": null,
       "avatar": "string"
+    }
+  },
+  "included": [
+    {
+      "id": "7f92b58c-b9a9-43fe-83af-9025833f5697",
+      "type": "tag",
+      "attributes": {
+        "name": "string"
+      }
     },
-    "relationships": {
-      "tags": {
-        "data": [
-          {
-            "name": "string"
-          }
-        ]
+    {
+      "id": "d85ff3df-8d62-403f-93ef-d296922dff44",
+      "type": "tag",
+      "attributes": {
+        "name": "string"
       }
     }
-  }
+  ]
 }

@@ -3,6 +3,21 @@ using GamificationPlayer.Session;
 
 namespace GamificationPlayer
 {
+    public class UserTagsDataHelper : ILoggableData
+    {
+        public string Type { get; } = "user_tags";
+
+        public float Time { get; set; }
+
+        [UserTags]
+        public GetUserResponseDTO.Tags[] Tags;
+
+        public UserTagsDataHelper(GetUserResponseDTO getUserResponseDTO)
+        {
+            Tags = getUserResponseDTO.included;
+        }
+    }
+
     public class GetUserResponseDTO
     {
         [Serializable]
@@ -53,7 +68,6 @@ namespace GamificationPlayer
 
         public Data data;
 
-        [UserTags]
         public Tags[] included;
 
         public GetUserResponseDTO()

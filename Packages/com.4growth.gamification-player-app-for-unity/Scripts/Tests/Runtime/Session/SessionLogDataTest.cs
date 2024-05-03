@@ -91,6 +91,7 @@ namespace GamificationPlayer.Tests
             var sessionData = new SessionLogData();
 
             sessionData.AddToLog(dto.data);
+            sessionData.AddToLog(new UserTagsDataHelper(dto));
 
             Assert.That(sessionData.TryGetLatestUserTags(out _));
             if(sessionData.TryGetLatestUserTags(out var tags))

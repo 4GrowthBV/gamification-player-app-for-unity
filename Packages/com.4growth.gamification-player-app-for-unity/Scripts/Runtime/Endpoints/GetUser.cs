@@ -58,6 +58,7 @@ namespace GamificationPlayer
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                         obj = webRequest.downloadHandler.text.FromJson<GetUserResponseDTO>();
                         sessionData.AddToLog(obj.data, false);           
+                        sessionData.AddToLog(new UserTagsDataHelper(dto), false);
                         break;
                 }
 

@@ -5,8 +5,26 @@
     "attributes": {
       "name": "string",
       "email": "user@example.com",
+      "language": [
+        "string"
+      ],
       "login_token": "string",
+      "sso_identities": [
+        {
+          "sso_configuration_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "idp_id": "string"
+        }
+      ],
       "avatar": "string"
+    },
+    "relationships": {
+      "tags": {
+        "data": [
+          {
+            "name": "string"
+          }
+        ]
+      }
     }
   }
 }

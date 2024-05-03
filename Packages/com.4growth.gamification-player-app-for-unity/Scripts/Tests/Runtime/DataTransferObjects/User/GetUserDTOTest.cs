@@ -23,6 +23,12 @@ namespace GamificationPlayer.Tests
             Assert.That(dto.data.attributes.name != default);
             Assert.That(dto.data.attributes.email != default);
             Assert.That(dto.data.attributes.avatar != default);
+
+            Assert.NotNull(dto.data.relationships);
+            Assert.NotNull(dto.data.relationships.tags);
+            Assert.NotNull(dto.data.relationships.tags.data);
+            Assert.That(dto.data.relationships.tags.data.Length > 0);
+            Assert.That(dto.data.relationships.tags.data[0].name != default);
         }
     }
 }

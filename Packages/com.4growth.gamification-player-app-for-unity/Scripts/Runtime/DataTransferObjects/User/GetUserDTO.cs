@@ -19,6 +19,25 @@ namespace GamificationPlayer
         }
 
         [Serializable]
+        public class Relationships
+        {
+            [Serializable]
+            public class Tags
+            {
+                [Serializable]
+                public class Data
+                {
+                    public string name;
+                }
+
+                [UserTags]
+                public Data[] data;
+            }
+
+            public Tags tags;
+        }
+
+        [Serializable]
         public class Data : ILoggableData
         {
             public string Type { get => type; }
@@ -29,6 +48,7 @@ namespace GamificationPlayer
             
             public string type;
             public Attributes attributes;
+            public Relationships relationships;
 
             public Data()
             {

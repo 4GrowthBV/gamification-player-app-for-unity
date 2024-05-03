@@ -5,6 +5,7 @@ using GamificationPlayer.DTO.LoginToken;
 using GamificationPlayer.DTO.ModuleSession;
 using GamificationPlayer.Session;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
@@ -56,6 +57,43 @@ namespace GamificationPlayer.Tests
             if(sessionData.TryGetLatest<OrganisationAllowUpgradeToRegisteredUser>(out bool organisationAllowUpgradeToRegisteredUser))
             {
                 Assert.AreEqual(organisationAllowUpgradeToRegisteredUser, false);
+            }
+        }
+
+        [Test]
+        public void TestTryGetLatestUserTags()
+        {
+            var dto = new GetUserResponseDTO();
+
+            dto.data.attributes.name = "John Doe";
+
+            dto.data.relationships = new GetUserResponseDTO.Relationships
+            {
+                tags = new GetUserResponseDTO.Relationships.Tags
+                {
+                    data = new GetUserResponseDTO.Relationships.Tags.Data[]
+                    {
+                        new GetUserResponseDTO.Relationships.Tags.Data { name = "tag1" },
+                        new GetUserResponseDTO.Relationships.Tags.Data { name = "tag2" }
+                    }
+                }
+            };
+
+            dto.data.type = "user";
+            
+            var sessionData = new SessionLogData();
+
+            sessionData.AddToLog(dto.data);
+
+            Assert.That(sessionData.TryGetLatestUserTags(out _));
+            if(sessionData.TryGetLatestUserTags(out var tags))
+            {
+                var index = 0;
+                foreach (var tag in tags)
+                {
+                    Assert.That(tag == dto.data.relationships.tags.data[index].name);
+                    index++;
+                }
             }
         }
 

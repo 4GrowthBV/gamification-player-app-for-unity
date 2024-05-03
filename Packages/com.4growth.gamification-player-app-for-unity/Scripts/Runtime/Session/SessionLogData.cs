@@ -234,6 +234,35 @@ namespace GamificationPlayer
             sessionLogData.ClearData();
         }
 
+        public bool TryGetLatestUserTags(out string[] value)
+        {
+            sessionLogData.TryGetLatestQueryableValue<GetUserResponseDTO.Relationships.Tags.Data[], UserTags>(out var tags);
+
+            if(tags == null)
+            {
+                value = null;
+
+                return false;
+            }
+
+            value = tags.Select(t => t.name).ToArray();
+
+            return true;
+        }
+
+        public bool TryGetLatest<TQueryable>(out string[] value)
+            where TQueryable : Session.IQueryable
+        {
+            if(typeof(TQueryable) == typeof(UserTags))
+            {
+                return TryGetLatestUserTags(out value);
+            }
+
+            value = null;
+            
+            return false;
+        }
+
         public bool TryGetLatest<TQueryable>(out string value)
             where TQueryable : Session.IQueryable
         {

@@ -5,4 +5,9 @@ namespace GamificationPlayer.Session
     public class UserScore : Attribute, IQueryable
     {
     }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public class UserTags : Attribute, IQueryable
+    {
+    }
 }

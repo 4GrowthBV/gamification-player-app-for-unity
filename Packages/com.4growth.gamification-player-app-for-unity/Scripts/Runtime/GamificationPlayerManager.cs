@@ -283,6 +283,17 @@ namespace GamificationPlayer
         /// <summary>
         /// Attempts to get the latest data that has been sync with the server.
         /// </summary>
+        /// <param name="dateTime">The current latest data synced with the server, if it is available.</param>
+        /// <returns>true if current latest data synced with the server was already retrieved; otherwise, false.</returns>
+        public static bool TryGetLatestData<TQueryable>(out string[] value)
+            where TQueryable : Session.IQueryable
+        {
+            return instance.GTryGetLatestData<TQueryable>(out value);
+        }
+
+        /// <summary>
+        /// Attempts to get the latest data that has been sync with the server.
+        /// </summary>
         /// <typeparam name="TQueryable"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -560,6 +571,12 @@ namespace GamificationPlayer
             where TQueryable : Session.IQueryable
         {
             sessionData.ListenTo<TQueryable>(callback);
+        }
+
+        private bool GTryGetLatestData<TQueryable>(out string[] value) 
+            where TQueryable : Session.IQueryable
+        {
+            return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
         private bool GTryGetLatestData<TQueryable>(out string value) 

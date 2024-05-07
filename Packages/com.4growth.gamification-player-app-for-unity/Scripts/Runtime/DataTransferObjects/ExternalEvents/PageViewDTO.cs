@@ -65,6 +65,10 @@ namespace GamificationPlayer.DTO.ExternalEvents
             [TotalOpenBattleInvitationForUser]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int user_battle_invitations;
+       
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [UserTags]
+            public string[] user_tags;
         }
 
         public Data data;

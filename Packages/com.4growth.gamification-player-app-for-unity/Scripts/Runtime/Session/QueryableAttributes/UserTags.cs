@@ -2,7 +2,7 @@ using System;
 namespace GamificationPlayer.Session
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class UserScore : Attribute, IQueryable
+    public class UserTags : Attribute, IQueryable
     {
     }
 }

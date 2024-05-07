@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GamificationPlayer.Session;
 
 namespace GamificationPlayer
@@ -10,11 +11,17 @@ namespace GamificationPlayer
         public float Time { get; set; }
 
         [UserTags]
-        public GetUserResponseDTO.Tags[] Tags;
+        public string[] Tags;
 
         public UserTagsDataHelper(GetUserResponseDTO getUserResponseDTO)
         {
-            Tags = getUserResponseDTO.included;
+            if(getUserResponseDTO == null)
+                return;
+
+            if(getUserResponseDTO.included == null)
+                return;
+
+            Tags = getUserResponseDTO.included.Select(x => x.attributes.name).ToArray();
         }
     }
 

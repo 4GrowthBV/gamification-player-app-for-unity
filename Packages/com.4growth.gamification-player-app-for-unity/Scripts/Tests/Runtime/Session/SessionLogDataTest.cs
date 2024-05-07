@@ -61,7 +61,34 @@ namespace GamificationPlayer.Tests
         }
 
         [Test]
-        public void TestTryGetLatestUserTags()
+        public void TestTryGetLatestUserTagsViaPageView()
+        {
+            var dto = new PageViewDTO();
+            dto.data.attributes = new PageViewDTO.Attributes
+            {
+                user_tags = new string[] { "tag1", "tag2" }
+            };
+
+            dto.data.type = "pageView";
+
+            var sessionData = new SessionLogData();
+
+            sessionData.AddToLog(dto.data);
+
+            Assert.That(sessionData.TryGetLatest<UserTags>(out string[] _));
+            if(sessionData.TryGetLatest<UserTags>(out string[] tags))
+            {
+                var index = 0;
+                foreach (var tag in tags)
+                {
+                    Assert.That(tag == dto.data.attributes.user_tags[index]);
+                    index++;
+                }
+            }
+        }
+
+        [Test]
+        public void TestTryGetLatestUserTagsViaAPI()
         {
             var dto = new GetUserResponseDTO();
 
@@ -85,7 +112,6 @@ namespace GamificationPlayer.Tests
                 }
             };
 
-
             dto.data.type = "user";
             
             var sessionData = new SessionLogData();
@@ -93,8 +119,8 @@ namespace GamificationPlayer.Tests
             sessionData.AddToLog(dto.data);
             sessionData.AddToLog(new UserTagsDataHelper(dto));
 
-            Assert.That(sessionData.TryGetLatestUserTags(out _));
-            if(sessionData.TryGetLatestUserTags(out var tags))
+            Assert.That(sessionData.TryGetLatest<UserTags>(out string[] _));
+            if(sessionData.TryGetLatest<UserTags>(out string[] tags))
             {
                 var index = 0;
                 foreach (var tag in tags)

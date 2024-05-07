@@ -35,11 +35,12 @@ namespace GamificationPlayer.Tests
 
             obj.data.attributes.user_is_demo = false;
             obj.data.attributes.organisation_allow_upgrade_to_registered_user = true;
+            obj.data.attributes.user_tags = new string[] { };
 
             obj.data.type = "pageView";
 
             var json = obj.ToJson();
-            var newObj = json.FromJson<PageViewDTO>();
+            var newObj = json.FromJson<PageViewDTO>(false);
 
             Assert.AreEqual(newObj.data.attributes.organisation_id, obj.data.attributes.organisation_id);
             Assert.AreEqual(newObj.data.attributes.user_id, obj.data.attributes.user_id);

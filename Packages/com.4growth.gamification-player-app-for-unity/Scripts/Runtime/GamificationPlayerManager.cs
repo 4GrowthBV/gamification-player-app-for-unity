@@ -824,7 +824,7 @@ namespace GamificationPlayer
         {
             sessionData.TryGetLatestLanguage(out var previousLanguage);
 
-            var dto = jsonMessage.FromJson<PageViewDTO>();
+            var dto = jsonMessage.FromJson<PageViewDTO>(false);
 
             sessionData.AddToLog(dto.data);
 

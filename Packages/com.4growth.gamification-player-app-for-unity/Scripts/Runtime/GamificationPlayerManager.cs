@@ -696,6 +696,13 @@ namespace GamificationPlayer
 
                 OnTileClick?.Invoke(dto.data.attributes.identifier);
             }
+
+            if(message.data.Type == "link")
+            {
+                var dto = jsonMessage.FromJson<LinkDTO>();
+
+                Application.OpenURL(dto.data.attributes.link);
+            }
         }
 
         private void Error(string jsonMessage)

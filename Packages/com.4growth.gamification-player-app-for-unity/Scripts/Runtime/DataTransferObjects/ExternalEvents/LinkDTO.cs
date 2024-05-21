@@ -2,7 +2,7 @@ using System;
 
 namespace GamificationPlayer.DTO.ExternalEvents
 {
-    public class ErrorDTO
+    public class LinkDTO
     {
         [Serializable]
         public class Data : ILoggableData
@@ -23,14 +23,12 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [Serializable]
         public class Attributes
         {  
-            public string title;
-
-            public string code;
+            public string link;
         }
 
         public Data data;
         
-        public ErrorDTO()
+        public LinkDTO()
         {
             data = new Data();
         }

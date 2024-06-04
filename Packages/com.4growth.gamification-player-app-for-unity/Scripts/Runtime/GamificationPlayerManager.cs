@@ -937,7 +937,7 @@ namespace GamificationPlayer
             
             StartCoroutine(gamificationPlayerEndpoints.CoAppScores(latestStartedGame, now, score, isCompleted, (result, gotoLinkUrl) =>
             {
-                currentMicroGamePayload = null;
+                //currentMicroGamePayload = null;
 
                 onDone?.Invoke(result, gotoLinkUrl);
             }));

@@ -18,6 +18,50 @@ namespace GamificationPlayer.Tests
         }
 
         [Test]
+        public void RestartMicroGame()
+        {
+            var guid = Guid.NewGuid();
+            GamificationPlayerManager.StartMicroGame(guid);
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+
+            // restart during gameplay
+            GamificationPlayerManager.RestartMicroGame();
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+
+            GamificationPlayerManager.TryGetCurrentMicroGamePayload(out var payload);
+            Assert.IsTrue(payload.micro_game.id == guid.ToString());
+
+            GamificationPlayerManager.StopMicroGame(777, true);
+
+            Assert.IsFalse(GamificationPlayerManager.IsMicroGameActive());
+
+            // restart after gameplay
+            GamificationPlayerManager.RestartMicroGame();
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+
+            GamificationPlayerManager.TryGetCurrentMicroGamePayload(out payload);
+            Assert.IsTrue(payload.micro_game.id == guid.ToString());
+
+
+            var newGuid = Guid.NewGuid();
+            GamificationPlayerManager.StartMicroGame(newGuid);
+
+            GamificationPlayerManager.TryGetCurrentMicroGamePayload(out payload);
+            Assert.IsTrue(payload.micro_game.id == newGuid.ToString());
+
+            // restart after a new MicroGame during gameplay
+            GamificationPlayerManager.RestartMicroGame();
+
+            Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
+
+            GamificationPlayerManager.TryGetCurrentMicroGamePayload(out payload);
+            Assert.IsTrue(payload.micro_game.id == newGuid.ToString());
+        }
+
+        [Test]
         public void TestStartMicroGame()
         {
             var guid = Guid.NewGuid();

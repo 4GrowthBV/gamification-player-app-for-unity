@@ -220,9 +220,9 @@ namespace GamificationPlayer
         /// <summary>
         /// Attempts to restart the previous module session.
         /// </summary>
-        public static void RestartPreviousMicroGame()
+        public static void RestartMicroGame()
         {
-            instance.GRestartPreviousMicroGame();
+            instance.GRestartMicroGame();
         }
 
         /// <summary>
@@ -442,7 +442,7 @@ namespace GamificationPlayer
         private bool isInitialized = false;
 
         private MicroGamePayload currentMicroGamePayload;
-        private MicroGamePayload previousMicroGamePayload;
+        private MicroGamePayload finishedMicroGamePayload;
 
         private DateTime latestStartedGame;
 
@@ -934,15 +934,16 @@ namespace GamificationPlayer
             return sessionData.TryGetLatestModuleId(out id);
         }
 
-        private void GRestartPreviousMicroGame()
+        private void GRestartMicroGame()
         {
-            if(previousMicroGamePayload == null)
+            if(finishedMicroGamePayload == null)
             {
-                Debug.LogError("No MicroGame to restart!!");
+                // MicroGame is still running
+                // We can savely restart without any issues
                 return;
             }
 
-            currentMicroGamePayload = previousMicroGamePayload;
+            currentMicroGamePayload = finishedMicroGamePayload;
 
             GTryGetServerTime(out latestStartedGame);
         }
@@ -959,7 +960,7 @@ namespace GamificationPlayer
             
             StartCoroutine(gamificationPlayerEndpoints.CoAppScores(latestStartedGame, now, score, isCompleted, (result, gotoLinkUrl) =>
             {
-                previousMicroGamePayload = currentMicroGamePayload;
+                finishedMicroGamePayload = currentMicroGamePayload;
 
                 currentMicroGamePayload = null;
 
@@ -1068,6 +1069,8 @@ namespace GamificationPlayer
             GTryGetServerTime(out latestStartedGame);
 
             currentMicroGamePayload = microGame;
+
+            finishedMicroGamePayload = null;
 
             OnMicroGameOpened?.Invoke(microGame);
         }

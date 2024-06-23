@@ -1,4 +1,5 @@
 using System;
+using GamificationPlayer.Session;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -68,8 +69,10 @@ namespace GamificationPlayer.DTO.AppScores
 
             public string ended_at;
 
+            [MicroGameCompletedAt]
             public string completed_at;
             
+            [MicroGameScore]
             public int score;
 
             public Attributes(DateTime startedAt,

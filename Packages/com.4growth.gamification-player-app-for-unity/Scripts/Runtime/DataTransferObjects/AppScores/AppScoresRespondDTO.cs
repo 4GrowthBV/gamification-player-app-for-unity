@@ -46,9 +46,12 @@ namespace GamificationPlayer.DTO.AppScores
 
             #nullable enable
             public string? ended_at;
+
+            [MicroGameCompletedAt]
             public string? completed_at;
             #nullable disable
 
+            [MicroGameScore]
             public int score;
         }
 

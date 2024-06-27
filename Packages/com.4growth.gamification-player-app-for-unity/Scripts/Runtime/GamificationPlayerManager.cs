@@ -8,18 +8,6 @@ using UnityEngine.Networking;
 namespace GamificationPlayer
 {
     /// <summary>
-    /// Represents a method that is called when the device flow is started.
-    /// </summary>
-    /// <param name="loginUrl">The URL where the user can login via a different device.</param>
-    public delegate void StartDeviceFlowCallback(string loginUrl);
-
-    /// <summary>
-    /// Represents a method that is called when there is a new loginURL.
-    /// </summary>
-    /// <param name="loginToken">The loginURL that can be used to log in the user in the gamification player.</param>
-    public delegate void OnUserLoggedInEvent(string redirectURL);
-
-    /// <summary>
     /// Represents a method that is called when a module is started.
     /// </summary>
     /// <param name="moduleIdentifier">The module identifier of the started module.</param>
@@ -75,11 +63,6 @@ namespace GamificationPlayer
 
     public class GamificationPlayerManager : MonoBehaviour
     {
-        /// <summary>
-        /// Occurs when there is a new login token.
-        /// </summary>
-        public static event OnUserLoggedInEvent OnUserLoggedIn;
-
         /// <summary>
         /// Occurs when a module is started.
         /// </summary>
@@ -223,34 +206,6 @@ namespace GamificationPlayer
         public static void RestartMicroGame()
         {
             instance.GRestartMicroGame();
-        }
-
-        /// <summary>
-        /// Starts the device flow and calls the specified callback when it is started.
-        /// </summary>
-        /// <param name="onStart">The callback to be called when the device flow is started.</param>
-        public static void StartDeviceFlow(StartDeviceFlowCallback onStart)
-        {
-            instance.GStartDeviceFlow(onStart);
-        }
-
-        /// <summary>
-        /// Determines whether the device flow is currently active.
-        /// Device flow is being used when the user is logging via a QR code.
-        /// </summary>
-        /// <returns>true if the device flow is active; otherwise, false.</returns>
-        public static bool IsDeviceFlowActive()
-        {
-            return instance.isDeviceFlowActive;
-        }
-
-        /// <summary>
-        /// Stops the device flow
-        /// Device flow is being used when the user is logging via a QR code.
-        /// </summary>
-        public static void StopDeviceFlow()
-        {
-            instance.GStopDeviceFlow();
         }
 
         /// <summary>
@@ -435,8 +390,6 @@ namespace GamificationPlayer
 
         protected SessionLogData sessionData;
 
-        private bool isDeviceFlowActive;
-
         private bool isUserActive = false;
 
         private bool isInitialized = false;
@@ -577,31 +530,31 @@ namespace GamificationPlayer
         }
 
         private void GListenToData<TQueryable>(Action<object> callback) 
-            where TQueryable : Session.IQueryable
+            where TQueryable : IQueryable
         {
             sessionData.ListenTo<TQueryable>(callback);
         }
 
         private bool GTryGetLatestData<TQueryable>(out string[] value) 
-            where TQueryable : Session.IQueryable
+            where TQueryable : IQueryable
         {
             return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
         private bool GTryGetLatestData<TQueryable>(out string value) 
-            where TQueryable : Session.IQueryable
+            where TQueryable : IQueryable
         {
             return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
         private bool GTryGetLatestData<TQueryable>(out bool value) 
-            where TQueryable : Session.IQueryable
+            where TQueryable : IQueryable
         {
             return sessionData.TryGetLatest<TQueryable>(out value);
         }
 
         private bool GTryGetLatestData<TQueryable>(out int value) 
-            where TQueryable : Session.IQueryable
+            where TQueryable : IQueryable
         {
             return sessionData.TryGetLatest<TQueryable>(out value);
         }
@@ -842,16 +795,9 @@ namespace GamificationPlayer
 
             var dto = jsonMessage.FromJson<PageViewDTO>(false);
 
+            sessionData.TryGetLatestOrganisationId(out Guid latestOrganisationId);
+
             sessionData.AddToLog(dto.data);
-
-            if(isDeviceFlowActive && 
-                sessionData.TryGetLatestOrganisationId(out _) && 
-                sessionData.TryGetLatestUserId(out _))
-            {
-                StopAllCoroutines();
-
-                gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult);
-            }
 
             if(!GHaveUserCredentials())
             {
@@ -966,97 +912,6 @@ namespace GamificationPlayer
 
                 onDone?.Invoke(result, gotoLinkUrl);
             }));
-        }
-
-        private void GStartDeviceFlow(StartDeviceFlowCallback onStart)
-        {
-            if(isDeviceFlowActive)
-            {
-                GStopDeviceFlow();
-            }
-
-            isDeviceFlowActive = true;
-
-            StartCoroutine(gamificationPlayerEndpoints.CoAnnounceDeviceFlow((result, loginUrl) =>
-            {
-                if(result == UnityWebRequest.Result.Success)
-                {
-                    onStart?.Invoke(loginUrl);
-
-                    StartCoroutine(ActionAfterXSeconds(CheckDeviceFlow, 4f));
-                } else
-                {
-                    onStart?.Invoke(string.Empty);
-                }
-            }));
-        }
-
-        private void GStopDeviceFlow()
-        {
-            isDeviceFlowActive = false;
-
-            StopAllCoroutines();
-        }
-
-        private void CheckDeviceFlow()
-        {
-            StartCoroutine(gamificationPlayerEndpoints.CoGetDeviceFlow((result, isValidated, userId) =>
-            {
-                if(result == UnityWebRequest.Result.Success && isValidated)
-                {
-                    StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation(GetOrganisationResult));
-                    StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult));
-                } else
-                {
-                    StartCoroutine(ActionAfterXSeconds(CheckDeviceFlow, 4f));
-                }
-            }));
-        }
-
-        private void GetOrganisationResult(UnityWebRequest.Result result, GetOrganisationResponseDTO dto)
-        {
-            if(result == UnityWebRequest.Result.Success)
-            {
-                EndLoginFlowIfCorrect();
-            } else
-            {
-                StartCoroutine(ActionAfterXSeconds(() =>
-                {
-                    StartCoroutine(gamificationPlayerEndpoints.CoGetOrganisation(GetOrganisationResult));
-                }, 4f));
-            }
-        }
-
-        private void GetLoginTokenResult(UnityWebRequest.Result result, string token)
-        {
-            if(result == UnityWebRequest.Result.Success)
-            {
-                EndLoginFlowIfCorrect();
-            } else
-            {
-                StartCoroutine(ActionAfterXSeconds(() =>
-                {
-                    StartCoroutine(gamificationPlayerEndpoints.CoGetLoginToken(GetLoginTokenResult));
-                }, 4f));
-            }
-        }
-
-        private void EndLoginFlowIfCorrect()
-        {
-            if(sessionData.TryGetLatestSubdomain(out var subdomain) &&
-                sessionData.TryGetLatestLoginToken(out var loginToken))
-            {
-                var redirectURL = string.Format("https://{0}.{1}login?otlToken={2}", subdomain, gamificationPlayerEndpoints.EnvironmentConfig.Webpage, loginToken);
-
-                isDeviceFlowActive = false;
-                
-                InvokeUserLoggedIn(redirectURL);
-            }
-        }
-
-        protected void InvokeUserLoggedIn(string redirectURL)
-        {
-            OnUserLoggedIn?.Invoke(redirectURL);
         }
 
         protected void InvokeModuleStart(Guid moduleId)

@@ -56,24 +56,6 @@ public class GamificationTest : MonoBehaviour
                 Debug.Log("New page is fully loaded, no user is active on this page");
             }
         };
-
-        // Start the device flow for logging in via a different device
-        // The loginUrl parameter is the URL that the user can visit to log in
-        GamificationPlayerManager.StartDeviceFlow((loginUrl) =>
-        {
-            // TIP: Display the loginUrl as a QR code so the user can log in using their mobile phone
-            Debug.Log(loginUrl);
-        });
-
-        // Register a handler for when a user is logged in via a different device
-        GamificationPlayerManager.OnUserLoggedIn += (redirectURL) =>
-        {
-            // Opens the redirectURL that includes the login token
-            var webpageWithLoginToken = redirectURL;
-            
-            // Load the webpage in the Vuplex WebView
-            //baseWebViewPrefab.WebView.LoadUrl(webpageWithLoginToken);
-        };
     }
 
     /*

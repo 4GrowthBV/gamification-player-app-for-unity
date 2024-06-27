@@ -373,11 +373,20 @@ namespace GamificationPlayer
             instance.GOpenMicroGameBasedOnMicroGamePayload(microGamePayload);
         }
 
+        /// <summary>
+        /// Change the environment of the gamification player.
+        /// </summary>
+        /// <param name="environmentDomain">The domain of the environment to change to.</param>
+        public static void ChangeEnvironment(string environmentDomain)
+        {
+            instance.GChangeEnvironment(environmentDomain);
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
         [SerializeField]
-        private string defaultEnvironment = ".it";
+        private string defaultEnvironment = ".eu";
 
         [SerializeField]
         [Header("Mock settings for testing")]
@@ -451,8 +460,23 @@ namespace GamificationPlayer
             return Application.absoluteURL;
         }
 
+        private void GChangeEnvironment(string environmentDomain)
+        {
+            sessionData.ClearData();
+
+            if(GamificationPlayerConfig.TryGetEnvironmentConfig(environmentDomain, out var environmentConfig))
+            {
+                gamificationPlayerEndpoints = new GamificationPlayerEndpoints(environmentConfig, sessionData);
+            }
+        }
+
         private EnvironmentConfig GGetEnvironmentConfig()
         {
+            if(gamificationPlayerEndpoints != null)
+            {
+                return gamificationPlayerEndpoints.EnvironmentConfig;
+            }
+
             EnvironmentConfig environmentConfig;
 
             if(sessionData.TryGetLatestEnvironmentDomain(out var env))
@@ -796,8 +820,30 @@ namespace GamificationPlayer
             var dto = jsonMessage.FromJson<PageViewDTO>(false);
 
             sessionData.TryGetLatestOrganisationId(out Guid latestOrganisationId);
+            sessionData.TryGetLatestUserId(out Guid latestUserId);
 
             sessionData.AddToLog(dto.data);
+
+            var isDifferentOrganisation = false;
+            var isDifferentUser = false;
+
+            if(latestOrganisationId != Guid.Empty &&
+                sessionData.TryGetLatestOrganisationId(out Guid organisationId))
+            {
+                isDifferentOrganisation = latestOrganisationId != organisationId;
+            }
+            
+            if(latestUserId != Guid.Empty &&
+                sessionData.TryGetLatestUserId(out Guid userId))
+            {
+                isDifferentUser = latestUserId != userId;
+            }
+
+            if(isDifferentOrganisation || isDifferentUser)
+            {
+                sessionData.ClearData();
+                sessionData.AddToLog(dto.data);
+            }
 
             if(!GHaveUserCredentials())
             {

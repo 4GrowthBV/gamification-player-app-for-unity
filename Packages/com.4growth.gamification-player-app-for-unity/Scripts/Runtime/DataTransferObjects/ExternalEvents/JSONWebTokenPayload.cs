@@ -104,7 +104,15 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public int current_bonus;
 
             public int current_total;
-        }        
+        }    
+
+        [Serializable]
+        public class Integration
+        {
+            public string id;
+
+            public Dictionary<string, string> context;
+        }    
 
         public Player player;
         public Session session;
@@ -112,6 +120,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
         public MicroGame micro_game;
         public Module module;
         public Environment environment;
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Integration integration;
 
         public string Type => "moduleData";
 
@@ -125,6 +136,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             micro_game = new MicroGame();
             module = new Module();
             environment = new Environment();
+            integration = new Integration();
         }
     }
 }

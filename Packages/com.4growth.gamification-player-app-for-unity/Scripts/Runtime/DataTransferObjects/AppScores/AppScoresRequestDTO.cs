@@ -1,4 +1,5 @@
 using System;
+using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -75,6 +76,9 @@ namespace GamificationPlayer.DTO.AppScores
             [MicroGameScore]
             public int score;
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public MicroGamePayload.Integration integration;
+
             public Attributes(DateTime startedAt,
                 DateTime endedAt, 
                 int score, 
@@ -83,7 +87,8 @@ namespace GamificationPlayer.DTO.AppScores
                 Guid userId,
                 Guid organisationId,
                 Guid microGameId,
-                DateTime? completedAt)
+                DateTime? completedAt,
+                MicroGamePayload.Integration integration = null)
             {
                 this.score = score;
 
@@ -92,6 +97,7 @@ namespace GamificationPlayer.DTO.AppScores
                 this.user_id = userId == Guid.Empty ? null : userId.ToString();
                 this.organisation_id = organisationId == Guid.Empty ? null : organisationId.ToString();
                 this.micro_game_id = microGameId == Guid.Empty ? null : microGameId.ToString();     
+                this.integration = IsValid(integration) ? integration : null;
 
                 //Have to double check with Dick, I thought that started_at was always needed
                 //But the API docs says it is not needed in a module session
@@ -104,6 +110,21 @@ namespace GamificationPlayer.DTO.AppScores
                 this.completed_at = completedAt == null ? null : completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
                 Valid();
+            }
+
+            private bool IsValid(MicroGamePayload.Integration integration)
+            {
+                if(integration == null)
+                {
+                    return false;
+                }
+
+                if(string.IsNullOrEmpty(integration.id))
+                {
+                    return false;
+                }
+
+                return true;
             }
 
             public void Valid()
@@ -152,9 +173,19 @@ namespace GamificationPlayer.DTO.AppScores
                 Guid userId,
                 Guid organisationId,
                 Guid microGameId,
-                DateTime? completedAt)
+                DateTime? completedAt,
+                MicroGamePayload.Integration integration = null)
             {
-                attributes = new Attributes(startedAt, endedAt, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
+                attributes = new Attributes(startedAt, 
+                    endedAt, 
+                    score, 
+                    moduleSessionId, 
+                    battleSessionId, 
+                    userId, 
+                    organisationId, 
+                    microGameId, 
+                    completedAt, 
+                    integration);
             }            
         }
 
@@ -168,9 +199,19 @@ namespace GamificationPlayer.DTO.AppScores
             Guid userId,
             Guid organisationId,
             Guid microGameId,
-            DateTime? completedAt)
+            DateTime? completedAt,
+            MicroGamePayload.Integration integration = null)
         {
-            data = new Data(startedAt, endedAt, score, moduleSessionId, battleSessionId, userId, organisationId, microGameId, completedAt);
+            data = new Data(startedAt, 
+                endedAt, 
+                score, 
+                moduleSessionId, 
+                battleSessionId, 
+                userId, 
+                organisationId, 
+                microGameId, 
+                completedAt, 
+                integration);
         }
 
         public static AppScoresRequestDTO GetAppScoresBattleRequest(DateTime startedAt,
@@ -178,18 +219,38 @@ namespace GamificationPlayer.DTO.AppScores
             int score, 
             Guid userId,
             Guid battelSessionId,
-            DateTime? completedAt)
+            DateTime? completedAt,
+            MicroGamePayload.Integration integration = null)
         {
-            return new AppScoresRequestDTO(startedAt, endedAt, score, Guid.Empty, battelSessionId, userId, Guid.Empty, Guid.Empty, completedAt);
+            return new AppScoresRequestDTO(startedAt, 
+                endedAt,
+                score, 
+                Guid.Empty, 
+                battelSessionId, 
+                userId, 
+                Guid.Empty, 
+                Guid.Empty, 
+                completedAt, 
+                integration);
         }
 
         public static AppScoresRequestDTO GetAppScoresModuleRequest(DateTime startedAt,
             DateTime endedAt, 
             int score, 
             Guid moduleSessionId,
-            DateTime? completedAt)
+            DateTime? completedAt,
+            MicroGamePayload.Integration integration = null)
         {
-            return new AppScoresRequestDTO(startedAt, endedAt, score, moduleSessionId, Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty, completedAt);
+            return new AppScoresRequestDTO(startedAt, 
+                endedAt, 
+                score, 
+                moduleSessionId, 
+                Guid.Empty, 
+                Guid.Empty, 
+                Guid.Empty, 
+                Guid.Empty, 
+                completedAt, 
+                integration);
         }
 
         public static AppScoresRequestDTO GetAppScoresRequest(DateTime startedAt,
@@ -198,9 +259,19 @@ namespace GamificationPlayer.DTO.AppScores
             Guid userId,
             Guid organisationId,
             Guid microGameId,
-            DateTime? completedAt)
+            DateTime? completedAt,
+            MicroGamePayload.Integration integration = null)
         {
-            return new AppScoresRequestDTO(startedAt, endedAt, score, Guid.Empty, Guid.Empty, userId, organisationId, microGameId, completedAt);
+            return new AppScoresRequestDTO(startedAt, 
+                endedAt, 
+                score, 
+                Guid.Empty, 
+                Guid.Empty,
+                userId, 
+                organisationId, 
+                microGameId, 
+                completedAt, 
+                integration);
         }
     }
 }

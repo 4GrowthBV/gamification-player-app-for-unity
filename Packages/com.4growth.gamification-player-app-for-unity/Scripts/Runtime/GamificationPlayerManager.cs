@@ -957,7 +957,7 @@ namespace GamificationPlayer
                 currentMicroGamePayload = null;
 
                 onDone?.Invoke(result, gotoLinkUrl);
-            }));
+            }, currentMicroGamePayload.integration));
         }
 
         protected void InvokeModuleStart(Guid moduleId)

@@ -15,11 +15,24 @@ namespace GamificationPlayer.Tests
                 { "testKey", "testValue" } 
             };
 
+            obj.integration = new MicroGamePayload.Integration()
+            {
+                id = "integrationId",
+                context = new System.Collections.Generic.Dictionary<string, string>()
+                {
+                    { "contextkey", "contextValue" }
+                }
+            };
+
             var json = obj.ToJson();
 
             Assert.That(json.Contains("moduleData"));
             Assert.That(json.Contains("testKey"));
             Assert.That(json.Contains("testValue"));
+
+            Assert.That(json.Contains("integrationId"));
+            Assert.That(json.Contains("contextkey"));
+            Assert.That(json.Contains("contextValue"));
         }
 
         [Test]
@@ -32,11 +45,23 @@ namespace GamificationPlayer.Tests
                 { "testKey", "testValue" } 
             };
 
+            obj.integration = new MicroGamePayload.Integration()
+            {
+                id = "integrationId",
+                context = new System.Collections.Generic.Dictionary<string, string>()
+                {
+                    { "contextkey", "contextValue" }
+                }
+            };
+
             var json = obj.ToJson();
             var newObj = json.FromJson<MicroGamePayload>();
 
             Assert.AreEqual(newObj.Type, "moduleData");
             Assert.AreEqual(newObj.micro_game.extra_data["testKey"], "testValue");
+
+            Assert.AreEqual(newObj.integration.id, "integrationId");
+            Assert.AreEqual(newObj.integration.context["contextkey"], "contextValue");
         }
     }
 }

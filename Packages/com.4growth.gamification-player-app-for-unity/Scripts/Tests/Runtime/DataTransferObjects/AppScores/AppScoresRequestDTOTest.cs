@@ -2,6 +2,7 @@ using NUnit.Framework;
 using GamificationPlayer.DTO.AppScores;
 using System;
 using UnityEngine;
+using GamificationPlayer.DTO.ExternalEvents;
 
 namespace GamificationPlayer.Tests
 {
@@ -17,22 +18,34 @@ namespace GamificationPlayer.Tests
             var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
+            var integration = new MicroGamePayload.Integration
+            {
+                id = Guid.NewGuid().ToString(),
+                context = new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "key", "value" }
+                }
+            };
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date, integration);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
+            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
 
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date, integration);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
+            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
 
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date, integration);
 
             Assert.AreEqual(score, obj.data.attributes.score);
             Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
@@ -40,6 +53,8 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(date, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
+            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
         }
 
         [Test]
@@ -52,6 +67,14 @@ namespace GamificationPlayer.Tests
             var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
+            var integration = new MicroGamePayload.Integration
+            {
+                id = Guid.NewGuid().ToString(),
+                context = new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "key", "value" }
+                }
+            };
 
             var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, null);
 
@@ -59,6 +82,7 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(null, obj.data.attributes.integration);
 
             obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, null);
 
@@ -66,6 +90,7 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(null, obj.data.attributes.integration);
 
             obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, null);
 
@@ -75,6 +100,7 @@ namespace GamificationPlayer.Tests
             Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
             Assert.AreEqual(date, obj.data.attributes.EndedAt);
             Assert.AreEqual(null, obj.data.attributes.CompletedAt);
+            Assert.AreEqual(null, obj.data.attributes.integration);
         }
 
         [Test]
@@ -87,8 +113,16 @@ namespace GamificationPlayer.Tests
             var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
+            var integration = new MicroGamePayload.Integration
+            {
+                id = Guid.NewGuid().ToString(),
+                context = new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "key", "value" }
+                }
+            };
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date);
+            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date, integration);
 
             var json = obj.ToJson();
 
@@ -96,8 +130,10 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.type));
             Assert.That(json.Contains(obj.data.attributes.ended_at));
             Assert.That(json.Contains(obj.data.attributes.battle_session_id));
+            Assert.That(json.Contains(obj.data.attributes.integration.id));
+            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
 
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date);
+            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date, integration);
 
             json = obj.ToJson();
 
@@ -105,8 +141,10 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.type));
             Assert.That(json.Contains(obj.data.attributes.ended_at));
             Assert.That(json.Contains(obj.data.attributes.module_session_id));
+            Assert.That(json.Contains(obj.data.attributes.integration.id));
+            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
 
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date);
+            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date, integration);
 
             json = obj.ToJson();
 
@@ -116,6 +154,10 @@ namespace GamificationPlayer.Tests
             Assert.That(json.Contains(obj.data.attributes.user_id));
             Assert.That(json.Contains(obj.data.attributes.organisation_id));
             Assert.That(json.Contains(obj.data.attributes.micro_game_id));
+            Assert.That(json.Contains(obj.data.attributes.integration.id));
+            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
+
+            Debug.Log(json);
         }
 
         [Test]

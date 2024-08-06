@@ -13,7 +13,11 @@ namespace GamificationPlayer.DTO.ModuleSession
             {
                 get
                 {
-                    return DateTime.Parse(ended_at.Remove(ended_at.Length - 1, 1));
+                    var date = ended_at.Replace("Z", "");
+
+                    return DateTime.ParseExact(date, 
+                        "yyyy-MM-ddTHH:mm:ss", 
+                        CultureInfo.InvariantCulture);
                 }
             }
 
@@ -26,7 +30,11 @@ namespace GamificationPlayer.DTO.ModuleSession
                         return null;
                     }
 
-                    return DateTime.Parse(completed_at.Remove(completed_at.Length - 1, 1));
+                    var date = completed_at.Replace("Z", "");
+
+                    return DateTime.ParseExact(date, 
+                        "yyyy-MM-ddTHH:mm:ss", 
+                        CultureInfo.InvariantCulture);
                 }
             }
 
@@ -40,9 +48,9 @@ namespace GamificationPlayer.DTO.ModuleSession
 
             public Attributes(DateTime endedAt, int score, DateTime? completedAt)
             {
-                this.ended_at = endedAt.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                this.ended_at = endedAt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
                 this.score = score;
-                this.completed_at = completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                this.completed_at = completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
             }
         }
 

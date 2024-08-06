@@ -8,6 +8,14 @@ namespace GamificationPlayer.Tests
 {
     public class AppScoresRequestDTOTest
     {
+        [SetUp]
+        public void Setup()
+        {
+            // We had some problems with parsing the date for Indonesian players, 
+            // so by removing the comments we can set the culture to Indonesian during the tests
+            // System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("id-ID");
+        }
+
         [Test]
         public void TestConstructor()
         {

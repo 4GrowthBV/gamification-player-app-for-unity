@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using Newtonsoft.Json;
@@ -20,7 +21,11 @@ namespace GamificationPlayer.DTO.AppScores
                         return null;
                     }
 
-                    return DateTime.Parse(started_at.Remove(started_at.Length - 1, 1));
+                    var date = started_at.Replace("Z", "");
+
+                    return DateTime.ParseExact(date, 
+                        "yyyy-MM-ddTHH:mm:ss", 
+                        CultureInfo.InvariantCulture);
                 }
             }
 
@@ -33,7 +38,13 @@ namespace GamificationPlayer.DTO.AppScores
                         return null;
                     }
 
-                    return DateTime.Parse(ended_at.Remove(ended_at.Length - 1, 1));
+                    var date = ended_at.Replace("Z", "");
+
+
+
+                    return DateTime.ParseExact(date, 
+                        "yyyy-MM-ddTHH:mm:ss", 
+                        CultureInfo.InvariantCulture);
                 }
             }
 
@@ -46,7 +57,11 @@ namespace GamificationPlayer.DTO.AppScores
                         return null;
                     }
 
-                    return DateTime.Parse(completed_at.Remove(completed_at.Length - 1, 1));
+                    var date = completed_at.Replace("Z", "");
+
+                    return DateTime.ParseExact(date, 
+                        "yyyy-MM-ddTHH:mm:ss", 
+                        CultureInfo.InvariantCulture);
                 }
             }
 
@@ -103,11 +118,11 @@ namespace GamificationPlayer.DTO.AppScores
                 //But the API docs says it is not needed in a module session
                 if(string.IsNullOrEmpty(module_session_id))
                 {
-                    this.started_at = startedAt.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                    this.started_at = startedAt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
                 }
 
-                this.ended_at = endedAt == null ? null : endedAt.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                this.completed_at = completedAt == null ? null : completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                this.ended_at = endedAt == null ? null : endedAt.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+                this.completed_at = completedAt == null ? null : completedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
 
                 Valid();
             }

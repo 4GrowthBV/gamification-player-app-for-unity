@@ -502,6 +502,9 @@ namespace GamificationPlayer
 
         public void Start()
         {
+#if UNITY_WEBGL
+            isInitialized = true;
+#endif
             if(sessionData.TryGetLatestModuleId(out Guid id))
             {
                 InvokeModuleStart(id);
@@ -543,8 +546,6 @@ namespace GamificationPlayer
             {
                 isInitialized = true;
             }
-#else
-            isInitialized = true;
 #endif
         }
 

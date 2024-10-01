@@ -764,7 +764,7 @@ namespace GamificationPlayer
                             extra_data = dto.data.attributes.extra_data
                         },
 
-                        module = new MicroGamePayload.Module(),
+                        module = null,
 
                         environment = environment ?? new MicroGamePayload.Environment
                         {

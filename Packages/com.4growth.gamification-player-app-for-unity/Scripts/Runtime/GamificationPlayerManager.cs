@@ -786,13 +786,15 @@ namespace GamificationPlayer
                         }
                     };
 
+                    var maxScore = 10000;
+
                     webTokenPayload.micro_game.stars = new MicroGamePayload.MicroGame.Stars
                     {
-                        one = dto.data.attributes.star_thresholds[0],
-                        two = dto.data.attributes.star_thresholds[1],
-                        three = dto.data.attributes.star_thresholds[2],
-                        four = dto.data.attributes.star_thresholds[3],
-                        five = dto.data.attributes.star_thresholds[4]
+                        one = (int)(dto.data.attributes.star_thresholds[0] / 100f * maxScore),
+                        two = (int)(dto.data.attributes.star_thresholds[1] / 100f * maxScore),
+                        three = (int)(dto.data.attributes.star_thresholds[2] / 100f * maxScore),
+                        four = (int)(dto.data.attributes.star_thresholds[3] / 100f * maxScore),
+                        five = (int)(dto.data.attributes.star_thresholds[4] / 100f * maxScore)
                     };
 
                     sessionData.AddToLog(webTokenPayload);

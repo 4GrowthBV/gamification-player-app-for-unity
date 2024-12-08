@@ -6,6 +6,9 @@ namespace GamificationPlayer
 {
     public interface ISessionLogData
     {
+        public bool TryGetLatestId<TQueryable>(out Guid id)
+            where TQueryable : Session.IQueryable;
+            
         public bool TryGetLatest<TQueryable>(out string value)
             where TQueryable : Session.IQueryable;
 

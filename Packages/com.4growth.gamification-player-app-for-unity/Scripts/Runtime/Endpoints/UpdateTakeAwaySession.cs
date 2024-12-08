@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using GamificationPlayer.DTO.ChallengeSession;
+using GamificationPlayer.DTO.TakeAway;
+using GamificationPlayer.Session;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,40 +9,39 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoEndChallengeSession(bool isCompleted, EndChallengeSessionCallback onReady)
+        public IEnumerator CoUpdateTakeAwaySessions(DateTime startedAt,
+            DateTime endedAt,
+            UpdateTakeAwaySessionCallback onReady = null, 
+            Guid takeAwaySessionId = default)
         {
-            if(!sessionData.TryGetLatestChallengeSessionId(out var challengeSessionId))
-            {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
-
-                yield break;
+            if(takeAwaySessionId == default)
+            {
+                sessionData.TryGetLatestId<TakeAwaySessionId>(out takeAwaySessionId);
             }
 
-            yield return CoEndChallengeSession(challengeSessionId, isCompleted, onReady);
+            yield return CoUpdateTakeAwaySessions(takeAwaySessionId, startedAt, endedAt, onReady);
         }
 
-        private IEnumerator CoEndChallengeSession(Guid challengeSessionId, bool isCompleted, EndChallengeSessionCallback onReady)
+        private IEnumerator CoUpdateTakeAwaySessions(Guid takeAwaySessionId,
+            DateTime startedAt,
+            DateTime endedAt,
+            UpdateTakeAwaySessionCallback onReady)
         {
-            DateTime? completedAt = null;
-            if(isCompleted)
-            {
-                completedAt = DateTime.Now;
-            }
-            
-            var challengeSession = new UpdateChallendeSessionRequestDTO(DateTime.Now, completedAt);
-            sessionData.AddToLog(challengeSession.data);
+            var now = DateTime.Now;
+            var takeAwayDTO = new UpdateTakeAwaySessionRequestDTO(startedAt, endedAt);
+            sessionData.AddToLog(takeAwayDTO.data);
 
-            string data = challengeSession.ToJson();
-            
-            string webRequestString = string.Format("{0}/challenge-sessions/{1}?_method=PATCH", environmentConfig.API_URL, challengeSessionId);
+            var data = takeAwayDTO.ToJson();
+
+            var webRequestString = string.Format("{0}/take-away-sessions/{1}", environmentConfig.API_URL, takeAwaySessionId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(data);
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
-            if(environmentConfig.TryGetMockDTO<UpdateChallengeSessionResponseDTO>(out var dto))
+            if(environmentConfig.TryGetMockDTO<TakeAwaySessionResponseDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
-                onReady?.Invoke(UnityWebRequest.Result.Success);
+                onReady?.Invoke(UnityWebRequest.Result.Success, dto);
             } 
             else
             {
@@ -53,6 +52,8 @@ namespace GamificationPlayer
                 webRequest.certificateHandler = new ForceAcceptAll();
 
                 yield return webRequest.SendWebRequest();
+
+                var obj = new TakeAwaySessionResponseDTO();
 
                 switch (webRequest.result)
                 {
@@ -68,12 +69,12 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        var obj = webRequest.downloadHandler.text.FromJson<UpdateChallengeSessionResponseDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<TakeAwaySessionResponseDTO>();
                         sessionData.AddToLog(obj.data, false);
                         break;
                 }
 
-                onReady?.Invoke(webRequest.result);
+                onReady?.Invoke(webRequest.result, obj);
             }
         }
     }

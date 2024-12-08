@@ -66,9 +66,13 @@ namespace GamificationPlayer.Tests
         {
             var guid = Guid.NewGuid();
 
-            GamificationPlayerManager.OnMicroGameOpened += (payload) => Assert.AreEqual(payload.micro_game.id, guid.ToString());
+            OnMicroGameOpenedEvent OnMicroGameOpened = (payload) => Assert.AreEqual(payload.micro_game.id, guid.ToString());
+
+            GamificationPlayerManager.OnMicroGameOpened += OnMicroGameOpened;
 
             GamificationPlayerManager.StartMicroGame(guid);
+
+            GamificationPlayerManager.OnMicroGameOpened -= OnMicroGameOpened;
         }
 
         [UnityTest]

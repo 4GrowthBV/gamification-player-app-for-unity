@@ -1,0 +1,153 @@
+{
+  "data": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "take_away_session",
+      "attributes": {
+        "started_at": "2024-12-08T13:02:37.221Z",
+        "ended_at": "2024-12-08T13:02:37.221Z",
+        "extra_data": "string"
+      },
+      "relationships": {
+        "micro_game": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "micro_game"
+          }
+        },
+        "user": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "user"
+          }
+        },
+        "organisation": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "organisation"
+          }
+        },
+        "module_session": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "module_session"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "micro_game",
+      "attributes": {
+        "name": "string",
+        "description": "string",
+        "identifier": "string",
+        "star_thresholds": [
+          0
+        ],
+        "web_gl_location": "string",
+        "extra_data": {}
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "user",
+      "attributes": {
+        "name": "string",
+        "email": "user@example.com",
+        "language": [
+          "string"
+        ],
+        "login_token": "string",
+        "avatar": "string"
+      },
+      "relationships": {
+        "tags": {
+          "data": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "tag"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "organisation",
+      "attributes": {
+        "name": "string",
+        "subdomain": "string",
+        "default_language": "string",
+        "available_languages": [
+          "string"
+        ],
+        "logo": "string",
+        "background_image": "string",
+        "background_mobile_image": "string",
+        "background_tablet_image": "string",
+        "background_desktop_image": "string",
+        "primary_color": "string",
+        "secondary_color": "string",
+        "accent_color": "string",
+        "background_color": "string",
+        "card_background_color": "string",
+        "primary_font_color": "string",
+        "secondary_font_color": "string",
+        "primary_font_family": "string",
+        "secondary_font_family": "string",
+        "card_border_radius": "string",
+        "registration_enabled": true,
+        "anonymous_enabled": true,
+        "allow_upgrade_to_registered_user": true,
+        "reseller_enabled": true,
+        "introduction": "string",
+        "webhook_url": "string",
+        "webhook_events": [
+          "string"
+        ],
+        "timezone": "string",
+        "ios_app_url": "string",
+        "android_app_url": "string",
+        "branchio_url": "string",
+        "open_graph_image": "string",
+        "open_graph_description": "string"
+      },
+      "relationships": {
+        "reseller": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "organisation"
+          }
+        }
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "module_session",
+      "attributes": {
+        "score": 0,
+        "started_at": "2024-12-08T13:02:37.221Z",
+        "ended_at": "2024-12-08T13:02:37.221Z",
+        "completed_at": "2024-12-08T13:02:37.221Z",
+        "extra_data": {}
+      },
+      "relationships": {
+        "challenge_session": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "challenge_session"
+          }
+        },
+        "module": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "module"
+          }
+        }
+      }
+    }
+  ]
+}

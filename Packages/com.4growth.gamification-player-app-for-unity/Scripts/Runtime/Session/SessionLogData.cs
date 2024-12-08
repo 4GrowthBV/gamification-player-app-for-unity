@@ -234,6 +234,8 @@ namespace GamificationPlayer
             sessionLogData.ClearData();
         }
 
+        
+
         public bool TryGetLatest<TQueryable>(out string[] value)
             where TQueryable : Session.IQueryable
         {
@@ -272,6 +274,11 @@ namespace GamificationPlayer
         public bool TryGetLatestMicroGameId(out Guid id)
         {
             return TryGetLatestId<MicroGameId>(out id);
+        }
+
+        bool ISessionLogData.TryGetLatestId<TQueryable>(out Guid id)
+        {
+            return TryGetLatestId<TQueryable>(out id);
         }
     }
 }

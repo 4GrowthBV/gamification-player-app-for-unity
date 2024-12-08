@@ -387,6 +387,11 @@ namespace GamificationPlayer
             instance.GChangeEnvironment(environmentDomain);
         }
 
+        public static void AddTakeAwayResultToActiveSession(string zipFilePath, StoreTakeAwayResultCallback callback)
+        {
+            instance.GAddTakeAwayResult(zipFilePath, callback);
+        }
+
         [SerializeField]
         private bool checkServerTimeOnStartUp = false;
 
@@ -974,6 +979,33 @@ namespace GamificationPlayer
 
                 onDone?.Invoke(result, gotoLinkUrl);
             }, currentMicroGamePayload.integration));
+        }
+
+        private void GAddTakeAwayResult(string zipFilePath, StoreTakeAwayResultCallback callback)
+        {
+            GTryGetServerTime(out DateTime now);
+
+            if(currentMicroGamePayload == null)
+            {
+                callback?.Invoke(UnityWebRequest.Result.ProtocolError);
+                Debug.LogError("No MicroGame playload to add the take away result!!");
+                return;
+            }
+
+            StartCoroutine(gamificationPlayerEndpoints.CoCreateTakeAwaySession(latestStartedGame, now, (result, dto) =>
+            {
+                if(result == UnityWebRequest.Result.Success)
+                {
+                    StartCoroutine(gamificationPlayerEndpoints.CoStoreTakeAwayResult(zipFilePath, (result) =>
+                    {
+                        callback?.Invoke(result);
+                    }));
+                } else
+                {
+                    callback?.Invoke(UnityWebRequest.Result.ProtocolError);
+                    Debug.LogError("Failed to create take away session!!");
+                }
+            }));
         }
 
         protected void InvokeModuleStart(Guid moduleId)

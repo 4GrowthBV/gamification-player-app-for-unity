@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using GamificationPlayer.DTO.ChallengeSession;
+using GamificationPlayer.DTO.TakeAway;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,40 +8,55 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoEndChallengeSession(bool isCompleted, EndChallengeSessionCallback onReady)
+        public IEnumerator CoGetTakeAwaySessions(GetTakeAwaySessionCallback onReady = null, 
+            bool isModuleSession = false,
+            Guid microGameId = default,
+            Guid userId = default,
+            Guid organisationId = default,
+            Guid moduleSessionId = default)
         {
-            if(!sessionData.TryGetLatestChallengeSessionId(out var challengeSessionId))
-            {   
-                onReady?.Invoke(UnityWebRequest.Result.ProtocolError);
-
-                yield break;
+            if(microGameId == default)
+            {
+                sessionData.TryGetLatestMicroGameId(out microGameId);
             }
 
-            yield return CoEndChallengeSession(challengeSessionId, isCompleted, onReady);
+            if(userId == default)
+            {
+                sessionData.TryGetLatestUserId(out userId);
+            }
+
+            if(organisationId == default)
+            {
+                sessionData.TryGetLatestOrganisationId(out organisationId);
+            }
+
+            if(isModuleSession && moduleSessionId == default)
+            {
+                sessionData.TryGetLatestModuleSessionId(out moduleSessionId);
+            }
+
+            yield return CoGetTakeAwaySession(microGameId, userId, organisationId, onReady, moduleSessionId);
         }
 
-        private IEnumerator CoEndChallengeSession(Guid challengeSessionId, bool isCompleted, EndChallengeSessionCallback onReady)
+        private IEnumerator CoGetTakeAwaySession(Guid microGameId,
+            Guid userId,
+            Guid organisationId,
+            GetTakeAwaySessionCallback onReady,
+            Guid? moduleSessionId = null)
         {
-            DateTime? completedAt = null;
-            if(isCompleted)
-            {
-                completedAt = DateTime.Now;
-            }
-            
-            var challengeSession = new UpdateChallendeSessionRequestDTO(DateTime.Now, completedAt);
-            sessionData.AddToLog(challengeSession.data);
+            var takeAwayDTO = new GetTakeAwaySessionsRequestDTO(microGameId, userId, organisationId, moduleSessionId);
 
-            string data = challengeSession.ToJson();
-            
-            string webRequestString = string.Format("{0}/challenge-sessions/{1}?_method=PATCH", environmentConfig.API_URL, challengeSessionId);
+            var data = takeAwayDTO.ToJson();
+
+            var webRequestString = string.Format("{0}/take-away-sessions", environmentConfig.API_URL, organisationId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(data);
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
-            if(environmentConfig.TryGetMockDTO<UpdateChallengeSessionResponseDTO>(out var dto))
+            if(environmentConfig.TryGetMockDTO<GetTakeAwaySessionsResponseDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
-                onReady?.Invoke(UnityWebRequest.Result.Success);
+                onReady?.Invoke(UnityWebRequest.Result.Success, dto);
             } 
             else
             {
@@ -53,6 +67,8 @@ namespace GamificationPlayer
                 webRequest.certificateHandler = new ForceAcceptAll();
 
                 yield return webRequest.SendWebRequest();
+
+                var obj = new GetTakeAwaySessionsResponseDTO();
 
                 switch (webRequest.result)
                 {
@@ -68,12 +84,12 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        var obj = webRequest.downloadHandler.text.FromJson<UpdateChallengeSessionResponseDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<GetTakeAwaySessionsResponseDTO>();
                         sessionData.AddToLog(obj.data, false);
                         break;
                 }
 
-                onReady?.Invoke(webRequest.result);
+                onReady?.Invoke(webRequest.result, obj);
             }
         }
     }

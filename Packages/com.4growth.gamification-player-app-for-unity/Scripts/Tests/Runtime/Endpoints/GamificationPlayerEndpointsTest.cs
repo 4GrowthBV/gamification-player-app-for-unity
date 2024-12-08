@@ -19,6 +19,47 @@ namespace GamificationPlayer.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestUpdateTakeAwaySession()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+            var dateTime = DateTime.Now;
+
+            return gamificationPlayerEndpoints.CoUpdateTakeAwaySessions(dateTime, dateTime, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestGetTakeAwaySessions()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetTakeAwaySessions((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestCreateTakeAwaySession()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+            var dateTime = DateTime.Now;
+
+            return gamificationPlayerEndpoints.CoCreateTakeAwaySession(dateTime, dateTime, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
         public IEnumerator TestGetMicroGame()
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());

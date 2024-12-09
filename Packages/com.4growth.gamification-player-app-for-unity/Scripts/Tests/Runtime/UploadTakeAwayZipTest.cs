@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,15 +10,31 @@ namespace GamificationPlayer.Tests
 {
     public class UploadTakeAwayZipTest
     {
-        [SetUp]
+        //[SetUp]
         public void TestSetup()
         {
             //Use mock server for testing
             //GamificationPlayerManager.UseMockServer();
         }
 
-        /*
-        [UnityTest]
+        IEnumerator LoadFileFromStreamingAssets(string filePath, Action<byte[]> onSuccess)
+        {
+            string fullPath = Path.Combine(Application.streamingAssetsPath, filePath);
+            UnityWebRequest request = UnityWebRequest.Get(fullPath);
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                onSuccess?.Invoke(request.downloadHandler.data);
+            }
+            else
+            {
+                Debug.LogError($"Failed to load file: {request.error}");
+            }
+        }
+
+        //[UnityTest]
         public IEnumerator TestUploadTakeAwayZip()
         {
             var isMicroGameActive = false;
@@ -39,15 +56,18 @@ namespace GamificationPlayer.Tests
 
             yield return new WaitUntil(() => isMicroGameActive);
 
-            GamificationPlayerManager.AddTakeAwayResultToActiveSession("test.zip", (r) =>
+            yield return LoadFileFromStreamingAssets("test.zip", (fileData) =>
             {
-                result = r;
-                isTakeAwaySaveDone = true;
+                GamificationPlayerManager.AddTakeAwayResultToActiveSession(fileData, (r) =>
+                {
+                    result = r;
+                    isTakeAwaySaveDone = true;
+                });
             });
 
             yield return new WaitUntil(() => isTakeAwaySaveDone);
 
             Assert.That(result == UnityWebRequest.Result.Success);
-        }*/
+        }
     }
 }

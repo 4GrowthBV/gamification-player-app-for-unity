@@ -8,7 +8,7 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoStoreTakeAwayResult(string zipPath,
+        public IEnumerator CoStoreTakeAwayResult(byte[] fileData,
             StoreTakeAwayResultCallback onReady = null, 
             Guid takeAwaySessionId = default)
         {
@@ -17,10 +17,10 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestId<TakeAwaySessionId>(out takeAwaySessionId);
             }
 
-            yield return CoStoreTakeAwayResult(zipPath, takeAwaySessionId, onReady);
+            yield return CoStoreTakeAwayResult(fileData, takeAwaySessionId, onReady);
         }
 
-        private IEnumerator CoStoreTakeAwayResult(string zipPath, 
+        private IEnumerator CoStoreTakeAwayResult(byte[] fileData, 
             Guid takeAwaySessionId,
             StoreTakeAwayResultCallback onReady)
         {
@@ -28,7 +28,7 @@ namespace GamificationPlayer
 
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
-            UnityWebRequest webRequest = GetUnityWebRequestPOSTZip(webRequestString, zipPath);
+            UnityWebRequest webRequest = GetUnityWebRequestPOSTZip(webRequestString, fileData);
             webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
             webRequest.SetRequestHeader("Accept", "application/json");
             webRequest.certificateHandler = new ForceAcceptAll();

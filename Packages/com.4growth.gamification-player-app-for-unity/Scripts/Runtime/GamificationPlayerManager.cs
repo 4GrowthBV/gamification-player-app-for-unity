@@ -387,9 +387,9 @@ namespace GamificationPlayer
             instance.GChangeEnvironment(environmentDomain);
         }
 
-        public static void AddTakeAwayResultToActiveSession(string zipFilePath, StoreTakeAwayResultCallback callback)
+        public static void AddTakeAwayResultToActiveSession(byte[] fileData, StoreTakeAwayResultCallback callback)
         {
-            instance.GAddTakeAwayResult(zipFilePath, callback);
+            instance.GAddTakeAwayResult(fileData, callback);
         }
 
         [SerializeField]
@@ -981,7 +981,7 @@ namespace GamificationPlayer
             }, currentMicroGamePayload.integration));
         }
 
-        private void GAddTakeAwayResult(string zipFilePath, StoreTakeAwayResultCallback callback)
+        private void GAddTakeAwayResult(byte[] fileData, StoreTakeAwayResultCallback callback)
         {
             GTryGetServerTime(out DateTime now);
 
@@ -996,7 +996,7 @@ namespace GamificationPlayer
             {
                 if(result == UnityWebRequest.Result.Success)
                 {
-                    StartCoroutine(gamificationPlayerEndpoints.CoStoreTakeAwayResult(zipFilePath, (result) =>
+                    StartCoroutine(gamificationPlayerEndpoints.CoStoreTakeAwayResult(fileData, (result) =>
                     {
                         callback?.Invoke(result);
                     }));

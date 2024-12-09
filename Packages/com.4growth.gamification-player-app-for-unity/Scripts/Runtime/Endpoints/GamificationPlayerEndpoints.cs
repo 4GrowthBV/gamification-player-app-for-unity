@@ -85,35 +85,27 @@ namespace GamificationPlayer
             return webRequest;
         }
 
-        private UnityWebRequest GetUnityWebRequestPOSTZip(string webRequestString, string zipFilePath)
+        private UnityWebRequest GetUnityWebRequestPOSTZip(string webRequestString, byte[] fileData, string fileName = "takeaway.zip")
         {
             UnityWebRequest webRequest;
 
-            // Resolve the full path to the file in StreamingAssets
-            string fullPath = Path.Combine(Application.streamingAssetsPath, zipFilePath);
-
-            if (File.Exists(fullPath))
+            if (fileData == null || fileData.Length == 0)
             {
-                // Read the file into a byte array
-                byte[] fileData = File.ReadAllBytes(fullPath);
+                throw new ArgumentException("File data cannot be null or empty.", nameof(fileData));
+            }
 
-                if (environmentConfig.IsMockServer)
-                {
-                    // For the mock server, use GET
-                    webRequest = UnityWebRequest.Get(webRequestString);
-                }
-                else
-                {
-                    // Create a multipart form data request
-                    WWWForm form = new WWWForm();
-                    form.AddBinaryData("file", fileData, Path.GetFileName(fullPath), "application/zip");
-
-                    webRequest = UnityWebRequest.Post(webRequestString, form);
-                }
+            if (environmentConfig.IsMockServer)
+            {
+                // For the mock server, use GET
+                webRequest = UnityWebRequest.Get(webRequestString);
             }
             else
             {
-                throw new FileNotFoundException($"The file at path {fullPath} does not exist.");
+                // Create a multipart form data request
+                WWWForm form = new WWWForm();
+                form.AddBinaryData("file", fileData, fileName, "application/zip");
+
+                webRequest = UnityWebRequest.Post(webRequestString, form);
             }
 
             return webRequest;

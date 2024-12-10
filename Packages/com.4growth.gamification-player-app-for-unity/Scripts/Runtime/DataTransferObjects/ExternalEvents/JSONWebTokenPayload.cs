@@ -55,6 +55,12 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             [BattleSessionId]
             public string battle_session_id;
+
+            [BattleOpponentName]
+            public string opponent_name;
+            
+            [BattleOpponentAvatar]
+            public string opponent_avatar;
         }
 
         [Serializable]

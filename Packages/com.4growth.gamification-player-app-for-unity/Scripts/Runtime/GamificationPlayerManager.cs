@@ -368,6 +368,11 @@ namespace GamificationPlayer
             instance.GGetMicroGame(guid, callback);
         }
 
+        public static void GetModuleSession(GetModuleSessionCallback callback)
+        {
+            instance.GGetModuleSession(callback);
+        }
+
         /// <summary>
         /// Open a MicroGame based on the MicroGamePayload.
         /// This method is used to open a MicroGame based on the MicroGamePayload that can be configured in Unity Editor for testing purposes.
@@ -738,6 +743,11 @@ namespace GamificationPlayer
             {
                 callback?.Invoke(dto);
             }));
+        }
+
+        private void GGetModuleSession(GetModuleSessionCallback callback)
+        {
+            StartCoroutine(gamificationPlayerEndpoints.CoGetModuleSession(callback));
         }
 
         private void GStartMicroGame(Guid guid, 

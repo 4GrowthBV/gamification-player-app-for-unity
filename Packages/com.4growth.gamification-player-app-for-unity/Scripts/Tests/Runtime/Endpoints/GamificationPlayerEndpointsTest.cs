@@ -127,6 +127,17 @@ namespace GamificationPlayer.Tests
         }
 
         [UnityTest]
+        public IEnumerator TestGetModuleSession()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetModuleSession((result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        [UnityTest]
         public IEnumerator TestGetModuleSessionId()
         {
             var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());

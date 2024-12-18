@@ -1,0 +1,72 @@
+{
+  "data": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "type": "module_session",
+    "attributes": {
+      "score": 0,
+      "started_at": "2024-12-18T20:01:27.423Z",
+      "ended_at": "2024-12-18T20:01:27.423Z",
+      "completed_at": "2024-12-18T20:01:27.423Z",
+      "extra_data": {}
+    },
+    "relationships": {
+      "challenge_session": {
+        "data": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "type": "challenge_session"
+        }
+      },
+      "module": {
+        "data": {
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "type": "module"
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "challenge_session",
+      "attributes": {
+        "started_at": "2024-12-18T20:01:27.423Z",
+        "ended_at": "2024-12-18T20:01:27.423Z",
+        "completed_at": "2024-12-18T20:01:27.423Z"
+      },
+      "relationships": {
+        "users": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "user"
+          }
+        },
+        "challenges": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "challenge"
+          }
+        },
+        "module_sessions": {
+          "data": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "module_session"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "module",
+      "attributes": {
+        "type": "string",
+        "name": "string",
+        "description": "string",
+        "description_html": "string",
+        "score_factor": 0,
+        "sort_order": 0
+      }
+    }
+  ]
+}

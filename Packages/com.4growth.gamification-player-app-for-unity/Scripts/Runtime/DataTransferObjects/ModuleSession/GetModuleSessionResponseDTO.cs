@@ -5,7 +5,7 @@ using GamificationPlayer.Session;
 
 namespace GamificationPlayer.DTO.ModuleSession
 {
-    public class GetModuleSessionsResponseDTO
+    public class GetModuleSessionResponseDTO
     {
         [Serializable]
         public class Attributes
@@ -107,6 +107,6 @@ namespace GamificationPlayer.DTO.ModuleSession
             public Module module;
         }
 
-        public List<Data> data;
+        public Data data;
     }
 }

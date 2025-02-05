@@ -455,6 +455,9 @@ namespace GamificationPlayer
 
                 sessionData.AddToLog(dto);
             }
+#else
+            sessionData.ListenTo<Language>(LanguageSet);
+            sessionData.ListenTo<OrganisationDefaultLanguage>(LanguageSet);
 #endif
 
             gamificationPlayerEndpoints = new GamificationPlayerEndpoints(GGetEnvironmentConfig(), sessionData);
@@ -463,6 +466,18 @@ namespace GamificationPlayer
             {
                 GGetServerOffSetTime();
             }
+        }
+
+        private void LanguageSet(object obj)
+        {
+            OnLanguageSet?.Invoke(obj as string);
+        }
+
+        private void OnDestroy()
+        {
+#if !UNITY_WEBGL
+            sessionData.RemoveListener(LanguageSet);
+#endif
         }
 
         private string GetAbsoluteURL()
@@ -548,7 +563,7 @@ namespace GamificationPlayer
                     if(isGetLoginToken && isGetOrganisation && isGetUser)
                     {
                         isInitialized = true;
-                    }
+                    }                  
                 }));
                 StartCoroutine(gamificationPlayerEndpoints.CoGetUser((_, __) => { 
                     isGetUser = true; 
@@ -846,8 +861,6 @@ namespace GamificationPlayer
 
         private void PageView(string jsonMessage)
         {
-            sessionData.TryGetLatestLanguage(out var previousLanguage);
-
             var dto = jsonMessage.FromJson<PageViewDTO>(false);
 
             sessionData.TryGetLatestOrganisationId(out Guid latestOrganisationId);
@@ -889,14 +902,6 @@ namespace GamificationPlayer
             }
 
             OnPageView?.Invoke();
-
-            if(sessionData.TryGetLatestLanguage(out var language))
-            {
-                if(previousLanguage != language)
-                {
-                    OnLanguageSet?.Invoke(language);
-                }
-            }
 
             if(!sessionData.TryGetLatestSubdomain(out _) && 
                 sessionData.TryGetLatestOrganisationId(out _))

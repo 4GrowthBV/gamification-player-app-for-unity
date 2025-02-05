@@ -221,7 +221,6 @@ namespace GamificationPlayer
                 if(pair.Value.Contains(callback))
                 {
                     pair.Value.Remove(callback);
-                    break;
                 }
             }
         }

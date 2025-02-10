@@ -476,7 +476,10 @@ namespace GamificationPlayer
         private void OnDestroy()
         {
 #if !UNITY_WEBGL
-            sessionData.RemoveListener(LanguageSet);
+            if(sessionData != null)
+            {
+                sessionData.RemoveListener(LanguageSet);
+            }
 #endif
         }
 

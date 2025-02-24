@@ -36,6 +36,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             [Language]
             public string language;
+
+            [UserTags]
+            public string[] user_tags;
         }
 
         [Serializable]

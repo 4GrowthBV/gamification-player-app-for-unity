@@ -786,6 +786,7 @@ namespace GamificationPlayer
                     sessionData.TryGetLatest<Language>(out string language);
                     sessionData.TryGetLatest<EnvironmentDomain>(out string environmentDomain);
                     sessionData.TryGetLatest<EnvironmentType>(out string environmentType);
+                    sessionData.TryGetLatest<UserTags>(out string[] userTags);
 
                     var webTokenPayload = new MicroGamePayload
                     {
@@ -795,7 +796,8 @@ namespace GamificationPlayer
                             user_id = userId.ToString(),
                             user_avatar = userAvatar,
                             user_name = userName,
-                            language = language
+                            language = language,
+                            user_tags = userTags
                         },
 
                         session = new MicroGamePayload.Session(),

@@ -857,7 +857,7 @@ namespace GamificationPlayer
 
             var JSONWebTokenPayload = JWTHelper.GetJSONWebTokenPayload(dto.data.attributes.module_data, 
                 gamificationPlayerEndpoints.EnvironmentConfig.JSONWebTokenSecret);
-            var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>();
+            var webTokenPayload = JSONWebTokenPayload.FromJson<MicroGamePayload>(false);
 
             sessionData.AddToLog(webTokenPayload);
 

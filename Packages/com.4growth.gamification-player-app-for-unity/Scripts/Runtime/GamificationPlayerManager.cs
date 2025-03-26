@@ -851,7 +851,7 @@ namespace GamificationPlayer
 
         private void MicroGameOpened(string jsonMessage)
         {
-            var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
+            var dto = jsonMessage.FromJson<MicroGameOpenedDTO>(false);
             
             sessionData.AddToLog(dto.data);
 

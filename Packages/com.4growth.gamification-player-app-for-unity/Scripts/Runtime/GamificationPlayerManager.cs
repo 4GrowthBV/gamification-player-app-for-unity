@@ -451,7 +451,7 @@ namespace GamificationPlayer
 
                 var json = JWTHelper.GetJSONWebTokenPayload(jwt, environmentConfig.JSONWebTokenSecret);
 
-                var dto = json.FromJson<MicroGamePayload>();
+                var dto = json.FromJson<MicroGamePayload>(false);
 
                 sessionData.AddToLog(dto);
             }
@@ -851,7 +851,7 @@ namespace GamificationPlayer
 
         private void MicroGameOpened(string jsonMessage)
         {
-            var dto = jsonMessage.FromJson<MicroGameOpenedDTO>(false);
+            var dto = jsonMessage.FromJson<MicroGameOpenedDTO>();
             
             sessionData.AddToLog(dto.data);
 

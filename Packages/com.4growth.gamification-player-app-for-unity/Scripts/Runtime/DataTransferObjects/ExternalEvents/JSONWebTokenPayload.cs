@@ -39,6 +39,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             [UserTags]
             public string[] user_tags;
+
+            [UserRole]
+            public string role;
         }
 
         [Serializable]
@@ -104,6 +107,9 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [Serializable]
         public class Module
         {
+            [ModuleId]
+            public string id;
+
             public int multiplier;
 
             public int max_score;

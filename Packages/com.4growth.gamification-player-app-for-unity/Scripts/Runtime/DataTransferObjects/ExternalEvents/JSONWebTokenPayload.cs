@@ -139,6 +139,12 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Integration integration;
 
+        [ContextType]
+        public string context_type;
+
+        [SubmitToken]
+        public string submit_token;
+
         public string Type => "moduleData";
 
         public float Time { get; set; }

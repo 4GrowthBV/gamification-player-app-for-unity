@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using GamificationPlayer.DTO.AppScores;
 using GamificationPlayer.DTO.ExternalEvents;
+using GamificationPlayer.Session;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -82,8 +83,12 @@ namespace GamificationPlayer
             }
             else
             {
+                sessionData.TryGetLatest<SubmitToken>(out var submitToken);
+
+                var apiKey = string.IsNullOrEmpty(submitToken) ? environmentConfig.APIKey : submitToken;
+
                 UnityWebRequest webRequest = GetUnityWebRequestPOST(webRequestString, data);
-                webRequest.SetRequestHeader("X-Api-Key", environmentConfig.APIKey);
+                webRequest.SetRequestHeader("X-Api-Key", apiKey);
                 webRequest.SetRequestHeader("Content-Type", "application/json");
                 webRequest.SetRequestHeader("Accept", "application/json");
                 webRequest.certificateHandler = new ForceAcceptAll();

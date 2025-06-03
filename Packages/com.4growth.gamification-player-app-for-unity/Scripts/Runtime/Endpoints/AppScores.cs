@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Codice.CM.Common;
 using GamificationPlayer.DTO.AppScores;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;

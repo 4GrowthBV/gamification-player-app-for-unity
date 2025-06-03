@@ -106,7 +106,7 @@ namespace GamificationPlayer.DTO.AppScores
                     CompletedAt = FormatDateTime(completedAt.Value);
                 }
 
-                Integration = integration;
+                Integration = integration == null || string.IsNullOrEmpty(integration.id) ? null : integration;
 
                 ValidateProhibitions();
             }

@@ -19,11 +19,7 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestConstructor()
         {
-            var moduleSessionId = Guid.NewGuid();
-            var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var organisationId = Guid.NewGuid();
-            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
             var integration = new MicroGamePayload.Integration
@@ -35,90 +31,83 @@ namespace GamificationPlayer.Tests
                 }
             };
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date, integration);
+            var obj = AppScoresRequestDTO.CreateBattleSessionRequest(userId, date, date, score, date, integration);
 
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(date, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
-            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(integration.id, obj.Data.Attributes.Integration.id);
 
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date, integration);
 
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(date, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
-            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
+            obj = AppScoresRequestDTO.CreateModuleSessionRequest(date, score, date, integration);
 
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date, integration);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.Data.Attributes.Integration.id);
 
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
-            Assert.AreEqual(organisationId.ToString(), obj.data.attributes.organisation_id);
-            Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(date, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(integration.id, obj.data.attributes.integration.id);
-            Assert.AreEqual(integration.context, obj.data.attributes.integration.context);
+            obj = AppScoresRequestDTO.CreateDailyChallengeRequest(userId, date, date, score, date, integration);
+
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.Data.Attributes.Integration.id);
+
+            obj = AppScoresRequestDTO.CreateDirectPlayRequest(userId, date, date, score, date, integration);
+
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(integration.id, obj.Data.Attributes.Integration.id);
         }
 
         [Test]
         public void TestNullConstructor()
         {
-            var moduleSessionId = Guid.NewGuid();
-            var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var organisationId = Guid.NewGuid();
-            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
-            var integration = new MicroGamePayload.Integration
-            {
-                id = Guid.NewGuid().ToString(),
-                context = new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "key", "value" }
-                }
-            };
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, null);
+            var obj = AppScoresRequestDTO.CreateBattleSessionRequest(userId, date, date, score, null, null);
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(null, obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(null, obj.Data.Attributes.Integration);
 
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(battleSessionId.ToString(), obj.data.attributes.battle_session_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(null, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(null, obj.data.attributes.integration);
+            obj = AppScoresRequestDTO.CreateModuleSessionRequest(date, score, null, null);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(null, obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(null, obj.Data.Attributes.Integration);
 
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, null);
+            obj = AppScoresRequestDTO.CreateDailyChallengeRequest(userId, date, date, score, null, null);
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(null, obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(null, obj.Data.Attributes.Integration);
 
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(moduleSessionId.ToString(), obj.data.attributes.module_session_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(null, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(null, obj.data.attributes.integration);
-
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, null);
-
-            Assert.AreEqual(score, obj.data.attributes.score);
-            Assert.AreEqual(userId.ToString(), obj.data.attributes.user_id);
-            Assert.AreEqual(organisationId.ToString(), obj.data.attributes.organisation_id);
-            Assert.AreEqual(microGameId.ToString(), obj.data.attributes.micro_game_id);
-            Assert.AreEqual(date, obj.data.attributes.EndedAt);
-            Assert.AreEqual(null, obj.data.attributes.CompletedAt);
-            Assert.AreEqual(null, obj.data.attributes.integration);
+            obj = AppScoresRequestDTO.CreateDirectPlayRequest(userId, date, date, score, null, null);
+            Assert.AreEqual(userId.ToString(), obj.Data.Attributes.UserId);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.StartedAt);
+            Assert.AreEqual(date.ToString("yyyy-MM-ddTHH:mm:ssZ"), obj.Data.Attributes.EndedAt);
+            Assert.AreEqual(score, obj.Data.Attributes.Score);
+            Assert.AreEqual(null, obj.Data.Attributes.CompletedAt);
+            Assert.AreEqual(null, obj.Data.Attributes.Integration);
         }
 
         [Test]
         public void TestToJSON()
         {
-            var moduleSessionId = Guid.NewGuid();
-            var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var organisationId = Guid.NewGuid();
-            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
             var integration = new MicroGamePayload.Integration
@@ -130,86 +119,65 @@ namespace GamificationPlayer.Tests
                 }
             };
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, date, integration);
-
+            var obj = AppScoresRequestDTO.CreateBattleSessionRequest(userId, date, date, score, date, integration);
             var json = obj.ToJson();
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.battle_session_id));
-            Assert.That(json.Contains(obj.data.attributes.integration.id));
-            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
+            Assert.That(json.Contains(integration.id));
 
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, date, integration);
-
+            obj = AppScoresRequestDTO.CreateModuleSessionRequest(date, score, date, integration);
             json = obj.ToJson();
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.module_session_id));
-            Assert.That(json.Contains(obj.data.attributes.integration.id));
-            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
+            Assert.That(json.Contains(integration.id));
 
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, date, integration);
-
+            obj = AppScoresRequestDTO.CreateDailyChallengeRequest(userId, date, date, score, date, integration);
             json = obj.ToJson();
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
+            Assert.That(json.Contains(integration.id));
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.user_id));
-            Assert.That(json.Contains(obj.data.attributes.organisation_id));
-            Assert.That(json.Contains(obj.data.attributes.micro_game_id));
-            Assert.That(json.Contains(obj.data.attributes.integration.id));
-            Assert.That(json.Contains(obj.data.attributes.integration.context["key"]));
-
-            Debug.Log(json);
+            obj = AppScoresRequestDTO.CreateDirectPlayRequest(userId, date, date, score, date, integration);
+            json = obj.ToJson();
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
+            Assert.That(json.Contains(integration.id));
         }
 
         [Test]
         public void TestToJSONWithNull()
         {
-            var moduleSessionId = Guid.NewGuid();
-            var battleSessionId = Guid.NewGuid();
             var userId = Guid.NewGuid();
-            var organisationId = Guid.NewGuid();
-            var microGameId = Guid.NewGuid();
             var score = 888;
             var date = new System.DateTime(2001, 1, 1);
 
-            var obj = AppScoresRequestDTO.GetAppScoresBattleRequest(date, date, score, userId, battleSessionId, null);
-
+            var obj = AppScoresRequestDTO.CreateBattleSessionRequest(userId, date, date, score, null, null);
             var json = obj.ToJson();
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.battle_session_id));
-            Assert.That(json.Contains("null"));
-
-            obj = AppScoresRequestDTO.GetAppScoresModuleRequest(date, date, score, moduleSessionId, null);
-
+            obj = AppScoresRequestDTO.CreateModuleSessionRequest(date, score, null, null);
             json = obj.ToJson();
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.module_session_id));
-            Assert.That(json.Contains("null"));
-
-            obj = AppScoresRequestDTO.GetAppScoresRequest(date, date, score, userId, organisationId, microGameId, null);
-
+            obj = AppScoresRequestDTO.CreateDailyChallengeRequest(userId, date, date, score, null, null);
             json = obj.ToJson();
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
 
-            Assert.That(json.Contains(obj.data.attributes.score.ToString()));
-            Assert.That(json.Contains(obj.data.type));
-            Assert.That(json.Contains(obj.data.attributes.ended_at));
-            Assert.That(json.Contains(obj.data.attributes.user_id));
-            Assert.That(json.Contains(obj.data.attributes.organisation_id));
-            Assert.That(json.Contains(obj.data.attributes.micro_game_id));
-            Assert.That(json.Contains("null"));
+            obj = AppScoresRequestDTO.CreateDirectPlayRequest(userId, date, date, score, null, null);
+            json = obj.ToJson();
+            Assert.That(json.Contains(userId.ToString()));
+            Assert.That(json.Contains(date.ToString("yyyy-MM-ddTHH:mm:ssZ")));
+            Assert.That(json.Contains(score.ToString()));
         }
     }
 }

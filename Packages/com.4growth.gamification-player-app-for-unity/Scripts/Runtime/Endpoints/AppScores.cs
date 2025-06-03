@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Codice.CM.Common;
 using GamificationPlayer.DTO.AppScores;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
@@ -24,49 +25,75 @@ namespace GamificationPlayer
                 completedAt = now;
             }
 
-            sessionData.TryGetLatestModuleSessionId(out var moduleSessionId);
-            sessionData.TryGetLatestBattleSessionId(out var battleSessionId);
+            sessionData.TryGetLatest<ContextType>(out var contextType);
 
-            sessionData.TryGetLatestUserId(out var userId);
-            sessionData.TryGetLatestOrganisationId(out var organisationId);
-            sessionData.TryGetLatestMicroGameId(out var microGameId);
+            if (contextType == "module_session")
+            {
+                appScoresRequestDTO = AppScoresRequestDTO.CreateModuleSessionRequest(
+                    endedAt: now,
+                    score: score,
+                    completedAt: completedAt,
+                    integration: integration);
+            }
+            else if (contextType == "battle_session")
+            {
+                sessionData.TryGetLatestUserId(out var userId);
 
-            if(moduleSessionId != null && moduleSessionId != Guid.Empty)
+                appScoresRequestDTO = AppScoresRequestDTO.CreateBattleSessionRequest(
+                    userId: userId,
+                    startedAt: started,
+                    endedAt: now,
+                    score: score,
+                    completedAt: completedAt,
+                    integration: integration);
+            }
+            else if (contextType == "direct_play")
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresModuleRequest(started, 
-                    now, 
-                    score, 
-                    moduleSessionId, 
-                    completedAt, 
-                    integration);
-            } 
-            else if(battleSessionId != null && battleSessionId != Guid.Empty)
+                sessionData.TryGetLatestUserId(out var userId);
+
+                appScoresRequestDTO = AppScoresRequestDTO.CreateDirectPlayRequest(
+                    userId: userId,
+                    startedAt: started,
+                    endedAt: now,
+                    score: score,
+                    completedAt: completedAt,
+                    integration: integration);
+            }
+            else if (contextType == "daily_challenge")
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresBattleRequest(started, 
-                    now, 
-                    score, 
-                    userId, 
-                    battleSessionId, 
-                    completedAt, 
-                    integration);
-            } else
+                sessionData.TryGetLatestUserId(out var userId);
+
+                appScoresRequestDTO = AppScoresRequestDTO.CreateDailyChallengeRequest(
+                    userId: userId,
+                    startedAt: started,
+                    endedAt: now,
+                    score: score,
+                    completedAt: completedAt,
+                    integration: integration);
+            }
+            else
             {
-                appScoresRequestDTO = AppScoresRequestDTO.GetAppScoresRequest(started, 
-                    now,
-                    score, 
-                    userId, 
-                    organisationId, 
-                    microGameId, 
-                    completedAt, 
-                    integration);
-            }            
+                sessionData.TryGetLatestUserId(out var userId);
+                sessionData.TryGetLatestMicroGameId(out var microGameId);
+                sessionData.TryGetLatestOrganisationId(out var organisationId);
+
+                appScoresRequestDTO = AppScoresRequestDTO.CreateNoContextRequest(
+                    userId: userId,
+                    organisationId: organisationId,
+                    microGameId: microGameId,
+                    startedAt: started,
+                    endedAt: now,
+                    score: score,
+                    completedAt: completedAt,
+                    integration: integration);
+            }
 
             yield return CoAppScores(appScoresRequestDTO, onReady);
         }
         
         private IEnumerator CoAppScores(AppScoresRequestDTO appScoresRequestDTO, AppScoresCallback onReady = null)
         {
-            sessionData.AddToLog(appScoresRequestDTO.data);
+            sessionData.AddToLog(appScoresRequestDTO.Data);
 
             string data = appScoresRequestDTO.ToJson();
 

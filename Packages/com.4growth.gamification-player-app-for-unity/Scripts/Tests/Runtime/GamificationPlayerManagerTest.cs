@@ -287,12 +287,6 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onEventWasCalled);
 
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
-
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestModuleId(out _));
-            if(GamificationPlayerManager.TryGetLatestModuleId(out var id))
-            {
-                Assert.AreEqual(id, moduleId);
-            }
         }
 
         [UnityTest]
@@ -420,12 +414,6 @@ namespace GamificationPlayer.Tests
             Assert.IsTrue(onEventWasCalled);
 
             Assert.IsTrue(GamificationPlayerManager.IsMicroGameActive());
-
-            Assert.IsTrue(GamificationPlayerManager.TryGetLatestModuleId(out _));
-            if(GamificationPlayerManager.TryGetLatestModuleId(out var id))
-            {
-                Assert.AreEqual(id, moduleId);
-            }
         }
 
         [UnityTest]

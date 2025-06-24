@@ -8,16 +8,21 @@ namespace GamificationPlayer
     {
         public bool TryGetEnvironmentConfig(string environmentDomain, out EnvironmentConfig gamificationPlayerEnvironmentConfig)
         {
-            foreach(var config in configs)
+            foreach (var config in configs)
             {
-                if(environmentDomain.ToLower().Contains(config.Webpage.ToLower()) || 
+                if (environmentDomain.ToLower().Contains(config.Webpage.ToLower()) ||
                     config.Webpage.ToLower().Contains(environmentDomain.ToLower()))
                 {
+                    Debug.Log($"EnvironmentDomainGroup::TryGetEnvironmentConfig::found config for {environmentDomain} in {config.name}");
                     gamificationPlayerEnvironmentConfig = config;
 
-                    return true; 
+                    return true;
                 }
+                
+                Debug.Log($"EnvironmentDomainGroup::TryGetEnvironmentConfig::no config found for {environmentDomain} in {config.name}");
             }
+
+            Debug.Log($"EnvironmentDomainGroup::TryGetEnvironmentConfig::no config found for {environmentDomain}");
 
             gamificationPlayerEnvironmentConfig = default;
 

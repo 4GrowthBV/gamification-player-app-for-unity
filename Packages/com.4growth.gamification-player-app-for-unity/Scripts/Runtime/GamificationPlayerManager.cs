@@ -446,12 +446,8 @@ namespace GamificationPlayer
                 Uri url = new Uri(absoluteURL);
                 var query = System.Web.HttpUtility.ParseQueryString(url.Query);
                 string jwt = query["moduleData"];
-                
-                Debug.Log($"GamificationPlayerManager::Awake::absoluteURL {absoluteURL}");
 
                 GamificationPlayerConfig.TryGetEnvironmentConfig(absoluteURL, out var environmentConfig);
-
-                Debug.Log($"GamificationPlayerManager::Awake::environmentConfig {environmentConfig.name}");
 
                 var json = JWTHelper.GetJSONWebTokenPayload(jwt, environmentConfig.JSONWebTokenSecret);
 

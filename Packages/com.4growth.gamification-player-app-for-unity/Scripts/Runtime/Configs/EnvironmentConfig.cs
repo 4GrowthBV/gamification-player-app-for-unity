@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -18,7 +19,17 @@ namespace GamificationPlayer
         {
             get
             {
-                return apiURL;
+                if(DynamicPort == 0)
+                {
+                    return apiURL;
+                }
+                
+                var url = new UriBuilder(apiURL)
+                {
+                    Port = DynamicPort
+                };
+
+                return url.Uri.ToString();
             }
         }
 
@@ -26,7 +37,17 @@ namespace GamificationPlayer
         {
             get
             {
-                return webpage;
+                if(DynamicPort == 0)
+                {
+                    return webpage;
+                }
+
+                var url = new UriBuilder(webpage)
+                {
+                    Port = DynamicPort
+                };
+
+                return url.Uri.ToString();
             }
         }
 
@@ -62,11 +83,14 @@ namespace GamificationPlayer
             }
         }
 
+        [HideInInspector]
+        public int DynamicPort = 0;
+
         public bool TryGetMockDTO<TType>(out TType dto)
         {
             dto = default;
-            
-            if(mockDTOs == null)
+
+            if (mockDTOs == null)
             {
                 return false;
             }
@@ -74,12 +98,12 @@ namespace GamificationPlayer
             var name = typeof(TType);
             var json = mockDTOs.FirstOrDefault(t => t.name == typeof(TType).ToString());
 
-            if(json != null)
+            if (json != null)
             {
                 dto = json.text.FromJson<TType>();
                 return true;
             }
-            
+
             return false;
         }
 

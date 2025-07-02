@@ -47,7 +47,7 @@ namespace GamificationPlayer
                     Port = DynamicPort
                 };
 
-                return url.Uri.ToString();
+                return url.Uri.ToString().Replace("http://", "");
             }
         }
 

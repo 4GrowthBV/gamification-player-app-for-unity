@@ -15,6 +15,7 @@ namespace GamificationPlayer
             sessionData.TryGetLatestId<UserId>(out var userId);
 
             var requestDto = new DTO.OfflineSync.OfflineSyncRequestDTO();
+            requestDto.Meta = new DTO.OfflineSync.OfflineSyncRequestDTO.MetaData();
             requestDto.Meta.OrganisationId = organisationId.ToString();
             requestDto.Meta.UserId = userId.ToString();
             requestDto.Data = dataItems;

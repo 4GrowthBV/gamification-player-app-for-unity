@@ -42,6 +42,8 @@ namespace GamificationPlayer
     public delegate void GetUserCallback(UnityWebRequest.Result result, GetUserResponseDTO dto);
 
     public delegate void GetOpenBattleInvitationsForUserCallback(UnityWebRequest.Result result, int total);
+    
+    public delegate void OfflineSyncCallback(UnityWebRequest.Result result, DTO.OfflineSync.OfflineSyncResponseDTO response);
 
 
     public partial class GamificationPlayerEndpoints
@@ -75,11 +77,12 @@ namespace GamificationPlayer
         private UnityWebRequest GetUnityWebRequestPOST(string webRequestString, string data)
         {
             UnityWebRequest webRequest;
-            if(environmentConfig.IsMockServer)
+            if (environmentConfig.IsMockServer)
             {
                 webRequest = UnityWebRequest.Get(webRequestString);
-            } else
-            {   
+            }
+            else
+            {
                 webRequest = UnityWebRequest.Put(webRequestString, data);
                 webRequest.method = "POST";
             }

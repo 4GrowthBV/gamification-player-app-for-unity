@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using UnityEngine;
@@ -366,6 +367,11 @@ namespace GamificationPlayer
         public static void GetMicroGame(Guid guid, Action<DTO.MicroGame.GetMicroGameResponseDTO> callback)
         {
             instance.GGetMicroGame(guid, callback);
+        }
+
+        public static void OfflineSync(List<DTO.OfflineSync.OfflineSyncRequestDTO.DataItem> dataItems, OfflineSyncCallback callback)
+        {
+            instance.GOfflineSync(dataItems, callback);
         }
 
         public static void GetModuleSession(GetModuleSessionCallback callback)
@@ -761,6 +767,11 @@ namespace GamificationPlayer
             {
                 callback?.Invoke(dto);
             }));
+        }
+
+        private void GOfflineSync(List<DTO.OfflineSync.OfflineSyncRequestDTO.DataItem> dataItems, OfflineSyncCallback callback)
+        {
+            StartCoroutine(gamificationPlayerEndpoints.CoOfflineSync(dataItems, callback));
         }
 
         private void GGetModuleSession(GetModuleSessionCallback callback)

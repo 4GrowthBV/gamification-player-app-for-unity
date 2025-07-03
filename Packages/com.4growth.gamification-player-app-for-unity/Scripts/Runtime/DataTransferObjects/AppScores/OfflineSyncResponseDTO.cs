@@ -8,48 +8,48 @@ namespace GamificationPlayer.DTO.OfflineSync
     public class OfflineSyncResponseDTO
     {
         [JsonProperty("data")]
-        public List<ResponseItem> Data { get; set; }
+        public List<ResponseItem> Data;
 
         [Serializable]
         public class ResponseItem
         {
             [JsonProperty("type")]
-            public string Type { get; set; }
+            public string Type;
 
             [JsonProperty("attributes")]
-            public ResponseAttributes Attributes { get; set; }
+            public ResponseAttributes Attributes;
 
             [JsonProperty("meta")]
-            public ResponseMeta Meta { get; set; }
+            public ResponseMeta Meta;
         }
 
         [Serializable]
         public class ResponseAttributes
         {
             [JsonProperty("module_id")]
-            public string ModuleId { get; set; }
+            public string ModuleId;
 
             [JsonProperty("started_at")]
-            public string StartedAt { get; set; }
+            public string StartedAt;
 
             [JsonProperty("ended_at")]
-            public string EndedAt { get; set; }
+            public string EndedAt;
 
             [JsonProperty("completed_at")]
-            public string CompletedAt { get; set; }
+            public string CompletedAt;
 
             [JsonProperty("score")]
-            public int Score { get; set; }
+            public int Score;
         }
 
         [Serializable]
         public class ResponseMeta
         {
             [JsonProperty("status")]
-            public string Status { get; set; }
+            public string Status;
 
             [JsonProperty("challenge_grouping")]
-            public string ChallengeGrouping { get; set; }
+            public string ChallengeGrouping;
         }
     }
 }

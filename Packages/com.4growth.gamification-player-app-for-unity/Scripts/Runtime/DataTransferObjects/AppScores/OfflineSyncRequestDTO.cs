@@ -8,61 +8,61 @@ namespace GamificationPlayer.DTO.OfflineSync
     public class OfflineSyncRequestDTO
     {
         [JsonProperty("meta")]
-        public MetaData Meta { get; set; }
+        public MetaData Meta;
 
         [JsonProperty("data")]
-        public List<DataItem> Data { get; set; }
+        public List<DataItem> Data;
 
         [Serializable]
         public class MetaData
         {
             [JsonProperty("organisation_id")]
-            public string OrganisationId { get; set; }
+            public string OrganisationId;
 
             [JsonProperty("user_id")]
-            public string UserId { get; set; }
+            public string UserId;
         }
 
         [Serializable]
         public class DataItem
         {
             [JsonProperty("type")]
-            public string Type { get; set; }
+            public string Type;
 
             [JsonProperty("attributes")]
-            public Attributes Attributes { get; set; }
+            public Attributes Attributes;
 
             [JsonProperty("meta")]
-            public ItemMeta Meta { get; set; }
+            public ItemMeta Meta;
         }
 
         [Serializable]
         public class Attributes
         {
             [JsonProperty("module_id")]
-            public string ModuleId { get; set; }
+            public string ModuleId;
 
             [JsonProperty("started_at")]
-            public string StartedAt { get; set; }
+            public string StartedAt;
 
             [JsonProperty("ended_at")]
-            public string EndedAt { get; set; }
+            public string EndedAt;
 
             [JsonProperty("completed_at")]
-            public string CompletedAt { get; set; }
+            public string CompletedAt;
 
             [JsonProperty("score")]
-            public int Score { get; set; }
+            public int Score;
 
             [JsonProperty("extra_data")]
-            public Dictionary<string, object> ExtraData { get; set; }
+            public Dictionary<string, object> ExtraData;
         }
 
         [Serializable]
         public class ItemMeta
         {
             [JsonProperty("challenge_grouping")]
-            public string ChallengeGrouping { get; set; }
+            public string ChallengeGrouping;
         }
     }
 }

@@ -84,6 +84,24 @@ namespace GamificationPlayer
 
             [OrganisationWebhookUrl]
             public string webhook_url;
+
+            [OrganisationAllowUpgradeToRegisteredUser]
+            private bool allow_upgrade_to_registered_user;
+
+            [OrganisationResellerEnabled]
+            private bool reseller_enabled;
+
+            [OrganisationTimezone]
+            private string timezone;
+
+            [OrganisationIosAppUrl]
+            private string ios_app_url;
+
+            [OrganisationAndroidAppUrl]
+            private string android_app_url;
+
+            [OrganisationBranchioUrl]   
+            private string branchio_url;
         }
 
         [Serializable]

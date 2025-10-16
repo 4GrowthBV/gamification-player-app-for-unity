@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "gamification-player-app-for-unity.sln"
+    "dotnet.defaultSolution": "gamification-player-app-for-unity.slnx"
 }

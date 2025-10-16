@@ -1,0 +1,6 @@
+﻿<Solution>
+  <Project Path="com.4growth.gamification-player-app-for-unity.csproj" />
+  <Project Path="com.4growth.gamification-player-app-for-unity.Tests.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="com.4growth.gamification-player-app-for-unity.Editor.csproj" />
+</Solution>

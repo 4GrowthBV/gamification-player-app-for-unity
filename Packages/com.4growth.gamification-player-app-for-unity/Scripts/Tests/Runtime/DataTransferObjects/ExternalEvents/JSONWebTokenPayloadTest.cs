@@ -1,5 +1,6 @@
 using GamificationPlayer.DTO.ExternalEvents;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
@@ -54,8 +55,14 @@ namespace GamificationPlayer.Tests
                 }
             };
 
+            obj.player.user_tags = new string[] {};
+
+
             var json = obj.ToJson();
-            var newObj = json.FromJson<MicroGamePayload>();
+
+            Debug.Log(json);
+
+            var newObj = json.FromJson<MicroGamePayload>(false);
 
             Assert.AreEqual(newObj.Type, "moduleData");
             Assert.AreEqual(newObj.micro_game.extra_data["testKey"], "testValue");

@@ -797,18 +797,28 @@ namespace GamificationPlayer
                     sessionData.TryGetLatest<Language>(out string language);
                     sessionData.TryGetLatest<EnvironmentDomain>(out string environmentDomain);
                     sessionData.TryGetLatest<EnvironmentType>(out string environmentType);
+                    sessionData.TryGetLatest<OrganisationSubdomain>(out string organisationSubdomain);
+                    sessionData.TryGetLatest<OrganisationResellerID>(out string organisationResellerId);
+                    sessionData.TryGetLatest<OrganisationName>(out string organisationName);
                     sessionData.TryGetLatest<UserTags>(out string[] userTags);
 
                     var webTokenPayload = new MicroGamePayload
                     {
                         player = player ?? new MicroGamePayload.Player
                         {
-                            organisation_id = organisationId.ToString(),
                             user_id = userId.ToString(),
                             user_avatar = userAvatar,
                             user_name = userName,
                             language = language,
                             user_tags = userTags
+                        },
+
+                        organisation = new MicroGamePayload.Organisation
+                        {
+                            id = organisationId.ToString(),
+                            name = organisationName,    
+                            subdomain = organisationSubdomain,
+                            reseller_id = organisationResellerId
                         },
 
                         session = new MicroGamePayload.Session(),

@@ -20,9 +20,6 @@ namespace GamificationPlayer.DTO.ExternalEvents
         [Serializable]
         public class Player
         {
-            [OrganisationId]
-            public string organisation_id;
-
             [UserId]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string user_id;
@@ -119,7 +116,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public int current_bonus;
 
             public int current_total;
-        }    
+        }
 
         [Serializable]
         public class Integration
@@ -127,9 +124,26 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public string id;
 
             public Dictionary<string, string> context;
-        }    
+        }
+
+        [Serializable]
+        public class Organisation
+        {
+            [OrganisationId]
+            public string id;
+
+            [OrganisationName]
+            public string name;
+
+            [OrganisationSubdomain]
+            public string subdomain;
+
+            [OrganisationResellerID]
+            public string reseller_id;
+        }
 
         public Player player;
+        public Organisation organisation;
         public Session session;
         public Battle battle;
         public MicroGame micro_game;

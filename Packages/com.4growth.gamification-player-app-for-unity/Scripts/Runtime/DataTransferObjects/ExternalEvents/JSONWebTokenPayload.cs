@@ -139,6 +139,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public string subdomain;
 
             [OrganisationResellerID]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public string reseller_id;
         }
 

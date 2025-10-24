@@ -369,6 +369,11 @@ namespace GamificationPlayer
             instance.GGetMicroGame(guid, callback);
         }
 
+        public static void GetMicroGames(Action<DTO.MicroGame.GetMicroGamesResponseDTO> callback)
+        {
+            instance.GGetMicroGames(callback);
+        }
+
         public static void OfflineSync(List<DTO.OfflineSync.OfflineSyncRequestDTO.DataItem> dataItems, OfflineSyncCallback callback)
         {
             instance.GOfflineSync(dataItems, callback);
@@ -764,6 +769,14 @@ namespace GamificationPlayer
         private void GGetMicroGame(Guid guid, Action<DTO.MicroGame.GetMicroGameResponseDTO> callback)
         {
             StartCoroutine(gamificationPlayerEndpoints.CoGetMicroGame(guid, (result, dto) =>
+            {
+                callback?.Invoke(dto);
+            }));
+        }
+
+        private void GGetMicroGames(Action<DTO.MicroGame.GetMicroGamesResponseDTO> callback)
+        {
+            StartCoroutine(gamificationPlayerEndpoints.CoGetMicroGames((result, dto) =>
             {
                 callback?.Invoke(dto);
             }));

@@ -19,6 +19,8 @@ namespace GamificationPlayer
 
     public delegate void GetMicroGameCallback(UnityWebRequest.Result result, GetMicroGameResponseDTO dto);
 
+    public delegate void GetMicroGamesCallback(UnityWebRequest.Result result, GetMicroGamesResponseDTO dto);
+
     public delegate void GetUserStatisticsCallback(UnityWebRequest.Result result);
 
     public delegate void EndModuleSessionCallback(UnityWebRequest.Result result);

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f150b1e77bd3554283e3e90ee368272, type: 3}
   m_Name: GamificationPlayerEnviromentConfigMock
   m_EditorClassIdentifier: 
+  DynamicPort: 0
   apiKey: 123
   apiURL: https://stoplight.io/mocks/vdhicts/gamification-player-api-spec/55579676
   webpage: gamificationplayer.it/
@@ -36,3 +37,4 @@ MonoBehaviour:
   - {fileID: 4900000, guid: 4d8e209169c891042b007d07b54e21b0, type: 3}
   - {fileID: 4900000, guid: f8cad4a164c63504ebe97ac39548594e, type: 3}
   - {fileID: 4900000, guid: d189e2ca314e9544aa216adefa61aebe, type: 3}
+  - {fileID: 4900000, guid: 861ca83a93d5a364f970e02c76ea2ba9, type: 3}

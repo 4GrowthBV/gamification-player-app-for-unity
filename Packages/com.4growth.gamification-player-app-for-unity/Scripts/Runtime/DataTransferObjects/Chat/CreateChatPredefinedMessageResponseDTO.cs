@@ -25,10 +25,18 @@ namespace GamificationPlayer.DTO.Chat
                 }
             }
 
+            [ChatPredefinedMessageIdentifier]
             public string identifier;
+            
+            [ChatPredefinedMessageContent]
             public string content;
-            public List<string> buttons;
+            
+            [ChatPredefinedMessageButtons]
+            public string[] buttons;
+            
+            [ChatPredefinedMessageButtonName]
             public string button_name;
+            
             public string created_at;
             public string updated_at;
         }
@@ -39,7 +47,9 @@ namespace GamificationPlayer.DTO.Chat
             public string Type { get => type; }
             public float Time { get; set; }
 
+            [ChatPredefinedMessageId]
             public string id;
+            
             public string type;
             public PredefinedMessageAttributes attributes;
         }

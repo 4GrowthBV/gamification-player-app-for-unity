@@ -42,9 +42,38 @@ namespace GamificationPlayer
 
         public bool TryGetLatestOrganisationId(out Guid id);
 
+        public bool TryGetLatestUserId(out Guid id);
+
         public bool TryGetLatestMicroGameId(out Guid id);
 
-        public bool TryGetLatestUserId(out Guid id);
+        // Chat-specific methods
+        public bool TryGetLatestChatConversationId(out Guid id);
+
+        public bool TryGetLatestChatConversationMessageId(out Guid id);
+
+        public bool TryGetLatestChatInstructionId(out Guid id);
+
+        public bool TryGetLatestChatProfileId(out Guid id);
+
+        public bool TryGetLatestChatRole(out string role);
+
+        public bool TryGetLatestChatMessage(out string message);
+
+        public bool TryGetLatestChatPredefinedMessageId(out Guid id);
+
+        public bool TryGetLatestChatInstructionIdentifier(out string identifier);
+
+        public bool TryGetLatestChatInstruction(out string instruction);
+
+        public bool TryGetLatestChatPredefinedMessageIdentifier(out string identifier);
+
+        public bool TryGetLatestChatPredefinedMessageContent(out string content);
+
+        public bool TryGetLatestChatPredefinedMessageButtons(out string[] buttons);
+
+        public bool TryGetLatestChatPredefinedMessageButtonName(out string buttonName);
+
+        public bool TryGetLatestChatProfile(out string profile);
 
         public void AddToLog(ILoggableData dto, bool clearMissingPersistentData = true);
 

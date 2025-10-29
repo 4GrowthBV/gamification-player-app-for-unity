@@ -35,7 +35,9 @@ namespace GamificationPlayer.DTO.Chat
             public string Type { get => type; }
             public float Time { get; set; }
 
+            [ChatConversationId]
             public string id;
+            
             public string type;
             public Attributes attributes;
         }

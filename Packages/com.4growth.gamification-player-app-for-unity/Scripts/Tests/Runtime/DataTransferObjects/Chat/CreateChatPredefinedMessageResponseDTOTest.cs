@@ -32,7 +32,7 @@ namespace GamificationPlayer.Tests
             Assert.That(!string.IsNullOrEmpty(dto.data.attributes.updated_at));
 
             Assert.NotNull(dto.data.attributes.buttons);
-            Assert.That(dto.data.attributes.buttons.Count > 0);
+            Assert.That(dto.data.attributes.buttons.Length > 0);
 
             Assert.That(dto.data.attributes.CreatedAt != default);
             Assert.That(dto.data.attributes.UpdatedAt != default);

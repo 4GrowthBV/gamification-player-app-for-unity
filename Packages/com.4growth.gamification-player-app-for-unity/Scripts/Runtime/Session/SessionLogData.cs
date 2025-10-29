@@ -276,6 +276,77 @@ namespace GamificationPlayer
             return TryGetLatestId<MicroGameId>(out id);
         }
 
+        // Chat-specific implementations
+        public bool TryGetLatestChatConversationId(out Guid id)
+        {
+            return TryGetLatestId<ChatConversationId>(out id);
+        }
+
+        public bool TryGetLatestChatConversationMessageId(out Guid id)
+        {
+            return TryGetLatestId<ChatConversationMessageId>(out id);
+        }
+
+        public bool TryGetLatestChatInstructionId(out Guid id)
+        {
+            return TryGetLatestId<ChatInstructionId>(out id);
+        }
+
+        public bool TryGetLatestChatProfileId(out Guid id)
+        {
+            return TryGetLatestId<ChatProfileId>(out id);
+        }
+
+        public bool TryGetLatestChatRole(out string role)
+        {
+            return TryGetLatest<ChatRole>(out role);
+        }
+
+        public bool TryGetLatestChatMessage(out string message)
+        {
+            return TryGetLatest<ChatMessage>(out message);
+        }
+
+        public bool TryGetLatestChatPredefinedMessageId(out Guid id)
+        {
+            return TryGetLatestId<ChatPredefinedMessageId>(out id);
+        }
+
+        public bool TryGetLatestChatInstructionIdentifier(out string identifier)
+        {
+            return TryGetLatest<ChatInstructionIdentifier>(out identifier);
+        }
+
+        public bool TryGetLatestChatInstruction(out string instruction)
+        {
+            return TryGetLatest<ChatInstruction>(out instruction);
+        }
+
+        public bool TryGetLatestChatPredefinedMessageIdentifier(out string identifier)
+        {
+            return TryGetLatest<ChatPredefinedMessageIdentifier>(out identifier);
+        }
+
+        public bool TryGetLatestChatPredefinedMessageContent(out string content)
+        {
+            return TryGetLatest<ChatPredefinedMessageContent>(out content);
+        }
+
+        public bool TryGetLatestChatPredefinedMessageButtons(out string[] buttons)
+        {
+            return TryGetLatest<ChatPredefinedMessageButtons>(out buttons);
+        }
+
+        public bool TryGetLatestChatPredefinedMessageButtonName(out string buttonName)
+        {
+            return TryGetLatest<ChatPredefinedMessageButtonName>(out buttonName);
+        }
+
+        public bool TryGetLatestChatProfile(out string profile)
+        {
+            return TryGetLatest<ChatProfile>(out profile);
+        }
+
         bool ISessionLogData.TryGetLatestId<TQueryable>(out Guid id)
         {
             return TryGetLatestId<TQueryable>(out id);

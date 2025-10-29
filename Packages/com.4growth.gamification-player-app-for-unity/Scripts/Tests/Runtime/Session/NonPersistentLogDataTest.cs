@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.DTO.LoginToken;
 using GamificationPlayer.DTO.ModuleSession;
+using GamificationPlayer.DTO.Chat;
 using GamificationPlayer.Session;
 using NUnit.Framework;
 using UnityEngine;
@@ -361,11 +363,290 @@ namespace GamificationPlayer.Tests
                 Assert.AreEqual(dto4.data.attributes.ended_at, dateTime);
             }
 
-            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ModuleSessionCompleted>(out _));
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ModuleSessionCompleted>(out dateTime));
             if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ModuleSessionCompleted>(out dateTime))
             {
                 Assert.AreEqual(dto4.data.attributes.completed_at, dateTime);
             }
+        }
+
+        [Test]
+        public void TestListenToChatQueryableAttributes()
+        {
+            var messageDto = new CreateChatConversationMessageResponseDTO();
+            messageDto.data = new CreateChatConversationMessageResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatConversationMessage",
+                attributes = new CreateChatConversationMessageResponseDTO.MessageAttributes
+                {
+                    role = "user",
+                    message = "Hello from listener test",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var instructionDto = new CreateChatInstructionResponseDTO();
+            instructionDto.data = new CreateChatInstructionResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatInstruction",
+                attributes = new CreateChatInstructionResponseDTO.InstructionAttributes
+                {
+                    identifier = "listener_test",
+                    instruction = "Test instruction for listener",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var nonPersistentSessionData = new NonPersistentLogData();
+
+            string testChatMessage = default;
+            string testChatRole = default;
+            string testChatInstruction = default;
+            string testChatInstructionIdentifier = default;
+
+            nonPersistentSessionData.ListenTo<ChatMessage>((message) =>
+            {
+                testChatMessage = (string)message;
+            });
+
+            nonPersistentSessionData.ListenTo<ChatRole>((role) =>
+            {
+                testChatRole = (string)role;
+            });
+
+            nonPersistentSessionData.ListenTo<ChatInstruction>((instruction) =>
+            {
+                testChatInstruction = (string)instruction;
+            });
+
+            nonPersistentSessionData.ListenTo<ChatInstructionIdentifier>((identifier) =>
+            {
+                testChatInstructionIdentifier = (string)identifier;
+            });
+
+            // Add message first
+            nonPersistentSessionData.AddToLog(messageDto.data);
+
+            Assert.AreEqual(testChatMessage, messageDto.data.attributes.message);
+            Assert.AreEqual(testChatRole, messageDto.data.attributes.role);
+            Assert.AreEqual(testChatInstruction, default); // Should still be default
+            Assert.AreEqual(testChatInstructionIdentifier, default); // Should still be default
+
+            // Add instruction
+            nonPersistentSessionData.AddToLog(instructionDto.data);
+
+            Assert.AreEqual(testChatInstruction, instructionDto.data.attributes.instruction);
+            Assert.AreEqual(testChatInstructionIdentifier, instructionDto.data.attributes.identifier);
+        }
+
+        [Test]
+        public void TestTryGetLatestChatQueryableValues()
+        {
+            var conversationDto = new CreateChatConversationResponseDTO();
+            conversationDto.data = new CreateChatConversationResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatConversation",
+                attributes = new CreateChatConversationResponseDTO.Attributes
+                {
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var messageDto = new CreateChatConversationMessageResponseDTO();
+            messageDto.data = new CreateChatConversationMessageResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatConversationMessage",
+                attributes = new CreateChatConversationMessageResponseDTO.MessageAttributes
+                {
+                    role = "assistant",
+                    message = "Test message for NonPersistent query",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var predefinedMessageDto = new CreateChatPredefinedMessageResponseDTO();
+            predefinedMessageDto.data = new CreateChatPredefinedMessageResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatPredefinedMessage",
+                attributes = new CreateChatPredefinedMessageResponseDTO.PredefinedMessageAttributes
+                {
+                    identifier = "test_predefined",
+                    content = "Predefined message content",
+                    buttons = new string[] { "Yes", "No", "Maybe" },
+                    button_name = "Yes",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var profileDto = new CreateChatProfileResponseDTO();
+            profileDto.data = new CreateChatProfileResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatProfile",
+                attributes = new CreateChatProfileResponseDTO.ProfileAttributes
+                {
+                    profile = "test_profile",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var nonPersistentSessionData = new NonPersistentLogData();
+
+            nonPersistentSessionData.AddToLog(conversationDto.data);
+            nonPersistentSessionData.AddToLog(messageDto.data);
+            nonPersistentSessionData.AddToLog(predefinedMessageDto.data);
+            nonPersistentSessionData.AddToLog(profileDto.data);
+
+            Assert.That(nonPersistentSessionData.LogData.Count() == 4);
+
+            // Test ChatConversationId
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatConversationId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatConversationId>(out var conversationId))
+            {
+                Assert.AreEqual(conversationDto.data.id, conversationId);
+            }
+
+            // Test ChatMessage
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatMessage>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatMessage>(out var message))
+            {
+                Assert.AreEqual(messageDto.data.attributes.message, message);
+            }
+
+            // Test ChatRole
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatRole>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatRole>(out var role))
+            {
+                Assert.AreEqual(messageDto.data.attributes.role, role);
+            }
+
+            // Test ChatConversationMessageId
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatConversationMessageId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatConversationMessageId>(out var messageId))
+            {
+                Assert.AreEqual(messageDto.data.id, messageId);
+            }
+
+            // Test ChatPredefinedMessageId
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageId>(out var predefinedMessageId))
+            {
+                Assert.AreEqual(predefinedMessageDto.data.id, predefinedMessageId);
+            }
+
+            // Test ChatPredefinedMessageIdentifier
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageIdentifier>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageIdentifier>(out var predefinedIdentifier))
+            {
+                Assert.AreEqual(predefinedMessageDto.data.attributes.identifier, predefinedIdentifier);
+            }
+
+            // Test ChatPredefinedMessageContent
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageContent>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageContent>(out var content))
+            {
+                Assert.AreEqual(predefinedMessageDto.data.attributes.content, content);
+            }
+
+            // Test ChatPredefinedMessageButtonName
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageButtonName>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatPredefinedMessageButtonName>(out var buttonName))
+            {
+                Assert.AreEqual(predefinedMessageDto.data.attributes.button_name, buttonName);
+            }
+
+            // Test ChatProfile
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatProfile>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatProfile>(out var profile))
+            {
+                Assert.AreEqual(profileDto.data.attributes.profile, profile);
+            }
+
+            // Test ChatProfileId
+            Assert.That(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatProfileId>(out _));
+            if(nonPersistentSessionData.TryGetLatestQueryableValue<string, ChatProfileId>(out var profileId))
+            {
+                Assert.AreEqual(profileDto.data.id, profileId);
+            }
+        }
+
+        [Test]
+        public void TestRemoveChatListeners()
+        {
+            var messageDto1 = new CreateChatConversationMessageResponseDTO();
+            messageDto1.data = new CreateChatConversationMessageResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatConversationMessage",
+                attributes = new CreateChatConversationMessageResponseDTO.MessageAttributes
+                {
+                    role = "user",
+                    message = "First message",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var messageDto2 = new CreateChatConversationMessageResponseDTO();
+            messageDto2.data = new CreateChatConversationMessageResponseDTO.Data
+            {
+                id = Guid.NewGuid().ToString(),
+                type = "chatConversationMessage",
+                attributes = new CreateChatConversationMessageResponseDTO.MessageAttributes
+                {
+                    role = "assistant",
+                    message = "Second message",
+                    created_at = DateTime.Now.ToString(),
+                    updated_at = DateTime.Now.ToString()
+                }
+            };
+
+            var nonPersistentSessionData = new NonPersistentLogData();
+
+            string testChatMessage = default;
+            string testChatRole = default;
+
+            void chatMessageMethod(object message)
+            {
+                testChatMessage = (string)message;
+            }
+
+            nonPersistentSessionData.ListenTo<ChatMessage>(chatMessageMethod);
+
+            nonPersistentSessionData.ListenTo<ChatRole>((role) =>
+            {
+                testChatRole = (string)role;
+            });
+
+            // Add first message
+            nonPersistentSessionData.AddToLog(messageDto1.data);
+
+            Assert.AreEqual(testChatMessage, messageDto1.data.attributes.message);
+            Assert.AreEqual(testChatRole, messageDto1.data.attributes.role);
+
+            // Remove chat message listener
+            nonPersistentSessionData.RemoveListener(chatMessageMethod);
+
+            // Add second message
+            nonPersistentSessionData.AddToLog(messageDto2.data);
+
+            // Chat message should not have changed (listener removed)
+            Assert.AreNotEqual(testChatMessage, messageDto2.data.attributes.message);
+            Assert.AreEqual(testChatMessage, messageDto1.data.attributes.message); // Still the first message
+
+            // Chat role should have changed (listener still active)
+            Assert.AreEqual(testChatRole, messageDto2.data.attributes.role);
         }
     }
 }

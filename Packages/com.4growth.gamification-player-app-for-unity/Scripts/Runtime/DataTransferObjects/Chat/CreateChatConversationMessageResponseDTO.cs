@@ -25,8 +25,12 @@ namespace GamificationPlayer.DTO.Chat
                 }
             }
 
+            [ChatRole]
             public string role;
+            
+            [ChatMessage]
             public string message;
+            
             public string created_at;
             public string updated_at;
         }
@@ -37,7 +41,9 @@ namespace GamificationPlayer.DTO.Chat
             public string Type { get => type; }
             public float Time { get; set; }
 
+            [ChatConversationMessageId]
             public string id;
+            
             public string type;
             public MessageAttributes attributes;
         }

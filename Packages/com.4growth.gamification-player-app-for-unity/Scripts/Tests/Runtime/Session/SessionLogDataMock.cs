@@ -160,5 +160,90 @@ namespace GamificationPlayer.Tests
 
             return true;
         }
+
+        // Chat-specific mock implementations
+        public bool TryGetLatestChatConversationId(out Guid id)
+        {
+            id = Guid.NewGuid();
+            return true;
+        }
+
+        public bool TryGetLatestChatConversationMessageId(out Guid id)
+        {
+            id = Guid.NewGuid();
+            return true;
+        }
+
+        public bool TryGetLatestChatInstructionId(out Guid id)
+        {
+            id = Guid.NewGuid();
+            return true;
+        }
+
+        public bool TryGetLatestChatProfileId(out Guid id)
+        {
+            id = Guid.NewGuid();
+            return true;
+        }
+
+        public bool TryGetLatestChatRole(out string role)
+        {
+            role = "assistant";
+            return true;
+        }
+
+        public bool TryGetLatestChatMessage(out string message)
+        {
+            message = "Hello! How can I help you today?";
+            return true;
+        }
+
+        public bool TryGetLatestChatPredefinedMessageId(out Guid id)
+        {
+            id = Guid.NewGuid();
+            return true;
+        }
+
+        public bool TryGetLatestChatInstructionIdentifier(out string identifier)
+        {
+            identifier = "welcome_instruction";
+            return true;
+        }
+
+        public bool TryGetLatestChatInstruction(out string instruction)
+        {
+            instruction = "You are a helpful AI assistant for a gamification platform.";
+            return true;
+        }
+
+        public bool TryGetLatestChatPredefinedMessageIdentifier(out string identifier)
+        {
+            identifier = "welcome_message";
+            return true;
+        }
+
+        public bool TryGetLatestChatPredefinedMessageContent(out string content)
+        {
+            content = "Welcome! How would you like to start?";
+            return true;
+        }
+
+        public bool TryGetLatestChatPredefinedMessageButtons(out string[] buttons)
+        {
+            buttons = new string[] { "Get Started", "Learn More", "Help" };
+            return true;
+        }
+
+        public bool TryGetLatestChatPredefinedMessageButtonName(out string buttonName)
+        {
+            buttonName = "Get Started";
+            return true;
+        }
+
+        public bool TryGetLatestChatProfile(out string profile)
+        {
+            profile = "Friendly AI Assistant with gaming knowledge";
+            return true;
+        }
     }
 }

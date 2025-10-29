@@ -1,0 +1,34 @@
+{
+  "data": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "type": "chat_predefined_message",
+    "attributes": {
+      "identifier": "new_predefined_message",
+      "content": "This is a new predefined message",
+      "buttons": ["Option 1", "Option 2", "Option 3"],
+      "button_name": "Choose Option",
+      "created_at": "2023-10-19T09:57:11.554Z",
+      "updated_at": "2023-10-19T09:57:11.554Z"
+    }
+  },
+  "included": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+      "type": "micro_game",
+      "attributes": {
+        "name": "Chat Game",
+        "created_at": "2023-10-19T09:57:11.554Z",
+        "updated_at": "2023-10-19T09:57:11.554Z"
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "type": "organisation",
+      "attributes": {
+        "name": "Test Organisation",
+        "created_at": "2023-10-19T09:57:11.554Z",
+        "updated_at": "2023-10-19T09:57:11.554Z"
+      }
+    }
+  ]
+}

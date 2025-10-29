@@ -215,5 +215,260 @@ namespace GamificationPlayer.Tests
                 Assert.That(dto == 1);
             });
         }
+
+        // Chat Conversations Tests
+        [UnityTest]
+        public IEnumerator TestGetChatConversations()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatConversations((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestGetChatConversation()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatConversation(Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestCreateChatConversation()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoCreateChatConversation((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestDeleteChatConversation()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoDeleteChatConversation(Guid.Empty, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        // Chat Messages Tests
+        [UnityTest]
+        public IEnumerator TestGetChatConversationMessages()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatConversationMessages((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestCreateChatConversationMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoCreateChatConversationMessage("user", "Test message", Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestUpdateChatConversationMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoUpdateChatConversationMessage(Guid.Empty, Guid.Empty, "user", "Updated message", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestDeleteChatConversationMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoDeleteChatConversationMessage(Guid.Empty, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        // Chat Instructions Tests
+        [UnityTest]
+        public IEnumerator TestGetChatInstructions()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatInstructions((result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestGetChatInstruction()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatInstruction(Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestCreateChatInstruction()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoCreateChatInstruction("test_identifier", "Test instruction", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestUpdateChatInstruction()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoUpdateChatInstruction(Guid.Empty, "Updated instruction", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestDeleteChatInstruction()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoDeleteChatInstruction(Guid.Empty, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        // Chat Predefined Messages Tests
+        [UnityTest]
+        public IEnumerator TestGetChatPredefinedMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoGetChatPredefinedMessage(Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestCreateChatPredefinedMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoCreateChatPredefinedMessage("test_identifier", "Test predefined message", new System.Collections.Generic.List<string>{"Button1", "Button2"}, "Test Button", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestUpdateChatPredefinedMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoUpdateChatPredefinedMessage(Guid.Empty, "Updated predefined message", new System.Collections.Generic.List<string>{"Button1", "Button2"}, "Updated Button", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestDeleteChatPredefinedMessage()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoDeleteChatPredefinedMessage(Guid.Empty, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
+
+        // Chat Profile Tests
+        [UnityTest]
+        public IEnumerator TestCreateChatProfile()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoCreateChatProfile("Test profile name", Guid.Empty, (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestUpdateChatProfile()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoUpdateChatProfile(Guid.Empty, "Updated profile name", (result, dto) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+
+                Assert.NotNull(dto);
+            });
+        }
+
+        [UnityTest]
+        public IEnumerator TestDeleteChatProfile()
+        {
+            var gamificationPlayerEndpoints = new GamificationPlayerEndpoints(gamificationPlayerEnvironmentConfig, new SessionLogDataMock());
+
+            return gamificationPlayerEndpoints.CoDeleteChatProfile(Guid.Empty, (result) =>
+            {
+                Assert.That(result == UnityWebRequest.Result.Success);
+            });
+        }
     }
 }

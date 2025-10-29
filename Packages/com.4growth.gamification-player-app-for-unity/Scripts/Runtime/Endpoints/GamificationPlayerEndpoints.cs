@@ -47,6 +47,49 @@ namespace GamificationPlayer
     
     public delegate void OfflineSyncCallback(UnityWebRequest.Result result, DTO.OfflineSync.OfflineSyncResponseDTO response);
 
+    // Chat callback delegates
+    public delegate void GetChatConversationsCallback(UnityWebRequest.Result result, DTO.Chat.GetChatConversationsResponseDTO dto);
+    
+    public delegate void CreateChatConversationCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatConversationResponseDTO dto);
+    
+    public delegate void GetChatConversationCallback(UnityWebRequest.Result result, DTO.Chat.GetChatConversationResponseDTO dto);
+    
+    public delegate void DeleteChatConversationCallback(UnityWebRequest.Result result);
+    
+    public delegate void GetChatConversationMessagesCallback(UnityWebRequest.Result result, DTO.Chat.GetChatConversationMessagesResponseDTO dto);
+    
+    public delegate void CreateChatConversationMessageCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatConversationMessageResponseDTO dto);
+    
+    public delegate void UpdateChatConversationMessageCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatConversationMessageResponseDTO dto);
+    
+    public delegate void DeleteChatConversationMessageCallback(UnityWebRequest.Result result);
+    
+    public delegate void GetChatInstructionsCallback(UnityWebRequest.Result result, DTO.Chat.GetChatInstructionsResponseDTO dto);
+    
+    public delegate void CreateChatInstructionCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatInstructionResponseDTO dto);
+    
+    public delegate void GetChatInstructionCallback(UnityWebRequest.Result result, DTO.Chat.GetChatInstructionResponseDTO dto);
+    
+    public delegate void UpdateChatInstructionCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatInstructionResponseDTO dto);
+    
+    public delegate void DeleteChatInstructionCallback(UnityWebRequest.Result result);
+    
+    public delegate void GetChatPredefinedMessagesCallback(UnityWebRequest.Result result, DTO.Chat.GetChatPredefinedMessagesResponseDTO dto);
+    
+    public delegate void CreateChatPredefinedMessageCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatPredefinedMessageResponseDTO dto);
+    
+    public delegate void GetChatPredefinedMessageCallback(UnityWebRequest.Result result, DTO.Chat.GetChatPredefinedMessageResponseDTO dto);
+    
+    public delegate void UpdateChatPredefinedMessageCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatPredefinedMessageResponseDTO dto);
+    
+    public delegate void DeleteChatPredefinedMessageCallback(UnityWebRequest.Result result);
+    
+    public delegate void CreateChatProfileCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatProfileResponseDTO dto);
+    
+    public delegate void UpdateChatProfileCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatProfileResponseDTO dto);
+    
+    public delegate void DeleteChatProfileCallback(UnityWebRequest.Result result);
+
 
     public partial class GamificationPlayerEndpoints
     {

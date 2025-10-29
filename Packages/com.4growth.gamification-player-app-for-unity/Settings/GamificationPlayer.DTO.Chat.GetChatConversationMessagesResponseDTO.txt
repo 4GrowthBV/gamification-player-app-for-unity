@@ -1,0 +1,46 @@
+{
+  "data": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "chat_conversation_message",
+      "attributes": {
+        "role": "user",
+        "message": "Hello, how can I help you today?",
+        "created_at": "2023-10-19T09:57:11.554Z",
+        "updated_at": "2023-10-19T09:57:11.554Z"
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+      "type": "chat_conversation_message",
+      "attributes": {
+        "role": "assistant",
+        "message": "I'm here to help you with any questions you may have.",
+        "created_at": "2023-10-19T09:58:11.554Z",
+        "updated_at": "2023-10-19T09:58:11.554Z"
+      }
+    }
+  ],
+  "included": [
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "type": "chat_conversation",
+      "attributes": {
+        "created_at": "2023-10-19T09:57:11.554Z",
+        "updated_at": "2023-10-19T09:57:11.554Z"
+      }
+    }
+  ],
+  "links": {
+    "first": "string",
+    "last": "string",
+    "prev": "string",
+    "next": "string"
+  },
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 25,
+    "total": 2
+  }
+}

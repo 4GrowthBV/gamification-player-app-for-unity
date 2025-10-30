@@ -8,13 +8,14 @@ namespace GamificationPlayer
         {
             var json = JsonConvert.SerializeObject(toJSON);
 
-            var newJSON = json.Replace("\"\"", "null");
+            //var newJSON = json.Replace("\"\"", "null");
 
-            return newJSON;
+            return json;
         }
 
         public static TType FromJson<TType>(this string json, bool changeEmptyArrayToObject = true)
         {
+            /*
             var newJSON = json.Replace("\"user_is_demo\":null,", "\"user_is_demo\":false,");
 
             newJSON = newJSON.Replace("\"organisation_allow_upgrade_to_registered_user\":null,", "\"organisation_allow_upgrade_to_registered_user\":false,");
@@ -26,9 +27,9 @@ namespace GamificationPlayer
             if(changeEmptyArrayToObject)
             {
                 newJSON = newJSON.Replace("[]", "{}");
-            }
+            }*/
 
-            var obj = JsonConvert.DeserializeObject<TType>(newJSON);
+            var obj = JsonConvert.DeserializeObject<TType>(json);
 
             return obj;
         }

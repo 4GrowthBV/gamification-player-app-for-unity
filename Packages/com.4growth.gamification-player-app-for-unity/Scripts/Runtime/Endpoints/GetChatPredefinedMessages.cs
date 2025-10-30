@@ -10,7 +10,6 @@ namespace GamificationPlayer
     {
         public IEnumerator CoGetChatPredefinedMessages(GetChatPredefinedMessagesCallback onReady = null,
             Guid organisationId = default,
-            Guid userId = default,
             Guid microGameId = default,
             int page = 1,
             int perPage = 25)
@@ -20,28 +19,22 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out organisationId);
             }
 
-            if (userId == default)
-            {
-                sessionData.TryGetLatestUserId(out userId);
-            }
-
             if (microGameId == default)
             {
                 sessionData.TryGetLatestMicroGameId(out microGameId);
             }
 
-            yield return CoGetChatPredefinedMessages(organisationId, userId, microGameId, page, perPage, onReady);
+            yield return CoGetChatPredefinedMessages(organisationId, microGameId, page, perPage, onReady);
         }
 
         private IEnumerator CoGetChatPredefinedMessages(Guid organisationId,
-            Guid userId,
             Guid microGameId,
             int page,
             int perPage,
             GetChatPredefinedMessagesCallback onReady = null)
         {
-            var url = string.Format("{0}/chat-predefined-messages?organisation={1}&user={2}&micro_game={3}&page={4}&per_page={5}",
-                environmentConfig.API_URL, organisationId, userId, microGameId, page, perPage);
+            var url = string.Format("{0}/chat-predefined-messages?organisation={1}&micro_game={2}&page={3}&per_page={4}",
+                environmentConfig.API_URL, organisationId, microGameId, page, perPage);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);
 

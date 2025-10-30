@@ -123,6 +123,38 @@ namespace GamificationPlayer
                 return instance.isInitialized; 
             } 
         }
+
+        /// <summary>
+        /// Gets the session log data instance for accessing queryable data
+        /// </summary>
+        public static SessionLogData SessionLogData
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    return null;
+                }
+                
+                return instance.sessionData;
+            }
+        }
+
+        /// <summary>
+        /// Gets the gamification player endpoints instance for making API calls
+        /// </summary>
+        public static GamificationPlayerEndpoints GamificationPlayerEndpoints
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    return null;
+                }
+                
+                return instance.gamificationPlayerEndpoints;
+            }
+        }
         
         /// <summary>
         /// Clears the non-persistence database and configures the class to use the mock server settings and mock requests for the mock server (GET requests instead of PATCH requests).

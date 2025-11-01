@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace GamificationPlayer
 {
@@ -15,19 +16,15 @@ namespace GamificationPlayer
 
         public static TType FromJson<TType>(this string json, bool changeEmptyArrayToObject = true)
         {
-            /*
-            var newJSON = json.Replace("\"user_is_demo\":null,", "\"user_is_demo\":false,");
-
-            newJSON = newJSON.Replace("\"organisation_allow_upgrade_to_registered_user\":null,", "\"organisation_allow_upgrade_to_registered_user\":false,");
-            
-            newJSON = newJSON.Replace("\"micro_game_id\":null", "\"micro_game_id\":\"\"");
-
+            /*            
             newJSON = newJSON.Replace("null", "\"\"");
 
             if(changeEmptyArrayToObject)
             {
                 newJSON = newJSON.Replace("[]", "{}");
             }*/
+
+            Debug.Log($"Deserializing JSON: {json}");
 
             var obj = JsonConvert.DeserializeObject<TType>(json);
 

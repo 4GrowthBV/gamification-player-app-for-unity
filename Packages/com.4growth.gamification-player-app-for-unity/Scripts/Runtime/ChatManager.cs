@@ -11,39 +11,35 @@ namespace GamificationPlayer
 {
     public class ChatManager : MonoBehaviour
     {
-        #region Singleton
-        private static ChatManager _instance;
+        #region Dependencies
+        private GamificationPlayerEndpoints endpoints;
+        private SessionLogData sessionData;
+        private bool isInitialized = false;
+        #endregion
+
+        #region Initialization
         
-        public static ChatManager Instance
+        /// <summary>
+        /// Initialize ChatManager with required dependencies
+        /// </summary>
+        /// <param name="gamificationPlayerEndpoints">The endpoints instance for API calls</param>
+        /// <param name="sessionLogData">The session data instance for data access</param>
+        public void Initialize(GamificationPlayerEndpoints gamificationPlayerEndpoints, SessionLogData sessionLogData)
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = FindFirstObjectByType<ChatManager>();
-                    if (_instance == null)
-                    {
-                        GameObject go = new GameObject("ChatManager");
-                        _instance = go.AddComponent<ChatManager>();
-                        DontDestroyOnLoad(go);
-                    }
-                }
-                return _instance;
-            }
+            endpoints = gamificationPlayerEndpoints;
+            sessionData = sessionLogData;
+            isInitialized = true;
         }
 
-        private void Awake()
+        /// <summary>
+        /// Check if ChatManager has been properly initialized
+        /// </summary>
+        /// <returns>True if initialized, false otherwise</returns>
+        public bool IsInitialized()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else if (_instance != this)
-            {
-                Destroy(gameObject);
-            }
+            return isInitialized && endpoints != null && sessionData != null;
         }
+        
         #endregion
 
         #region Chat State
@@ -78,11 +74,34 @@ namespace GamificationPlayer
         #region Public API
         
         /// <summary>
-        /// Initialize the chat system - creates profile and conversation
+        /// Initialize the chat system - reuses existing conversation/profile or creates new ones
         /// </summary>
         public void InitializeChat()
         {
-            StartCoroutine(InitializeChatCoroutine());
+            InitializeChat(false);
+        }
+
+        /// <summary>
+        /// Initialize the chat system with option to force new conversation
+        /// </summary>
+        /// <param name="forceNewConversation">If true, creates new conversation even if existing one found</param>
+        public void InitializeChat(bool forceNewConversation)
+        {
+            if (!IsInitialized())
+            {
+                Debug.LogWarning("ChatManager is not initialized. Please call Initialize() first.");
+                OnErrorOccurred?.Invoke("ChatManager not properly initialized");
+                return;
+            }
+
+            // Check if the GameObject is still valid before starting coroutine
+            if (this == null || gameObject == null)
+            {
+                Debug.LogError("ChatManager GameObject has been destroyed");
+                return;
+            }
+            
+            StartCoroutine(InitializeChatCoroutine(forceNewConversation));
         }
 
         /// <summary>
@@ -94,6 +113,19 @@ namespace GamificationPlayer
             if (string.IsNullOrEmpty(buttonIdentifier))
             {
                 Debug.LogError("Button identifier is null or empty");
+                return;
+            }
+
+            if (!IsInitialized())
+            {
+                Debug.LogWarning("ChatManager is not initialized. Please call Initialize() first.");
+                return;
+            }
+
+            // Check if the GameObject is still valid before starting coroutine
+            if (this == null || gameObject == null)
+            {
+                Debug.LogError("ChatManager GameObject has been destroyed");
                 return;
             }
 
@@ -109,6 +141,19 @@ namespace GamificationPlayer
             if (string.IsNullOrEmpty(userMessage))
             {
                 Debug.LogError("User message is null or empty");
+                return;
+            }
+
+            if (!IsInitialized())
+            {
+                Debug.LogWarning("ChatManager is not initialized. Please call Initialize() first.");
+                return;
+            }
+
+            // Check if the GameObject is still valid before proceeding
+            if (this == null || gameObject == null)
+            {
+                Debug.LogError("ChatManager GameObject has been destroyed");
                 return;
             }
 
@@ -139,21 +184,12 @@ namespace GamificationPlayer
 
         #region Private Implementation
 
-        private IEnumerator InitializeChatCoroutine()
+        private IEnumerator InitializeChatCoroutine(bool forceNewConversation = false)
         {
-            Debug.Log("Initializing Wellbe Buddy Chat...");
+            Debug.Log($"Initializing Wellbe Buddy Chat... (Force new: {forceNewConversation})");
 
-            // Step 1: Create or check chat profile
-            yield return StartCoroutine(CreateOrGetChatProfile());
-            
-            if (string.IsNullOrEmpty(currentProfileId))
-            {
-                OnErrorOccurred?.Invoke("Failed to create or get chat profile");
-                yield break;
-            }
-
-            // Step 2: Create or load conversation
-            yield return StartCoroutine(CreateOrGetConversation());
+            // Step 1: Create or load conversation FIRST (required for profile creation)
+            yield return StartCoroutine(CreateOrGetConversation(forceNewConversation));
             
             if (string.IsNullOrEmpty(currentConversationId))
             {
@@ -161,46 +197,79 @@ namespace GamificationPlayer
                 yield break;
             }
 
-            // Step 3: Load conversation history if it exists
-            yield return StartCoroutine(LoadConversationHistory());
-
-            // Step 4: Start with first predefined message
-            yield return StartCoroutine(LoadPredefinedMessage("day_one"));
-
-            OnChatInitialized?.Invoke();
-            Debug.Log("Wellbe Buddy Chat initialized successfully");
-        }
-
-        private IEnumerator CreateOrGetChatProfile()
-        {
-            Debug.Log("Creating or getting chat profile...");
+            // Step 2: Create or check chat profile (using conversation ID)
+            yield return StartCoroutine(CreateOrGetChatProfile(forceNewConversation));
             
-            // Try to get existing profile first
-            if (GamificationPlayerManager.SessionLogData.TryGetLatestChatProfileId(out Guid existingProfileId))
+            if (string.IsNullOrEmpty(currentProfileId))
             {
-                currentProfileId = existingProfileId.ToString();
-                Debug.Log($"Using existing chat profile: {currentProfileId}");
+                OnErrorOccurred?.Invoke("Failed to create or get chat profile");
                 yield break;
             }
 
-            // Create new profile
+            // Step 3: Load conversation history if it exists
+            yield return StartCoroutine(LoadConversationHistory());
+
+            // Step 4: Start with first predefined message (only if no history or forced new conversation)
+            if (conversationHistory.Count == 0 || forceNewConversation)
+            {
+                yield return StartCoroutine(LoadPredefinedMessage("day_one"));
+            }
+            else
+            {
+                Debug.Log($"Resuming conversation with {conversationHistory.Count} existing messages");
+                // Trigger event to show we're ready but don't load day_one
+                OnChatInitialized?.Invoke();
+            }
+
+            Debug.Log("Wellbe Buddy Chat initialized successfully");
+        }
+
+        private IEnumerator CreateOrGetChatProfile(bool forceNew = false)
+        {
+            Debug.Log($"Creating or getting chat profile... (Force new: {forceNew})");
+            
+            // Check if we already have a profile ID from existing conversation
+            if (!forceNew && !string.IsNullOrEmpty(currentProfileId))
+            {
+                Debug.Log($"✅ Using existing chat profile from conversation: {currentProfileId}");
+                yield break;
+            }
+            
+            // Try to get existing profile from session data (unless forcing new)
+            if (!forceNew && sessionData.TryGetLatestChatProfileId(out Guid existingProfileId))
+            {
+                currentProfileId = existingProfileId.ToString();
+                Debug.Log($"✅ Using existing chat profile from session: {currentProfileId}");
+                yield break;
+            }
+
+            // Create new profile using the conversation ID we created earlier
+            if (string.IsNullOrEmpty(currentConversationId))
+            {
+                string error = "Cannot create profile without conversation ID";
+                Debug.LogError($"❌ {error}");
+                OnErrorOccurred?.Invoke(error);
+                yield break;
+            }
+
             bool profileCreated = false;
             string errorMessage = "";
 
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoCreateChatProfile("wellbe_buddy", Guid.Empty, (result, dto) =>
+            Debug.Log($"Creating new chat profile for conversation: {currentConversationId}");
+            StartCoroutine(endpoints.CoCreateChatProfile("wellbe_buddy", Guid.Parse(currentConversationId), (result, dto) =>
             {
                 if (result == UnityWebRequest.Result.Success && dto?.data != null)
                 {
                     currentProfileId = dto.data.id;
                     profileCreated = true;
-                    Debug.Log($"Created new chat profile: {currentProfileId}");
+                    Debug.Log($"✅ Successfully created chat profile: {currentProfileId} for conversation: {currentConversationId}");
                 }
                 else
                 {
                     errorMessage = $"Failed to create chat profile: {result}";
-                    Debug.LogError(errorMessage);
+                    Debug.LogError($"❌ {errorMessage}");
                 }
-            });
+            }));
 
             // Wait for completion
             yield return new WaitUntil(() => profileCreated || !string.IsNullOrEmpty(errorMessage));
@@ -211,36 +280,95 @@ namespace GamificationPlayer
             }
         }
 
-        private IEnumerator CreateOrGetConversation()
+        private IEnumerator CreateOrGetConversation(bool forceNew = false)
         {
-            Debug.Log("Creating or getting conversation...");
+            Debug.Log($"Creating or getting conversation... (Force new: {forceNew})");
             
-            // Try to get existing conversation first
-            if (GamificationPlayerManager.SessionLogData.TryGetLatestChatConversationId(out Guid existingConversationId))
+            // Check API for existing conversations (unless forcing new)
+            if (!forceNew)
             {
-                currentConversationId = existingConversationId.ToString();
-                Debug.Log($"Using existing conversation: {currentConversationId}");
-                yield break;
+                bool conversationCheckComplete = false;
+                string existingConversationId = null;
+                string existingProfileId = null;
+                
+                Debug.Log("Checking API for existing conversations...");
+                StartCoroutine(endpoints.CoGetChatConversations((result, dto) =>
+                {
+                    if (result == UnityWebRequest.Result.Success && dto?.data != null && dto.data.Count > 0)
+                    {
+                        // Found existing conversation(s) - use the most recent one
+                        var conversation = dto.data[0];
+                        existingConversationId = conversation.id;
+                        
+                        // Try to extract the profile ID from the conversation relationships
+                        // The API response includes profile data in the relationships section
+                        if (dto.included != null)
+                        {
+                            foreach (var item in dto.included)
+                            {
+                                if (item.type == "chat_profile")
+                                {
+                                    existingProfileId = item.id;
+                                    break; // Use the first profile found
+                                }
+                            }
+                        }
+                        
+                        Debug.Log($"✅ Found existing conversation via API: {existingConversationId}");
+                        if (!string.IsNullOrEmpty(existingProfileId))
+                        {
+                            Debug.Log($"✅ Found existing profile via API: {existingProfileId}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("No existing conversations found via API");
+                    }
+                    conversationCheckComplete = true;
+                }));
+                
+                yield return new WaitUntil(() => conversationCheckComplete);
+                
+                // If we found an existing conversation, use it
+                if (!string.IsNullOrEmpty(existingConversationId))
+                {
+                    currentConversationId = existingConversationId;
+                    Debug.Log($"✅ Using existing conversation from API: {currentConversationId}");
+                    
+                    // Also set the profile ID if we found one
+                    if (!string.IsNullOrEmpty(existingProfileId))
+                    {
+                        currentProfileId = existingProfileId;
+                        Debug.Log($"✅ Using existing profile from API: {currentProfileId}");
+                    }
+                    
+                    yield break;
+                }
+            }
+            else
+            {
+                Debug.Log("Skipping API check - forcing new conversation");
             }
 
             // Create new conversation
             bool conversationCreated = false;
             string errorMessage = "";
 
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoCreateChatConversation((result, dto) =>
+            Debug.Log("Creating new chat conversation via API...");
+            StartCoroutine(endpoints.CoCreateChatConversation((result, dto) =>
             {
                 if (result == UnityWebRequest.Result.Success && dto?.data != null)
                 {
                     currentConversationId = dto.data.id;
                     conversationCreated = true;
-                    Debug.Log($"Created new conversation: {currentConversationId}");
+                    Debug.Log($"✅ Successfully created new conversation via API: {currentConversationId}");
                 }
                 else
                 {
                     errorMessage = $"Failed to create conversation: {result}";
-                    Debug.LogError(errorMessage);
+                    Debug.LogError($"❌ {errorMessage}");
                 }
-            });
+            }));
 
             // Wait for completion
             yield return new WaitUntil(() => conversationCreated || !string.IsNullOrEmpty(errorMessage));
@@ -257,30 +385,55 @@ namespace GamificationPlayer
             
             if (string.IsNullOrEmpty(currentConversationId))
             {
+                Debug.Log("No conversation ID, skipping history loading");
                 yield break;
             }
 
-            bool historyLoaded = false;
-            string errorMessage = "";
-
-            // Get conversation messages - this endpoint needs to be implemented
-            // For now, we'll use the existing session data to get the latest messages
             conversationHistory.Clear();
-            
-            // Try to get recent messages from session data
-            if (GamificationPlayerManager.SessionLogData.TryGetLatestChatMessage(out string lastMessage))
-            {
-                if (GamificationPlayerManager.SessionLogData.TryGetLatestChatRole(out string lastRole))
-                {
-                    conversationHistory.Add(new ChatMessage(lastRole, lastMessage));
-                }
-            }
+            bool historyLoaded = false;
 
-            historyLoaded = true;
+            // Load messages from the API
+            StartCoroutine(endpoints.CoGetChatConversationMessages((result, dto) =>
+            {
+                if (result == UnityWebRequest.Result.Success && dto?.data != null)
+                {
+                    Debug.Log($"Retrieved {dto.data.Count} messages from API for conversation {currentConversationId}");
+                    
+                    // NOTE: The API should filter by conversation ID, but if it returns messages from other conversations,
+                    // we'll still process them for now. This might be an API server issue.
+                    
+                    // Convert API messages to local ChatMessage format
+                    foreach (var messageData in dto.data)
+                    {
+                        if (messageData.attributes != null)
+                        {
+                            var chatMessage = new ChatMessage(
+                                messageData.attributes.role,
+                                messageData.attributes.message
+                            );
+                            // Use the actual timestamp from the API
+                            chatMessage.timestamp = messageData.attributes.CreatedAt;
+                            conversationHistory.Add(chatMessage);
+                        }
+                    }
+                    
+                    // Sort by timestamp to ensure correct order
+                    conversationHistory.Sort((a, b) => DateTime.Compare(a.timestamp, b.timestamp));
+                    
+                    Debug.Log($"✅ Loaded {conversationHistory.Count} messages from conversation history");
+                    historyLoaded = true;
+                }
+                else
+                {
+                    // Don't treat this as an error - conversation might be new with no messages
+                    Debug.Log($"No messages found for conversation {currentConversationId} or failed to load: {result}");
+                    historyLoaded = true;
+                }
+            }, Guid.Parse(currentConversationId), 1, 50)); // Load first 50 messages
+
+            yield return new WaitUntil(() => historyLoaded);
             
-            yield return new WaitUntil(() => historyLoaded || !string.IsNullOrEmpty(errorMessage));
-            
-            Debug.Log($"Loaded {conversationHistory.Count} messages from history");
+            Debug.Log($"Conversation history loading complete: {conversationHistory.Count} messages");
         }
 
         private IEnumerator LoadPredefinedMessage(string identifier)
@@ -290,12 +443,12 @@ namespace GamificationPlayer
             bool messageLoaded = false;
             string errorMessage = "";
 
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoGetChatPredefinedMessageByIdentifier(identifier, (result, dto) =>
+            StartCoroutine(endpoints.CoGetChatPredefinedMessageByIdentifier(identifier, (result, dto) =>
             {
                 if (result == UnityWebRequest.Result.Success && dto?.data != null)
                 {
-                    string messageText = dto.data.attributes?.content ?? "";
-                    string[] buttons = dto.data.attributes?.buttons?.ToArray() ?? new string[0];
+                    string messageText = dto.data[0].attributes?.content ?? "";
+                    string[] buttons = dto.data[0].attributes?.buttons?.ToArray() ?? new string[0];
                     
                     // Add bot message to history
                     AddMessageToHistory("bot", messageText);
@@ -317,7 +470,7 @@ namespace GamificationPlayer
                     errorMessage = $"Failed to load predefined message '{identifier}': {result}";
                     Debug.LogError(errorMessage);
                 }
-            });
+            }));
 
             yield return new WaitUntil(() => messageLoaded || !string.IsNullOrEmpty(errorMessage));
 
@@ -460,11 +613,11 @@ namespace GamificationPlayer
             string errorMessage = "";
             string instructions = "";
 
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoGetChatInstructionByAgent(agent, (result, dto) =>
+            StartCoroutine(endpoints.CoGetChatInstructionByAgent(agent, (result, dto) =>
             {
                 if (result == UnityWebRequest.Result.Success && dto?.data != null)
                 {
-                    instructions = dto.data.attributes?.instruction ?? "";
+                    instructions = dto.data[0].attributes?.instruction ?? "";
                     instructionsLoaded = true;
                     Debug.Log($"Loaded instructions: {instructions}");
                 }
@@ -476,7 +629,7 @@ namespace GamificationPlayer
                     instructions = "Be helpful and supportive in your responses.";
                     instructionsLoaded = true;
                 }
-            });
+            }));
 
             yield return new WaitUntil(() => instructionsLoaded || !string.IsNullOrEmpty(errorMessage));
             onComplete?.Invoke(instructions);
@@ -513,7 +666,7 @@ namespace GamificationPlayer
 
             // Save user message
             bool userMessageSaved = false;
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoCreateChatConversationMessage(
+            StartCoroutine(endpoints.CoCreateChatConversationMessage(
                 "user", 
                 userMessage, 
                 Guid.Parse(currentConversationId), 
@@ -528,13 +681,13 @@ namespace GamificationPlayer
                     {
                         Debug.LogError($"Failed to save user message: {result}");
                     }
-                });
+                }));
 
             yield return new WaitUntil(() => userMessageSaved);
 
             // Save AI response
             bool aiMessageSaved = false;
-            GamificationPlayerManager.GamificationPlayerEndpoints.CoCreateChatConversationMessage(
+            StartCoroutine(endpoints.CoCreateChatConversationMessage(
                 "bot", 
                 aiResponse, 
                 Guid.Parse(currentConversationId), 
@@ -549,7 +702,7 @@ namespace GamificationPlayer
                     {
                         Debug.LogError($"Failed to save AI message: {result}");
                     }
-                });
+                }));
 
             yield return new WaitUntil(() => aiMessageSaved);
         }

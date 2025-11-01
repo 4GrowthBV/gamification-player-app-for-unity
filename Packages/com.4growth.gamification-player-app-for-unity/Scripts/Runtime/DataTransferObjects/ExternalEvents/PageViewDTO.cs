@@ -30,7 +30,8 @@ namespace GamificationPlayer.DTO.ExternalEvents
             public string organisation_id;
 
             [OrganisationAllowUpgradeToRegisteredUser]
-            public bool organisation_allow_upgrade_to_registered_user;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public bool organisation_allow_upgrade_to_registered_user = false;
 
             [UserId]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -38,7 +39,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
 
             [UserIsDemo]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public bool user_is_demo;
+            public bool user_is_demo = false;
 
             [UserAvatar]
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

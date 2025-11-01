@@ -33,7 +33,7 @@ namespace GamificationPlayer
             int perPage,
             GetChatPredefinedMessagesCallback onReady = null)
         {
-            var url = string.Format("{0}/chat-predefined-messages?organisation={1}&micro_game={2}&page={3}&per_page={4}",
+            var url = string.Format("{0}/chat-predefined-messages?filter[organisation_id]={1}&filter[micro_game_id]={2}&page={3}&per_page={4}",
                 environmentConfig.API_URL, organisationId, microGameId, page, perPage);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);

@@ -14,7 +14,7 @@ namespace GamificationPlayer
         /// <param name="identifier">The identifier of the predefined message</param>
         /// <param name="onReady">Callback when request completes</param>
         /// <returns></returns>
-        public IEnumerator CoGetChatPredefinedMessageByIdentifier(string identifier, GetChatPredefinedMessageCallback onReady = null, Guid organisationId = default, Guid userId = default, Guid microGameId = default)
+        public IEnumerator CoGetChatPredefinedMessageByIdentifier(string identifier, GetChatPredefinedMessagesCallback onReady = null, Guid organisationId = default, Guid microGameId = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {
@@ -28,22 +28,17 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out organisationId);
             }
 
-            if (userId == default)
-            {
-                sessionData.TryGetLatestUserId(out userId);
-            }
-
             if (microGameId == default)
             {
                 sessionData.TryGetLatestMicroGameId(out microGameId);
             }
 
-            var url = string.Format("{0}/chat-predefined-messages?identifier={1}&organisation={2}&user={3}&micro_game={4}",
-                environmentConfig.API_URL, identifier, organisationId, userId, microGameId);
+            var url = string.Format("{0}/chat-predefined-messages?identifier={1}&filter[organisation_id]={2}&filter[micro_game_id]={3}",
+                environmentConfig.API_URL, identifier, organisationId, microGameId);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);
 
-            if (environmentConfig.TryGetMockDTO<GetChatPredefinedMessageResponseDTO>(out var dto))
+            if (environmentConfig.TryGetMockDTO<GetChatPredefinedMessagesResponseDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
                 onReady?.Invoke(UnityWebRequest.Result.Success, dto);
@@ -58,7 +53,7 @@ namespace GamificationPlayer
 
                 yield return webRequest.SendWebRequest();
 
-                GetChatPredefinedMessageResponseDTO obj = null;
+                GetChatPredefinedMessagesResponseDTO obj = null;
 
                 switch (webRequest.result)
                 {
@@ -74,7 +69,7 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if (environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        obj = webRequest.downloadHandler.text.FromJson<GetChatPredefinedMessageResponseDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<GetChatPredefinedMessagesResponseDTO>();
                         sessionData.AddToLog(obj.data, false);
                         break;
                 }
@@ -89,7 +84,7 @@ namespace GamificationPlayer
         /// <param name="agent">The agent name</param>
         /// <param name="onReady">Callback when request completes</param>
         /// <returns></returns>
-        public IEnumerator CoGetChatInstructionByAgent(string agent, GetChatInstructionCallback onReady = null, Guid organisationId = default, Guid userId = default, Guid microGameId = default)
+        public IEnumerator CoGetChatInstructionByAgent(string agent, GetChatInstructionsCallback onReady = null, Guid organisationId = default, Guid microGameId = default)
         {
             if (string.IsNullOrEmpty(agent))
             {
@@ -103,22 +98,17 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestOrganisationId(out organisationId);
             }
 
-            if (userId == default)
-            {
-                sessionData.TryGetLatestUserId(out userId);
-            }
-
             if (microGameId == default)
             {
                 sessionData.TryGetLatestMicroGameId(out microGameId);
             }
 
-            var url = string.Format("{0}/chat-instructions?agent={1}&organisation={2}&user={3}&micro_game={4}",
-                environmentConfig.API_URL, agent, organisationId, userId, microGameId);
+            var url = string.Format("{0}/chat-instructions?agent={1}&filter[organisation_id]={2}&filter[micro_game_id]={3}",
+                environmentConfig.API_URL, agent, organisationId, microGameId);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);
 
-            if (environmentConfig.TryGetMockDTO<GetChatInstructionResponseDTO>(out var dto))
+            if (environmentConfig.TryGetMockDTO<GetChatInstructionsResponseDTO>(out var dto))
             {
                 sessionData.AddToLog(dto.data, false);
                 onReady?.Invoke(UnityWebRequest.Result.Success, dto);
@@ -133,7 +123,7 @@ namespace GamificationPlayer
 
                 yield return webRequest.SendWebRequest();
 
-                GetChatInstructionResponseDTO obj = null;
+                GetChatInstructionsResponseDTO obj = null;
 
                 switch (webRequest.result)
                 {
@@ -149,7 +139,7 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.Success:
                         if (environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
-                        obj = webRequest.downloadHandler.text.FromJson<GetChatInstructionResponseDTO>();
+                        obj = webRequest.downloadHandler.text.FromJson<GetChatInstructionsResponseDTO>();
                         sessionData.AddToLog(obj.data, false);
                         break;
                 }

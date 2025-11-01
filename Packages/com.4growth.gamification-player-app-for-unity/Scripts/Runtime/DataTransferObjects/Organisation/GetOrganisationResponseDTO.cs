@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GamificationPlayer.Session;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace GamificationPlayer
@@ -86,7 +87,8 @@ namespace GamificationPlayer
             public string webhook_url;
 
             [OrganisationAllowUpgradeToRegisteredUser]
-            private bool allow_upgrade_to_registered_user;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            private bool allow_upgrade_to_registered_user = false;
 
             [OrganisationResellerEnabled]
             private bool reseller_enabled;

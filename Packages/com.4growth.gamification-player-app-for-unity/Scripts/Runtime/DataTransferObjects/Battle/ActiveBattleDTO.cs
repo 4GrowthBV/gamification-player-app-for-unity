@@ -1,5 +1,6 @@
 using System;
 using GamificationPlayer.Session;
+using Newtonsoft.Json;
 
 namespace GamificationPlayer.DTO.Battle
 {
@@ -15,7 +16,8 @@ namespace GamificationPlayer.DTO.Battle
             public string game_id;
 
             [BattleMicroGameId]
-            public string micro_game_id;
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public string micro_game_id = "";
 
             [BattleAvailableFrom]
             public string available_from;

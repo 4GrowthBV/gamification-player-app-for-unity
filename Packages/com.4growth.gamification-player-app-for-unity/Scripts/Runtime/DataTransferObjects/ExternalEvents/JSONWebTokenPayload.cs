@@ -167,6 +167,7 @@ namespace GamificationPlayer.DTO.ExternalEvents
         public MicroGamePayload()
         {
             player = new Player();
+            organisation = new Organisation();
             session = new Session();
             battle = new Battle();
             micro_game = new MicroGame();

@@ -1,0 +1,1302 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "conversations",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Webhook').item.json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        2060
+      ],
+      "id": "9f1f1e65-a4c4-4570-b85f-27668d84d5a1",
+      "name": "Vorige berichten Ophalen",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "predefined_messages",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "identifier",
+              "keyValue": "day_one"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        1540
+      ],
+      "id": "9d0e93bc-a46e-4e44-bbf0-65516713b457",
+      "name": "Bericht ophalen",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a807674-f561-4ee3-b8c3-72935d5f0b39",
+              "leftValue": "={{ $json.buttons }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -60,
+        1560
+      ],
+      "id": "467bfe1c-2bc2-446e-b3b6-af050fbe110b",
+      "name": "Bevat het bericht knoppen?"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "buttons",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        260,
+        1260
+      ],
+      "id": "a5c1325a-a634-4c02-b03d-e67c486ae3e9",
+      "name": "Per knop verder"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "predefined_messages",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "identifier",
+              "keyValue": "={{ $json.buttons }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        480,
+        1260
+      ],
+      "id": "29ed8983-cf44-43a9-8440-5fe90caa6e9a",
+      "name": "bijbehorende bericht van de knop ophalen",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15ba8462-0dfa-4d02-817b-9fea4684a9b8",
+              "name": "identifier",
+              "value": "={{ $json.identifier }}",
+              "type": "string"
+            },
+            {
+              "id": "2081b49a-df29-4ab4-9970-18f1ea3e7cbe",
+              "name": "button_name",
+              "value": "={{ $json.button_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        1260
+      ],
+      "id": "e0e679a5-73d5-4519-8e05-0d739d0a8056",
+      "name": "Naam en identifier van knop instellen"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1260
+      ],
+      "id": "970f4610-df75-472c-aeb8-06336a2dab9b",
+      "name": "Knoppen samenvoegen"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c7f44f5b-9f6a-4a68-adcb-2dce7e00ce38",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "array"
+            },
+            {
+              "id": "7b02b20f-9548-4d12-a0ab-bc4ac7f34dcc",
+              "name": "content",
+              "value": "={{ $('Bevat het bericht knoppen?').item.json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        1260
+      ],
+      "id": "85eeeb18-f7e8-4b3e-8825-464f1c46f60a",
+      "name": "Knoppen en text van het bericht instellen",
+      "retryOnFail": false,
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "68aed7ba-dac8-40fa-b7d8-83bc4f21458b",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        1680
+      ],
+      "id": "3985584b-5c12-4f0f-a85b-08ccb90f63cf",
+      "name": "Text van het bericht instellen"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "instructions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "identifier",
+              "keyValue": "={{ $('Edit Fields1').item.json.router_rag.agent }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        1900
+      ],
+      "id": "f446de78-c333-4a5b-b428-23bba820a6e6",
+      "name": "Instructies ophalen",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://wmw.app.n8n.cloud/webhook/router",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "callbackurl",
+              "value": "={{ $execution.resumeUrl }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "history",
+              "value": "={{ $json.conversation }}"
+            },
+            {
+              "name": "profile",
+              "value": "={{ $('Gebruiker vinden2').item.json.profile }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('Webhook').item.json.body.message }}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{ $('Webhook').item.json.body.userId }}"
+            },
+            {
+              "name": "finishedSetId",
+              "value": "router_rag"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8f544be-102f-4ee9-8c5f-ec08be5b0a0a",
+      "name": "Router en RAG",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        140,
+        2060
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://wmw.app.n8n.cloud/webhook/memory",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "callbackurl",
+              "value": "={{ $execution.resumeUrl }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "history",
+              "value": "={{ $('Gesprekgeschiedenis samenvoegen').item.json.conversation }}"
+            },
+            {
+              "name": "profile",
+              "value": "={{ $('Gebruiker vinden2').item.json.profile }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $('Webhook').item.json.body.message }}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{ $('Webhook').item.json.body.userId }}"
+            },
+            {
+              "name": "finishedSetId",
+              "value": "memory_profile"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6953952c-aeed-4abb-a195-4a0f4e488c5e",
+      "name": "Memory Profile AI",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        380,
+        2060
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        2060
+      ],
+      "id": "2649755c-be1d-4355-8eb0-25139ee8331b",
+      "name": "Berichten items samenvoegen"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawItems = $input.all();\n\nconst dataArray = rawItems[0]?.json?.data;\nif (!Array.isArray(dataArray)) {\n  return [{ json: { conversation: '', error: 'Invalid data format' } }];\n}\n\n// Take the last 10 (or fewer if dataArray.length < 10)\nconst lastItems = dataArray.length > 10 \n  ? dataArray.slice(-10) \n  : dataArray;\n\n// Build \"role [date]: message\" lines\nconst lines = lastItems.map((m, idx) => {\n  const role = m.role ?? 'unknown';\n  const text = m.message_text ?? '[missing text]';\n  const date = m.created_at ?? m.created_at ?? '[no date]';\n  return `${role} [${date}]: ${text}`;\n});\n\nconst conversation = lines.join('\\n');\n\nreturn [{\n  json: {\n    conversation,\n  },\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        2060
+      ],
+      "id": "de3326ad-9d2b-47d0-8c97-17149ec7ba3e",
+      "name": "Gesprekgeschiedenis samenvoegen"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "9b8f92e7-c6fb-42c4-97ce-2a6bfc84ebd8",
+      "name": "Wacht op callback van agent",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        680,
+        2060
+      ],
+      "webhookId": "5cd058b4-48c8-449a-9c09-959a5b8a2b48",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5db2417c-992b-4f49-9811-0fd825ca64d2",
+              "leftValue": "={{ $json.router_rag.agent }}",
+              "rightValue": "offtopic",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1500,
+        2060
+      ],
+      "id": "b550f96a-15f4-4999-9838-8291ec287e98",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"user\": \"offtopic\",\n  \"history\":{{ $('Gesprekgeschiedenis samenvoegen').item.json.conversation.toJsonString() }},\n  \"profile\":{{ $('If').item.json.memory_profile.profile.toJsonString() }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2160,
+        2120
+      ],
+      "id": "05b47f34-964e-4f02-88bb-8fd79d1d820c",
+      "name": "Offtopic bericht instellen"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "17e52f46-60ef-4100-bf1e-b2d39b94086e",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2360,
+        1780
+      ],
+      "id": "d1f97f8d-2f49-4f3c-89b8-527df1fa8e22",
+      "name": "Webhook",
+      "webhookId": "17e52f46-60ef-4100-bf1e-b2d39b94086e"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.type }}",
+                    "rightValue": "getfirst",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b628c175-99b2-4e55-b28e-cc9aedcf5ccf"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Eerste bericht ophalen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec658972-4c15-437f-bcf1-7fe60c3f32d6",
+                    "leftValue": "={{ $('Webhook').item.json.body.type }}",
+                    "rightValue": "getmessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bericht ophalen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2da11fdd-6761-4c60-81a0-ec44e2dbcb3d",
+                    "leftValue": "={{ $('Webhook').item.json.body.type }}",
+                    "rightValue": "getprompt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Prompt ophalen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3ce44cfb-c23f-4ad6-bef0-46f6cc2d130c",
+                    "leftValue": "={{ $('Webhook').item.json.body.type }}",
+                    "rightValue": "save",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bericht opslaan"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1180,
+        1760
+      ],
+      "id": "27634605-3c2d-4d01-a73b-1f74acb0481a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ad18b28-02b8-47d1-9050-5138a58f7229",
+              "leftValue": "={{ $json.user_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1880,
+        1780
+      ],
+      "id": "62151e23-3245-4be4-8ddd-7f2510fa841b",
+      "name": "Bestaat gebruiker?"
+    },
+    {
+      "parameters": {
+        "tableId": "users",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $('Webhook').item.json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1560,
+        1920
+      ],
+      "id": "bef9cfa1-a905-4f29-9a0b-43f1af8e29d2",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $json.body.userId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2100,
+        1780
+      ],
+      "id": "d474ec52-3c65-4e4a-885a-eee65a648b4a",
+      "name": "Gebruiker vinden2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "predefined_messages",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "identifier",
+              "keyValue": "={{ $('Webhook').item.json.body.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        1720
+      ],
+      "id": "0836356a-e142-4f59-8816-f378637d98da",
+      "name": "Bericht ophalen1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"user\": \"{{ $('Webhook').item.json.body.message }}\",\n  \"instructions\": {{ $json.instructions.toJsonString() }},\n  \"knowledge\": {{ $('If').item.json.router_rag.knowledge.toJsonString() }},\n  \"examples\": {{ $('If').item.json.router_rag.examples.toJsonString() }},\n  \"history\": {{ $('Gesprekgeschiedenis samenvoegen').item.json.conversation.toJsonString() }},\n  \"profile\": {{ $('If').item.json.memory_profile.profile.toJsonString() }},\n  \"agent\": \"{{ $('Edit Fields1').item.json.router_rag.agent }}\",\n  \"general\": {{ $('Algemene instructies').item.json.instructions.toJsonString() }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2420,
+        1900
+      ],
+      "id": "7aba56c8-e13a-46bb-9c11-4da0cdb19854",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "ec12c8f3-415f-4b96-a6ae-ec650b5abc20",
+      "name": "Wacht op callback van agent1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        960,
+        2060
+      ],
+      "webhookId": "5cd058b4-48c8-449a-9c09-959a5b8a2b48",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b09d1d5c-9253-484a-b6b7-8c3263a8efb8",
+              "name": "={{ $json.body.finishedItemId }}",
+              "value": "={{ $json.body }}",
+              "type": "object"
+            },
+            {
+              "id": "4b75147e-c460-46b8-b26b-f848e1b50ce6",
+              "name": "={{ $('Wacht op callback van agent').item.json.body.finishedItemId }}",
+              "value": "={{ $('Wacht op callback van agent').item.json.body }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        2060
+      ],
+      "id": "39ef8105-d8d3-4247-a75d-0932f6125a12",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2640,
+        1900
+      ],
+      "id": "dc324828-ebcb-4198-b7ad-f8c1e6cd6527",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "enableResponseOutput": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1320,
+        1560
+      ],
+      "id": "546db99d-637a-4cbc-9b08-97854259f46a",
+      "name": "Respond to Webhook1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2380,
+        2120
+      ],
+      "id": "0358eb0e-9c77-4abf-b630-6d59f84e05b6",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "tableId": "conversations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $('Webhook').item.json.body.userId }}"
+            },
+            {
+              "fieldId": "message_text",
+              "fieldValue": "={{ $json.response.body.content }}"
+            },
+            {
+              "fieldId": "role",
+              "fieldValue": "predefined_message"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1660,
+        1580
+      ],
+      "id": "06448d84-b653-40cd-93b8-b75316f146aa",
+      "name": "Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "conversations",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $('Webhook').item.json.body.userId }}"
+            },
+            {
+              "fieldId": "message_text",
+              "fieldValue": "={{ $('Webhook').item.json.body.message }}"
+            },
+            {
+              "fieldId": "role",
+              "fieldValue": "={{ $('Webhook').item.json.body.role }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -920,
+        2100
+      ],
+      "id": "a55161b9-06a9-40db-b22e-9f4802e72a3b",
+      "name": "Supabase2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "instructions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "identifier",
+              "keyValue": "general"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        1900
+      ],
+      "id": "42138e40-554c-49fd-b84f-0e909599f997",
+      "name": "Algemene instructies",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EOdF3s0rnjzAJu68",
+          "name": "Wellbe AI Ziektewet Buddy Users"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Vorige berichten Ophalen": {
+      "main": [
+        [
+          {
+            "node": "Berichten items samenvoegen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bericht ophalen": {
+      "main": [
+        [
+          {
+            "node": "Bevat het bericht knoppen?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bevat het bericht knoppen?": {
+      "main": [
+        [
+          {
+            "node": "Per knop verder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text van het bericht instellen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Per knop verder": {
+      "main": [
+        [
+          {
+            "node": "bijbehorende bericht van de knop ophalen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "bijbehorende bericht van de knop ophalen": {
+      "main": [
+        [
+          {
+            "node": "Naam en identifier van knop instellen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Naam en identifier van knop instellen": {
+      "main": [
+        [
+          {
+            "node": "Knoppen samenvoegen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knoppen samenvoegen": {
+      "main": [
+        [
+          {
+            "node": "Knoppen en text van het bericht instellen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knoppen en text van het bericht instellen": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text van het bericht instellen": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instructies ophalen": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router en RAG": {
+      "main": [
+        [
+          {
+            "node": "Memory Profile AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory Profile AI": {
+      "main": [
+        [
+          {
+            "node": "Wacht op callback van agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Berichten items samenvoegen": {
+      "main": [
+        [
+          {
+            "node": "Gesprekgeschiedenis samenvoegen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gesprekgeschiedenis samenvoegen": {
+      "main": [
+        [
+          {
+            "node": "Router en RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wacht op callback van agent": {
+      "main": [
+        [
+          {
+            "node": "Wacht op callback van agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Algemene instructies",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Offtopic bericht instellen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offtopic bericht instellen": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Gebruiker vinden2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Bericht ophalen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bericht ophalen1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vorige berichten Ophalen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bestaat gebruiker?": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gebruiker vinden2": {
+      "main": [
+        [
+          {
+            "node": "Bestaat gebruiker?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bericht ophalen1": {
+      "main": [
+        [
+          {
+            "node": "Bevat het bericht knoppen?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wacht op callback van agent1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Algemene instructies": {
+      "main": [
+        [
+          {
+            "node": "Instructies ophalen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "headers": {
+          "host": "wmw.app.n8n.cloud",
+          "user-agent": "UnityPlayer/6000.0.50f1 (UnityWebRequest/1.0, libcurl/8.10.1-DEV)",
+          "content-length": "138",
+          "accept": "*/*",
+          "accept-encoding": "gzip, br",
+          "cdn-loop": "cloudflare; loops=1; subreqs=1",
+          "cf-connecting-ip": "2001:4c3c:4205:5900:24ae:90d4:2f2e:e116",
+          "cf-ew-via": "15",
+          "cf-ipcountry": "NL",
+          "cf-ray": "95c962caa5fbfff8-AMS",
+          "cf-visitor": "{\"scheme\":\"https\"}",
+          "cf-worker": "n8n.cloud",
+          "content-type": "application/json",
+          "x-forwarded-for": "2001:4c3c:4205:5900:24ae:90d4:2f2e:e116, 172.71.95.106",
+          "x-forwarded-host": "wmw.app.n8n.cloud",
+          "x-forwarded-port": "443",
+          "x-forwarded-proto": "https",
+          "x-forwarded-server": "traefik-prod-users-gwc-54-58b646fcb5-rrb5r",
+          "x-is-trusted": "yes",
+          "x-real-ip": "2001:4c3c:4205:5900:24ae:90d4:2f2e:e116",
+          "x-unity-version": "6000.0.50f1"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+          "message": "Welke ademhaling oefening moet ik doen als ik stress heb?",
+          "type": "getprompt",
+          "userId": "db86d5b9-3545-40bb-9e4f-42133cd73c9e"
+        },
+        "webhookUrl": "https://wmw.app.n8n.cloud/webhook/17e52f46-60ef-4100-bf1e-b2d39b94086e",
+        "executionMode": "production"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "98cefcb19a8514cb27989ccebb62321943b09ac81153717d2d4cd5effd585149"
+  }
+}

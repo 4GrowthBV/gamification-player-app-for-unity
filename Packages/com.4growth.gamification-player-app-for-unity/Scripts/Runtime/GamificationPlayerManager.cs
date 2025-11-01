@@ -123,36 +123,25 @@ namespace GamificationPlayer
                 return instance.isInitialized; 
             } 
         }
-
+        
         /// <summary>
-        /// Gets the session log data instance for accessing queryable data
+        /// Gets the chat manager instance for chat functionality
         /// </summary>
-        public static SessionLogData SessionLogData
+        public static ChatManager ChatManager
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     return null;
                 }
-                
-                return instance.sessionData;
-            }
-        }
 
-        /// <summary>
-        /// Gets the gamification player endpoints instance for making API calls
-        /// </summary>
-        public static GamificationPlayerEndpoints GamificationPlayerEndpoints
-        {
-            get
-            {
-                if(instance == null)
+                if (instance.chatManager == null)
                 {
-                    return null;
+                    instance.InitializeChatManager();
                 }
-                
-                return instance.gamificationPlayerEndpoints;
+
+                return instance.chatManager;
             }
         }
         
@@ -456,6 +445,8 @@ namespace GamificationPlayer
         protected GamificationPlayerEndpoints gamificationPlayerEndpoints;
 
         protected SessionLogData sessionData;
+        
+        protected ChatManager chatManager;
 
         private bool isUserActive = false;
 
@@ -1115,6 +1106,22 @@ namespace GamificationPlayer
             yield return new WaitForSeconds(seconds);
 
             action?.Invoke();
+        }
+        
+        /// <summary>
+        /// Initialize the ChatManager with dependencies
+        /// </summary>
+        private void InitializeChatManager()
+        {
+            if (chatManager == null)
+            {
+                GameObject chatManagerGO = new GameObject("ChatManager");
+                chatManager = chatManagerGO.AddComponent<ChatManager>();
+                DontDestroyOnLoad(chatManagerGO);
+
+                // Initialize ChatManager with dependencies
+                chatManager.Initialize(gamificationPlayerEndpoints, sessionData);
+            }
         }
     }
 }

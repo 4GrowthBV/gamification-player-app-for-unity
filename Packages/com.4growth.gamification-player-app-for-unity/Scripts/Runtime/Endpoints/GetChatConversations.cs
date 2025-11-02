@@ -40,7 +40,7 @@ namespace GamificationPlayer
             int perPage, 
             GetChatConversationsCallback onReady = null)
         {
-            var url = string.Format("{0}/chat-conversations?filter[organisation_id]={1}&filter[user_id]={2}&filter[micro_game_id]={3}&page={4}&per_page={5}", 
+            var url = string.Format("{0}/chat-conversations?filter[organisation_id]={1}&filter[user_id]={2}&filter[micro_game_id]={3}&page={4}&per_page={5}&sort=-created_at", 
                 environmentConfig.API_URL, organisationId, userId, microGameId, page, perPage);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);

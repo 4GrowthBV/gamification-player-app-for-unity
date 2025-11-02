@@ -21,7 +21,7 @@ namespace GamificationPlayer
             int perPage,
             GetChatConversationMessagesCallback onReady = null)
         {
-            var url = string.Format("{0}/chat-conversation-messages?chat_conversation={1}&page={2}&per_page={3}",
+            var url = string.Format("{0}/chat-conversation-messages?filter[chat_conversation_id]={1}&page={2}&per_page={3}",
                 environmentConfig.API_URL, chatConversationId, page, perPage);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);

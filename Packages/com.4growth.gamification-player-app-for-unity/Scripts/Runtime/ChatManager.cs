@@ -296,9 +296,54 @@ namespace GamificationPlayer
                 {
                     if (result == UnityWebRequest.Result.Success && dto?.data != null && dto.data.Count > 0)
                     {
-                        // Found existing conversation(s) - use the most recent one
-                        var conversation = dto.data[0];
+                        // Sort conversations by creation date (newest first) as fallback
+                        var sortedConversations = new System.Collections.Generic.List<GamificationPlayer.DTO.Chat.GetChatConversationsResponseDTO.Data>(dto.data);
+                        sortedConversations.Sort((a, b) => 
+                        {
+                            if (DateTime.TryParse(a.attributes?.created_at, out DateTime dateA) && 
+                                DateTime.TryParse(b.attributes?.created_at, out DateTime dateB))
+                            {
+                                return dateB.CompareTo(dateA); // Descending order (newest first)
+                            }
+                            return 0;
+                        });
+                        
+                        // First try to find the most recent conversation that has messages
+                        GamificationPlayer.DTO.Chat.GetChatConversationsResponseDTO.Data conversation = null;
+                        foreach (var conv in sortedConversations)
+                        {
+                            // Check if this conversation has messages in the included data
+                            bool hasMessages = false;
+                            if (dto.included != null)
+                            {
+                                foreach (var item in dto.included)
+                                {
+                                    if (item.type == "chat_conversation_message")
+                                    {
+                                        hasMessages = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (hasMessages)
+                            {
+                                conversation = conv;
+                                Debug.Log($"📅 Selected most recent conversation with messages: {conv.id} (created: {conv.attributes?.created_at})");
+                                break;
+                            }
+                        }
+                        
+                        // If no conversation has messages, use the newest one anyway
+                        if (conversation == null)
+                        {
+                            conversation = sortedConversations[0];
+                            Debug.Log($"📅 Selected most recent conversation (no messages found): {conversation.id} (created: {conversation.attributes?.created_at})");
+                        }
+                        
                         existingConversationId = conversation.id;
+                        
+                        Debug.Log($"📅 Selected most recent conversation: {existingConversationId} (created: {conversation.attributes?.created_at})");
                         
                         // Try to extract the profile ID from the conversation relationships
                         // The API response includes profile data in the relationships section
@@ -392,15 +437,17 @@ namespace GamificationPlayer
             conversationHistory.Clear();
             bool historyLoaded = false;
 
-            // Load messages from the API
+            // Load messages from the API for the specific conversation
+            Guid conversationGuid = Guid.Parse(currentConversationId);
             StartCoroutine(endpoints.CoGetChatConversationMessages((result, dto) =>
             {
                 if (result == UnityWebRequest.Result.Success && dto?.data != null)
                 {
                     Debug.Log($"Retrieved {dto.data.Count} messages from API for conversation {currentConversationId}");
                     
-                    // NOTE: The API should filter by conversation ID, but if it returns messages from other conversations,
-                    // we'll still process them for now. This might be an API server issue.
+                    // API should filter messages by conversation ID
+                    // If we receive messages from other conversations, it's likely an API issue
+                    Debug.Log($"Processing {dto.data.Count} messages from API for conversation {currentConversationId}");
                     
                     // Convert API messages to local ChatMessage format
                     foreach (var messageData in dto.data)

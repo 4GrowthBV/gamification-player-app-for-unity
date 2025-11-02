@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using GamificationPlayer;
 using GamificationPlayer.Session;
+using GamificationPlayer.AI;
 using UnityEditor;
 using GamificationPlayer.DTO.ExternalEvents;
 
@@ -22,10 +24,25 @@ namespace GamificationPlayer.Testing
         [SerializeField] private Vector2 windowSize = new Vector2(600, 800);
         [SerializeField] private Vector2 windowPosition = new Vector2(50, 50);
         
+        [Header("AI Integration")]
+        [SerializeField] private bool enableAIResponses = true;
+        [SerializeField] private string openAIApiKey = "";
+        [SerializeField] private string openAIModel = "gpt-4o-mini";
+        [SerializeField] private string n8nRAGEndpoint = "";
+        [SerializeField] private string n8nApiKey = "";
+        [SerializeField] private bool enableParallelProcessing = true;
+        
         // Mock dependencies
         private GamificationPlayerEndpoints mockEndpoints;
         private SessionLogData mockSessionData;
         private EnvironmentConfig environmentConfig;
+        
+        // AI Components
+        private AIAgent aiAgent;
+        private OpenAIClient.Config openAIConfig;
+        private N8nRAGClient.Config ragConfig;
+        private AIAgent.Config aiConfig;
+        private AITestBedConfig aiTestBedConfig;
         
         // GUI State
         private string userInputText = "";
@@ -36,11 +53,16 @@ namespace GamificationPlayer.Testing
         private bool showChatHistory = true;
         private bool showLogs = false;
         private bool showControls = false;
+        private bool showAIConfig = false;
         private Rect windowRect;
         
         // Chat UI State
         private List<ChatUIMessage> chatUIMessages = new List<ChatUIMessage>();
         private bool waitingForAIResponse = false;
+        private string currentProcessingStatus = "";
+        private string currentUserProfile = "";
+        private int lastTokensUsed = 0;
+        private float lastProcessingTime = 0f;
         
         [System.Serializable]
         public class ChatUIMessage
@@ -84,6 +106,10 @@ namespace GamificationPlayer.Testing
             // Subscribe to ChatManager events
             SubscribeToEvents();
             
+            // Load AI configuration and initialize components
+            LoadAIConfiguration();
+            InitializeAIComponents();
+            
             // Auto-initialize if requested
             if (autoInitialize)
             {
@@ -118,6 +144,7 @@ namespace GamificationPlayer.Testing
         void OnDestroy()
         {
             UnsubscribeFromEvents();
+            UnsubscribeFromAIEvents();
         }
 
         void OnGUI()
@@ -149,6 +176,13 @@ namespace GamificationPlayer.Testing
             if (showControls)
             {
                 DrawControlSection();
+                GUILayout.Space(10);
+            }
+            
+            // AI Configuration section (collapsed by default)
+            if (showAIConfig)
+            {
+                DrawAIConfigSection();
                 GUILayout.Space(10);
             }
             
@@ -186,6 +220,30 @@ namespace GamificationPlayer.Testing
                 GUILayout.Label($"Chat Initialized: {chatInitialized}");
             }
             
+            // AI Status
+            string aiStatus = aiAgent != null ? "✓ Ready" : "✗ Not Configured";
+            GUILayout.Label($"AI Agent: {aiStatus}");
+            
+            if (enableAIResponses && aiAgent != null)
+            {
+                bool hasOpenAI = !string.IsNullOrEmpty(openAIApiKey);
+                bool hasRAG = !string.IsNullOrEmpty(n8nRAGEndpoint);
+                
+                GUILayout.Label($"OpenAI: {(hasOpenAI ? "✓" : "✗")} | RAG: {(hasRAG ? "✓" : "✗")}");
+                
+                if (!string.IsNullOrEmpty(currentProcessingStatus))
+                {
+                    GUI.color = Color.yellow;
+                    GUILayout.Label($"Status: {currentProcessingStatus}");
+                    GUI.color = Color.white;
+                }
+                
+                if (lastTokensUsed > 0)
+                {
+                    GUILayout.Label($"Last Response: {lastTokensUsed} tokens, {lastProcessingTime:F2}s");
+                }
+            }
+            
             // API-based conversation controls
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("🔄 Force New", GUILayout.Width(100)))
@@ -208,6 +266,7 @@ namespace GamificationPlayer.Testing
             GUILayout.BeginHorizontal();
             showControls = GUILayout.Toggle(showControls, "Debug Controls", GUILayout.Width(100));
             showLogs = GUILayout.Toggle(showLogs, "Debug Logs", GUILayout.Width(100));
+            showAIConfig = GUILayout.Toggle(showAIConfig, "AI Config", GUILayout.Width(80));
             GUILayout.EndHorizontal();
         }
         
@@ -371,11 +430,20 @@ namespace GamificationPlayer.Testing
             // Set waiting state
             waitingForAIResponse = true;
             
-            // Send to ChatManager
-            if (chatManager != null)
+            // Check if we should use AI responses or ChatManager
+            if (enableAIResponses && aiAgent != null && !string.IsNullOrEmpty(openAIApiKey))
             {
-                chatManager.HandleUserMessage(message);
-                LogMessage($"User sent message: {message}");
+                // Use AI Agent for response
+                ProcessWithAI(message);
+            }
+            else
+            {
+                // Send to ChatManager (original behavior)
+                if (chatManager != null)
+                {
+                    chatManager.HandleUserMessage(message);
+                    LogMessage($"User sent message: {message}");
+                }
             }
         }
         
@@ -488,8 +556,6 @@ namespace GamificationPlayer.Testing
         
         void ForceNewConversation()
         {
-            ResetChatInterface();
-            
             if (chatManager != null && chatManager.IsInitialized())
             {
                 // Reset the chat manager state
@@ -498,11 +564,12 @@ namespace GamificationPlayer.Testing
                 // Clear UI messages
                 chatUIMessages.Clear();
                 
-                // Force create new conversation (ignores any existing conversation found via API)
-                chatManager.InitializeChat(true);
-                
+                // Add system message before starting new conversation
                 AddChatMessage("system", "🔄 Forcing new conversation - will create fresh chat session via API (ignoring any existing conversation)");
                 LogMessage("Forcing new conversation with forceNewConversation=true (API-based)");
+                
+                // Force create new conversation (ignores any existing conversation found via API)
+                chatManager.InitializeChat(true);
             }
             else
             {
@@ -512,8 +579,6 @@ namespace GamificationPlayer.Testing
         
         void ResumeExistingConversation()
         {
-            ResetChatInterface();
-            
             if (chatManager != null && chatManager.IsInitialized())
             {
                 // Reset the chat manager state
@@ -522,11 +587,12 @@ namespace GamificationPlayer.Testing
                 // Clear UI messages
                 chatUIMessages.Clear();
                 
-                // Check for existing conversation via API first, create new if none found
-                chatManager.InitializeChat(false);
-                
+                // Add system message before resuming
                 AddChatMessage("system", "📜 Checking for existing conversation via API - will resume if found, create new if not");
                 LogMessage("Resuming existing conversation with forceNewConversation=false (API-based detection)");
+                
+                // Check for existing conversation via API first, create new if none found
+                chatManager.InitializeChat(false);
             }
             else
             {
@@ -820,5 +886,420 @@ namespace GamificationPlayer.Testing
             
             Debug.Log($"[ChatManagerTestBed] {message}");
         }
+
+        #region AI Integration Methods
+
+        void LoadAIConfiguration()
+        {
+            // Load saved configuration
+            aiTestBedConfig = AITestBedConfig.Load();
+            
+            // Update inspector fields with loaded values
+            enableAIResponses = aiTestBedConfig.enableAI;
+            openAIApiKey = aiTestBedConfig.openAIApiKey;
+            openAIModel = aiTestBedConfig.openAIModel;
+            n8nRAGEndpoint = aiTestBedConfig.n8nRAGEndpoint;
+            n8nApiKey = aiTestBedConfig.n8nApiKey;
+            enableParallelProcessing = aiTestBedConfig.enableParallelProcessing;
+            
+            LogMessage("AI configuration loaded from saved settings");
+        }
+
+        void SaveAIConfiguration()
+        {
+            if (aiTestBedConfig == null)
+                aiTestBedConfig = new AITestBedConfig();
+                
+            // Update config with current values
+            aiTestBedConfig.enableAI = enableAIResponses;
+            aiTestBedConfig.openAIApiKey = openAIApiKey;
+            aiTestBedConfig.openAIModel = openAIModel;
+            aiTestBedConfig.n8nRAGEndpoint = n8nRAGEndpoint;
+            aiTestBedConfig.n8nApiKey = n8nApiKey;
+            aiTestBedConfig.enableParallelProcessing = enableParallelProcessing;
+            
+            // Save to persistent storage
+            aiTestBedConfig.Save();
+            LogMessage("AI configuration saved");
+        }
+
+        void InitializeAIComponents()
+        {
+            if (!enableAIResponses)
+            {
+                LogMessage("AI responses disabled");
+                return;
+            }
+
+            try
+            {
+                // Use config helper to create configurations
+                if (aiTestBedConfig == null)
+                    LoadAIConfiguration();
+
+                openAIConfig = aiTestBedConfig.CreateOpenAIConfig();
+                ragConfig = aiTestBedConfig.CreateRAGConfig();
+                aiConfig = aiTestBedConfig.CreateAIAgentConfig();
+
+                // Initialize AI Agent if we have valid config
+                if (aiConfig.IsValid())
+                {
+                    aiAgent = new AIAgent(aiConfig, this);
+                    SubscribeToAIEvents();
+                    LogMessage("✓ AI Agent initialized successfully");
+                    
+                    string ragStatus = aiTestBedConfig.IsValidForRAG() ? "enabled" : "disabled";
+                    AddChatMessage("system", $"🤖 AI Agent ready! OpenAI enabled, RAG {ragStatus}.");
+                }
+                else
+                {
+                    LogMessage("AI Agent not initialized - missing OpenAI API key");
+                    AddChatMessage("system", "⚠️ AI Agent disabled - please configure OpenAI API key in AI Config section");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage($"ERROR initializing AI components: {ex.Message}");
+                AddChatMessage("system", $"❌ Failed to initialize AI: {ex.Message}");
+            }
+        }
+
+        void SubscribeToAIEvents()
+        {
+            AIAgent.OnAIResponseGenerated += OnAIResponseGenerated;
+            AIAgent.OnProfileUpdated += OnProfileUpdated;
+            AIAgent.OnProcessingStatusChanged += OnProcessingStatusChanged;
+            AIAgent.OnAIErrorOccurred += OnAIErrorOccurred;
+            
+            OpenAIClient.OnResponseReceived += OnOpenAIResponseReceived;
+            OpenAIClient.OnErrorOccurred += OnOpenAIErrorOccurred;
+            OpenAIClient.OnTokensUsed += OnTokensUsed;
+            
+            N8nRAGClient.OnRAGResponseReceived += OnRAGResponseReceived;
+            N8nRAGClient.OnRAGErrorOccurred += OnRAGErrorOccurred;
+        }
+
+        void UnsubscribeFromAIEvents()
+        {
+            AIAgent.OnAIResponseGenerated -= OnAIResponseGenerated;
+            AIAgent.OnProfileUpdated -= OnProfileUpdated;
+            AIAgent.OnProcessingStatusChanged -= OnProcessingStatusChanged;
+            AIAgent.OnAIErrorOccurred -= OnAIErrorOccurred;
+            
+            OpenAIClient.OnResponseReceived -= OnOpenAIResponseReceived;
+            OpenAIClient.OnErrorOccurred -= OnOpenAIErrorOccurred;
+            OpenAIClient.OnTokensUsed -= OnTokensUsed;
+            
+            N8nRAGClient.OnRAGResponseReceived -= OnRAGResponseReceived;
+            N8nRAGClient.OnRAGErrorOccurred -= OnRAGErrorOccurred;
+        }
+
+        void ProcessWithAI(string userMessage)
+        {
+            if (aiAgent == null)
+            {
+                AddChatMessage("system", "❌ AI Agent not available");
+                waitingForAIResponse = false;
+                return;
+            }
+
+            // Build conversation history for AI context
+            var conversationHistory = new List<string>();
+            foreach (var msg in chatUIMessages.Where(m => m.role == "user" || m.role == "bot").TakeLast(10))
+            {
+                conversationHistory.Add($"{msg.role}: {msg.message}");
+            }
+
+            // Create AI request
+            var aiRequest = new AIAgent.AIRequest
+            {
+                userMessage = userMessage,
+                conversationHistory = conversationHistory,
+                existingProfile = currentUserProfile,
+                conversationContext = GetConversationContext(),
+                categories = N8nRAGClient.ClassifyQuery(userMessage)
+            };
+
+            LogMessage($"Processing with AI: {userMessage}");
+            AddChatMessage("system", $"🤖 Processing with AI (Categories: {string.Join(", ", aiRequest.categories)})");
+
+            // Process with AI Agent
+            aiAgent.ProcessRequest(aiRequest, OnAIRequestComplete);
+        }
+
+        void OnAIRequestComplete(AIAgent.AIResponse response)
+        {
+            waitingForAIResponse = false;
+            currentProcessingStatus = "";
+
+            if (response.success)
+            {
+                // Add AI response to chat
+                AddChatMessage("bot", response.message);
+                
+                // Update profile if generated
+                if (!string.IsNullOrEmpty(response.updatedProfile))
+                {
+                    currentUserProfile = response.updatedProfile;
+                }
+                
+                // Store processing metrics
+                lastTokensUsed = response.tokensUsed;
+                lastProcessingTime = response.processingTime;
+                
+                LogMessage($"AI response generated successfully. Tokens: {response.tokensUsed}, Time: {response.processingTime:F2}s");
+            }
+            else
+            {
+                AddChatMessage("system", $"❌ AI processing failed: {response.error}");
+                LogMessage($"AI processing failed: {response.error}");
+            }
+        }
+
+        string GetConversationContext()
+        {
+            // Provide context about the current conversation for AI processing
+            var contextBuilder = new System.Text.StringBuilder();
+            
+            if (chatManager != null && chatManager.IsInitialized())
+            {
+                contextBuilder.AppendLine($"Conversation Type: {(chatManager.IsInPredefinedFlow() ? "Predefined Flow" : "Free Conversation")}");
+                contextBuilder.AppendLine($"Message Count: {currentHistory.Count}");
+            }
+            
+            contextBuilder.AppendLine($"User Profile Available: {!string.IsNullOrEmpty(currentUserProfile)}");
+            
+            return contextBuilder.ToString();
+        }
+
+        void DrawAIConfigSection()
+        {
+            GUILayout.Label("=== AI CONFIGURATION ===", GUI.skin.box);
+            
+            // AI Toggle
+            enableAIResponses = GUILayout.Toggle(enableAIResponses, "Enable AI Responses");
+            
+            if (!enableAIResponses)
+            {
+                GUILayout.Label("AI responses disabled. Enable to configure OpenAI and RAG.");
+                return;
+            }
+            
+            GUILayout.Space(5);
+            
+            // OpenAI Configuration
+            GUILayout.Label("OpenAI Configuration:", EditorStyles.boldLabel);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("API Key:", GUILayout.Width(80));
+            string newApiKey = GUILayout.TextField(openAIApiKey, GUILayout.Width(200));
+            if (newApiKey != openAIApiKey)
+            {
+                openAIApiKey = newApiKey;
+                SaveAIConfiguration(); // Auto-save on change
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Model:", GUILayout.Width(80));
+            string newModel = GUILayout.TextField(openAIModel, GUILayout.Width(120));
+            if (newModel != openAIModel)
+            {
+                openAIModel = newModel;
+                SaveAIConfiguration();
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(5);
+            
+            // n8n RAG Configuration
+            GUILayout.Label("n8n RAG Configuration:", EditorStyles.boldLabel);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Endpoint:", GUILayout.Width(80));
+            string newEndpoint = GUILayout.TextField(n8nRAGEndpoint, GUILayout.Width(200));
+            if (newEndpoint != n8nRAGEndpoint)
+            {
+                n8nRAGEndpoint = newEndpoint;
+                SaveAIConfiguration();
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("API Key:", GUILayout.Width(80));
+            string newRAGKey = GUILayout.TextField(n8nApiKey, GUILayout.Width(200));
+            if (newRAGKey != n8nApiKey)
+            {
+                n8nApiKey = newRAGKey;
+                SaveAIConfiguration();
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.Space(5);
+            
+            // Processing Options
+            GUILayout.Label("Processing Options:", EditorStyles.boldLabel);
+            bool newParallel = GUILayout.Toggle(enableParallelProcessing, "Enable Parallel Processing (Profile + RAG)");
+            if (newParallel != enableParallelProcessing)
+            {
+                enableParallelProcessing = newParallel;
+                SaveAIConfiguration();
+            }
+            
+            GUILayout.Space(5);
+            
+            // Action buttons
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("🔄 Reinitialize AI", GUILayout.Width(130)))
+            {
+                SaveAIConfiguration(); // Save before reinitializing
+                InitializeAIComponents();
+            }
+            if (GUILayout.Button("💾 Save Config", GUILayout.Width(100)))
+            {
+                SaveAIConfiguration();
+                AddChatMessage("system", "💾 AI configuration saved");
+            }
+            GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("🧠 Show Profile", GUILayout.Width(120)))
+            {
+                ShowCurrentProfile();
+            }
+            if (GUILayout.Button("🧪 Test AI", GUILayout.Width(80)))
+            {
+                TestAIConnection();
+            }
+            if (GUILayout.Button("📄 Show Config", GUILayout.Width(100)))
+            {
+                ShowConfigSummary();
+            }
+            GUILayout.EndHorizontal();
+            
+            // Status display
+            if (aiAgent != null)
+            {
+                GUI.color = Color.green;
+                GUILayout.Label("✓ AI Agent is ready and configured");
+                GUI.color = Color.white;
+            }
+            else if (enableAIResponses)
+            {
+                GUI.color = Color.red;
+                GUILayout.Label("✗ AI Agent failed to initialize - check configuration");
+                GUI.color = Color.white;
+            }
+        }
+
+        void ShowCurrentProfile()
+        {
+            if (string.IsNullOrEmpty(currentUserProfile))
+            {
+                AddChatMessage("system", "👤 No user profile available yet. Send some messages to generate a profile.");
+            }
+            else
+            {
+                AddChatMessage("system", $"👤 Current User Profile:\n{currentUserProfile}");
+            }
+        }
+
+        void TestAIConnection()
+        {
+            if (aiAgent == null)
+            {
+                AddChatMessage("system", "❌ AI Agent not initialized");
+                return;
+            }
+
+            AddChatMessage("system", "🧪 Testing AI connection...");
+            
+            var testRequest = new AIAgent.AIRequest
+            {
+                userMessage = "Hello, this is a test message to verify AI functionality.",
+                conversationHistory = new List<string>(),
+                existingProfile = "",
+                conversationContext = "Test request from TestBed",
+                categories = new string[] { "general" }
+            };
+
+            aiAgent.ProcessRequest(testRequest, (response) => {
+                if (response.success)
+                {
+                    AddChatMessage("system", $"✅ AI test successful! Response: {response.message}");
+                }
+                else
+                {
+                    AddChatMessage("system", $"❌ AI test failed: {response.error}");
+                }
+            });
+        }
+
+        void ShowConfigSummary()
+        {
+            if (aiTestBedConfig == null)
+            {
+                AddChatMessage("system", "⚠️ No configuration loaded");
+                return;
+            }
+
+            string summary = aiTestBedConfig.GetConfigSummary();
+            AddChatMessage("system", $"📄 Configuration Summary:\n{summary}");
+        }
+
+        #endregion
+
+        #region AI Event Handlers
+
+        void OnAIResponseGenerated(AIAgent.AIResponse response)
+        {
+            LogMessage($"AI response generated: {(string.IsNullOrEmpty(response.message) ? "empty" : response.message.Substring(0, Math.Min(50, response.message.Length)) + "...")}");
+        }
+
+        void OnProfileUpdated(string profile)
+        {
+            currentUserProfile = profile;
+            LogMessage("User profile updated");
+        }
+
+        void OnProcessingStatusChanged(string status)
+        {
+            currentProcessingStatus = status;
+            LogMessage($"AI Status: {status}");
+        }
+
+        void OnAIErrorOccurred(string error)
+        {
+            LogMessage($"AI Error: {error}");
+        }
+
+        void OnOpenAIResponseReceived(string response)
+        {
+            LogMessage($"OpenAI response received: {(string.IsNullOrEmpty(response) ? "empty" : response.Substring(0, Math.Min(30, response.Length)) + "...")}");
+        }
+
+        void OnOpenAIErrorOccurred(string error)
+        {
+            LogMessage($"OpenAI Error: {error}");
+        }
+
+        void OnTokensUsed(int tokens)
+        {
+            lastTokensUsed = tokens;
+            LogMessage($"OpenAI tokens used: {tokens}");
+        }
+
+        void OnRAGResponseReceived(N8nRAGClient.RAGResponse response)
+        {
+            if (response != null && response.success)
+            {
+                LogMessage($"RAG response received: {response.results?.Length ?? 0} results");
+            }
+        }
+
+        void OnRAGErrorOccurred(string error)
+        {
+            LogMessage($"RAG Error: {error}");
+        }
+
+        #endregion
     }
 }

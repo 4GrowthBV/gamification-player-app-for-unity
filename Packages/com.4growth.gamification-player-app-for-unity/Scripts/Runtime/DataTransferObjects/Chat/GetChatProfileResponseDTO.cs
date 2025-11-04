@@ -4,10 +4,10 @@ using GamificationPlayer.Session;
 
 namespace GamificationPlayer.DTO.Chat
 {
-    public class UpdateChatPredefinedMessageResponseDTO
+    public class GetChatProfileResponseDTO
     {
         [Serializable]
-        public class PredefinedMessageAttributes
+        public class ProfileAttributes
         {
             public DateTime CreatedAt
             {
@@ -25,10 +25,9 @@ namespace GamificationPlayer.DTO.Chat
                 }
             }
 
-            public string identifier;
-            public string content;
-            public List<string> buttons;
-            public string button_name;
+            [ChatProfile]
+            public string profile;
+            
             public string created_at;
             public string updated_at;
         }
@@ -39,9 +38,11 @@ namespace GamificationPlayer.DTO.Chat
             public string Type { get => type; }
             public float Time { get; set; }
 
+            [ChatProfileId]
             public string id;
+            
             public string type;
-            public PredefinedMessageAttributes attributes;
+            public ProfileAttributes attributes;
         }
 
         [Serializable]

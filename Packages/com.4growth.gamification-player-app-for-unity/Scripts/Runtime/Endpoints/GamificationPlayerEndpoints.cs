@@ -83,8 +83,10 @@ namespace GamificationPlayer
     public delegate void UpdateChatPredefinedMessageCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatPredefinedMessageResponseDTO dto);
     
     public delegate void DeleteChatPredefinedMessageCallback(UnityWebRequest.Result result);
-    
+
     public delegate void CreateChatProfileCallback(UnityWebRequest.Result result, DTO.Chat.CreateChatProfileResponseDTO dto);
+    
+    public delegate void GetChatProfileCallback(UnityWebRequest.Result result, DTO.Chat.GetChatProfileResponseDTO dto);
     
     public delegate void UpdateChatProfileCallback(UnityWebRequest.Result result, DTO.Chat.UpdateChatProfileResponseDTO dto);
     

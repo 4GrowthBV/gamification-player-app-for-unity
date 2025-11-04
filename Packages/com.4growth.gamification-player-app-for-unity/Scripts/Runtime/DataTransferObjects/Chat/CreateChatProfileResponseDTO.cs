@@ -53,7 +53,7 @@ namespace GamificationPlayer.DTO.Chat
 
             public string id;
             public string type;
-            public object attributes;
+            public Dictionary<string, object> attributes;
         }
 
         public Data data;

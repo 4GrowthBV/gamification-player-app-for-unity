@@ -5,6 +5,8 @@ using GamificationPlayer.DTO.ExternalEvents;
 using GamificationPlayer.Session;
 using UnityEngine;
 using UnityEngine.Networking;
+using GamificationPlayer.Chat;
+using GamificationPlayer.Chat.Services;
 
 namespace GamificationPlayer
 {

@@ -15,7 +15,7 @@ namespace GamificationPlayer.Tests
         private ISessionLogData mockSessionData;
         private EnvironmentConfig environmentConfig;
 
-        private IChatRouterService chatRouterService;
+        private IRAGService chatRouterService;
         private IChatAIService chatAIService;
 
         [SetUp]
@@ -31,10 +31,11 @@ namespace GamificationPlayer.Tests
             // Create a fresh ChatManager instance for testing
             GameObject go = new GameObject("ChatManager");
             chatManager = go.AddComponent<ChatManager>();
+            chatManager.IsLogging = true;
 
             // Set mock services
-            chatRouterService = go.AddComponent<N8nRouterMockService>();
-            chatAIService = go.AddComponent<OpenAIChatMockService>();
+            chatRouterService = new N8nRouterMockService();
+            chatAIService = new OpenAIChatMockService();
 
             // Initialize ChatManager with mock dependencies
             chatManager.Initialize(mockEndpoints, mockSessionData);
@@ -90,7 +91,7 @@ namespace GamificationPlayer.Tests
             try
             {
                 // Act
-                chatManager.InitializeChat(chatAIService);
+                chatManager.InitializeChat(chatAIService, chatRouterService);
 
                 // Wait for initialization to complete (max 10 seconds)
                 float timeout = 10f;
@@ -123,7 +124,7 @@ namespace GamificationPlayer.Tests
             string aiResponse = "";
             string errorMessage = "";
 
-            System.Action<string> onAIResponse = (response) => { aiResponseReceived = true; aiResponse = response; };
+            System.Action<ChatManager.ChatMessage> onAIResponse = (response) => { aiResponseReceived = true; aiResponse = response.message; };
             System.Action<string> onError = (msg) => { errorOccurred = true; errorMessage = msg; };
 
             // Initialize chat first
@@ -167,13 +168,14 @@ namespace GamificationPlayer.Tests
             bool messageReceived = false;
             bool errorOccurred = false;
             string receivedMessage = "";
-            string[] receivedButtons = null;
+            ChatManager.Button[] receivedButtons = null;
             string errorMessage = "";
 
-            System.Action<string, string[]> onMessage = (msg, buttons) => { 
+            System.Action<ChatManager.ChatMessage> onMessage = (msg) => { 
+                Debug.Log("Predefined message received: " + msg.message);
                 messageReceived = true; 
-                receivedMessage = msg; 
-                receivedButtons = buttons; 
+                receivedMessage = msg.message; 
+                receivedButtons = msg.buttons; 
             };
             System.Action<string> onError = (msg) => { errorOccurred = true; errorMessage = msg; };
 
@@ -186,7 +188,7 @@ namespace GamificationPlayer.Tests
             try
             {
                 // Act
-                chatManager.HandleButtonClick(chatAIService, "test_button");
+                chatManager.HandleButtonClick(chatAIService, "greeting_message");
 
                 // Wait for predefined message (max 10 seconds)
                 float timeout = 10f;
@@ -285,7 +287,7 @@ namespace GamificationPlayer.Tests
             bool errorOccurred = false;
             string errorMessage = "";
 
-            System.Action<string> onAIResponse = (response) => aiResponseCount++;
+            System.Action<ChatManager.ChatMessage> onAIResponse = (response) => aiResponseCount++;
             System.Action<string> onError = (msg) => { errorOccurred = true; errorMessage = msg; };
 
             // Initialize chat first
@@ -331,9 +333,9 @@ namespace GamificationPlayer.Tests
             // Arrange
             bool messageReceived = false;
             bool chatInitialized = false;
-            string receivedMessage = "";
+            ChatManager.ChatMessage receivedMessage = null;
 
-            System.Action<string, string[]> onMessage = (msg, buttons) => { 
+            System.Action<ChatManager.ChatMessage> onMessage = (msg) => { 
                 messageReceived = true; 
                 receivedMessage = msg; 
             };
@@ -345,7 +347,7 @@ namespace GamificationPlayer.Tests
             try
             {
                 // Act
-                chatManager.InitializeChat(chatAIService);
+                chatManager.InitializeChat(chatAIService, chatRouterService);
 
                 // Wait for initialization and day_one message (max 15 seconds)
                 float timeout = 15f;
@@ -359,7 +361,7 @@ namespace GamificationPlayer.Tests
                 // Assert
                 Assert.IsTrue(chatInitialized, "Chat should be initialized");
                 Assert.IsTrue(messageReceived, "Day one message should be received during initialization");
-                Assert.IsNotEmpty(receivedMessage, "Day one message should not be empty");
+                Assert.IsNotEmpty(receivedMessage?.message, "Day one message should not be empty");
             }
             finally
             {
@@ -382,7 +384,7 @@ namespace GamificationPlayer.Tests
             try
             {
                 // Act
-                chatManager.InitializeChat(chatAIService);
+                chatManager.InitializeChat(chatAIService, chatRouterService);
 
                 // Wait for initialization
                 while (!chatInitialized)
@@ -412,7 +414,7 @@ namespace GamificationPlayer.Tests
             bool aiResponseReceived = false;
             float startTime;
 
-            System.Action<string> onAIResponse = (response) => aiResponseReceived = true;
+            System.Action<ChatManager.ChatMessage> onAIResponse = (response) => aiResponseReceived = true;
 
             // Initialize chat first
             yield return InitializeChatAndWait();
@@ -466,7 +468,7 @@ namespace GamificationPlayer.Tests
 
             try
             {
-                chatManager.InitializeChat(chatAIService);
+                chatManager.InitializeChat(chatAIService, chatRouterService);
 
                 float timeout = 10f;
                 float elapsed = 0f;

@@ -1,0 +1,5 @@
+Bij het ontwikkelen van MicroGames in Unity is schaalbaarheid cruciaal. 
+Door gebruik te maken van ScriptableObjects kunnen ontwikkelaars data efficiënt beheren. 
+De Addressables-workflow maakt het mogelijk om content dynamisch te laden zonder nieuwe builds. 
+Een goed test- en releasesysteem zorgt ervoor dat updates snel en veilig kunnen worden uitgerold. 
+AI kan in de toekomst helpen om spelers persoonlijke feedback te geven op basis van hun gedrag.

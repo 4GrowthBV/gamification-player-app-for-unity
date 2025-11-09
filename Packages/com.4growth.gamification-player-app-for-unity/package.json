@@ -10,6 +10,7 @@
     "url": "https://4growth.com/"
   },
   "dependencies": {
+    "com.unity.ai.inference": "2.2.2",
     "com.unity.nuget.newtonsoft-json": "3.0.2"
   }
 }

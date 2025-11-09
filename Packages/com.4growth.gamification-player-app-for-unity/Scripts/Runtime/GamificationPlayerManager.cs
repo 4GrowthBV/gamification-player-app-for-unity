@@ -1118,7 +1118,9 @@ namespace GamificationPlayer
             if (chatManager == null)
             {
                 GameObject chatManagerGO = new GameObject("ChatManager");
+
                 chatManager = chatManagerGO.AddComponent<ChatManager>();
+                
                 DontDestroyOnLoad(chatManagerGO);
 
                 // Initialize ChatManager with dependencies

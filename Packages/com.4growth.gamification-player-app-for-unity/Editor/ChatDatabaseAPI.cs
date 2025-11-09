@@ -1137,25 +1137,18 @@ namespace GamificationPlayer.Editor
         /// <summary>
         /// Delete an instruction using real API
         /// </summary>
-        public void DeleteInstruction(string instructionId, Action<bool, string> onComplete)
+        public void DeleteInstruction(ChatInstructionData instruction, Action<bool, string> onComplete)
         {
             try
             {
-                if (string.IsNullOrEmpty(instructionId))
-                {
-                    onComplete?.Invoke(false, "Instruction ID is null or empty");
-                    return;
-                }
-                
-                var instruction = dataCache.GetInstruction(instructionId);
                 if (instruction == null)
                 {
-                    onComplete?.Invoke(false, "Instruction not found");
+                    onComplete?.Invoke(false, "Instruction is null");
                     return;
                 }
                 
                 // Use the real API endpoint to delete instruction
-                coroutineRunner.StartCoroutine(DeleteInstructionCoroutine(instructionId, instruction.identifier, onComplete));
+                coroutineRunner.StartCoroutine(DeleteInstructionCoroutine(instruction.id, instruction.identifier, onComplete));
             }
             catch (Exception ex)
             {

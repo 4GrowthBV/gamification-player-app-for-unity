@@ -13,7 +13,7 @@ namespace GamificationPlayer
             Guid userId = default,
             Guid microGameId = default,
             int page = 1,
-            int perPage = 25)
+            int perPage = 100)
         {
             if (organisationId == default)
             {

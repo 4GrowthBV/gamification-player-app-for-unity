@@ -33,7 +33,7 @@ namespace GamificationPlayer
                 sessionData.TryGetLatestMicroGameId(out microGameId);
             }
 
-            var url = string.Format("{0}/chat-predefined-messages?identifier={1}&filter[organisation_id]={2}&filter[micro_game_id]={3}",
+            var url = string.Format("{0}/chat-predefined-messages?filter[identifier]={1}&filter[organisation_id]={2}&filter[micro_game_id]={3}",
                 environmentConfig.API_URL, identifier, organisationId, microGameId);
 
             if (environmentConfig.TurnOnLogging) Debug.Log(url);

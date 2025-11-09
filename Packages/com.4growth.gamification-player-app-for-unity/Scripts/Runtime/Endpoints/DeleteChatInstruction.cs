@@ -38,10 +38,9 @@ namespace GamificationPlayer
                         break;
                     case UnityWebRequest.Result.ProtocolError:
                         Debug.LogError(": HTTP Error: " + webRequest.error);
-                        if(environmentConfig.TurnOnLogging) Debug.LogError(":\nReceived: " + webRequest.downloadHandler.text);
                         break;
                     case UnityWebRequest.Result.Success:
-                        if(environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
+                        if(environmentConfig.TurnOnLogging) Debug.Log("Delete successful");
                         break;
                 }
 

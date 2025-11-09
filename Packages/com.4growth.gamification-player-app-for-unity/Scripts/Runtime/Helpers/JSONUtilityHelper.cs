@@ -24,7 +24,7 @@ namespace GamificationPlayer
                 newJSON = newJSON.Replace("[]", "{}");
             }*/
 
-            Debug.Log($"Deserializing JSON: {json}");
+            //Debug.Log($"Deserializing JSON: {json}");
 
             var obj = JsonConvert.DeserializeObject<TType>(json);
 

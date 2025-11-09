@@ -1,14 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using UnityEditor;
-using GamificationPlayer;
 using GamificationPlayer.Chat;
 using GamificationPlayer.Chat.Services;
-using GamificationPlayer.Tests;
-using GamificationPlayer.TestBed.ProductionServices;
 using GamificationPlayer.DTO.ExternalEvents;
 
 namespace GamificationPlayer.TestBed
@@ -20,37 +15,27 @@ namespace GamificationPlayer.TestBed
     public class ChatManagerTestBed : MonoBehaviour
     {
         [Header("Configuration")]
-        [SerializeField] private bool useStagingEnvironment = true;
         [SerializeField] private bool enableLogging = true;
         [SerializeField] private bool autoInitialize = true;
+        [SerializeField] private EnvironmentConfig environmentConfig;
+        [SerializeField] private RagInitializer agentRagInitializer;
 
         #region Core Components
         private ChatManager chatManager;
         private GamificationPlayerEndpoints endpoints;
         private ISessionLogData sessionData;
-        private EnvironmentConfig environmentConfig;
         #endregion
 
         #region Services
-        private IChatAIService currentAIService;
-        private IChatRouterService currentRouterService;
-        
-        // Service options
-        private List<ServiceOption<IChatAIService>> aiServiceOptions = new List<ServiceOption<IChatAIService>>();
-        private List<ServiceOption<IChatRouterService>> routerServiceOptions = new List<ServiceOption<IChatRouterService>>();
-        private int selectedAIServiceIndex = 0;
-        private int selectedRouterServiceIndex = 0;
+        private IChatAIService AIService;
+        private IRAGService routerService;
         #endregion
 
         #region Chat State
-        private List<ChatDisplayMessage> chatHistory = new List<ChatDisplayMessage>();
         private string userInput = "";
-        private string[] availableButtons = new string[0];
         private bool isInitialized = false;
         private bool isConnected = false;
         private string connectionStatus = "Disconnected";
-        private string currentConversationId = "";
-        private string currentProfileId = "";
         #endregion
 
         #region Event Monitoring
@@ -61,49 +46,13 @@ namespace GamificationPlayer.TestBed
 
         #region Performance Metrics
         private float lastResponseTime = 0f;
-        private int totalAPICallsCount = 0;
         private DateTime lastOperationStart;
-        private StringBuilder performanceLog = new StringBuilder();
         #endregion
 
         #region GUI Layout
         private Rect windowRect = new Rect(50, 50, 800, 600);
         private bool showDebugPanel = true;
-        private bool isRecording = false;
         #endregion
-
-        [Serializable]
-        private class ChatDisplayMessage
-        {
-            public string sender;
-            public string message;
-            public string[] buttons;
-            public DateTime timestamp;
-            public bool isStreaming;
-
-            public ChatDisplayMessage(string sender, string message, string[] buttons = null)
-            {
-                this.sender = sender;
-                this.message = message;
-                this.buttons = buttons;
-                this.timestamp = DateTime.Now;
-                this.isStreaming = false;
-            }
-        }
-
-        private class ServiceOption<T>
-        {
-            public string name;
-            public System.Func<T> createService;
-            public bool isProduction;
-
-            public ServiceOption(string name, System.Func<T> createService, bool isProduction = false)
-            {
-                this.name = name;
-                this.createService = createService;
-                this.isProduction = isProduction;
-            }
-        }
 
         #region Unity Lifecycle
 
@@ -138,10 +87,7 @@ namespace GamificationPlayer.TestBed
         private void InitializeTestBed()
         {
             try
-            {
-                // Load environment configuration
-                LoadEnvironmentConfig();
-                
+            {               
                 // Setup services
                 SetupServiceOptions();
                 
@@ -162,48 +108,11 @@ namespace GamificationPlayer.TestBed
             }
         }
 
-        private void LoadEnvironmentConfig()
-        {
-            // Load Gamification Player environment config (for ChatManager backend API)
-            // Note: This is separate from OpenAI/N8n configurations
-            var configs = AssetDatabase.FindAssets("t:EnvironmentConfig LearnStrikeEnviromentConfigStaging");
-            if (configs.Length > 0)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(configs[0]);
-                environmentConfig = AssetDatabase.LoadAssetAtPath<EnvironmentConfig>(path);
-                LogEvent($"Loaded Gamification Player staging config successfully");
-            }
-            else
-            {
-                LogEvent("Warning: Gamification Player staging environment config not found!");
-            }
-        }
-
         private void SetupServiceOptions()
         {
-            // AI Service Options
-            aiServiceOptions.Clear();
-            aiServiceOptions.Add(new ServiceOption<IChatAIService>("OpenAI Mock Service", 
-                () => gameObject.AddComponent<OpenAIChatMockService>(), false));
-            aiServiceOptions.Add(new ServiceOption<IChatAIService>("OpenAI Production", 
-                () => gameObject.AddComponent<ProductionServices.OpenAIChatService>(), true));
+            AIService = new ChatAIService("");
             
-            // Router Service Options
-            routerServiceOptions.Clear();
-            routerServiceOptions.Add(new ServiceOption<IChatRouterService>("N8n Mock Service", 
-                () => gameObject.AddComponent<N8nRouterMockService>(), false));
-            routerServiceOptions.Add(new ServiceOption<IChatRouterService>("N8n Production", 
-                () => gameObject.AddComponent<N8nRouterServiceTest>(), true));
-            
-            // Initialize with production services if using staging environment
-            if (useStagingEnvironment)
-            {
-                selectedAIServiceIndex = 1; // Production OpenAI
-                selectedRouterServiceIndex = 1; // Production N8n
-            }
-            
-            // Initialize with first options
-            RefreshServices();
+            routerService = new RAGService(agentRagInitializer.GetAllRags());
         }
 
         private void InitializeCoreComponents()
@@ -255,36 +164,6 @@ namespace GamificationPlayer.TestBed
 
         #endregion
 
-        #region Service Management
-
-        private void RefreshServices()
-        {
-            // Clean up existing services
-            if (currentAIService != null && currentAIService is MonoBehaviour aiMono)
-            {
-                DestroyImmediate(aiMono);
-            }
-            if (currentRouterService != null && currentRouterService is MonoBehaviour routerMono)
-            {
-                DestroyImmediate(routerMono);
-            }
-            
-            // Create new services
-            if (selectedAIServiceIndex < aiServiceOptions.Count)
-            {
-                currentAIService = aiServiceOptions[selectedAIServiceIndex].createService();
-                LogEvent($"Switched to AI service: {aiServiceOptions[selectedAIServiceIndex].name}");
-            }
-            
-            if (selectedRouterServiceIndex < routerServiceOptions.Count)
-            {
-                currentRouterService = routerServiceOptions[selectedRouterServiceIndex].createService();
-                LogEvent($"Switched to Router service: {routerServiceOptions[selectedRouterServiceIndex].name}");
-            }
-        }
-
-        #endregion
-
         #region Event Handlers
 
         private void SetupEventHandlers()
@@ -313,44 +192,23 @@ namespace GamificationPlayer.TestBed
             RecordPerformanceMetric("Chat Initialization");
         }
 
-        private void OnMessageReceived(string message, string[] buttons)
+        private void OnMessageReceived(ChatManager.ChatMessage message)
         {
-            LogEvent($"✓ OnMessageReceived: \"{message.Substring(0, Math.Min(50, message.Length))}...\"");
-            
-            var displayMsg = new ChatDisplayMessage("Bot", message, buttons);
-            chatHistory.Add(displayMsg);
-            
-            availableButtons = buttons ?? new string[0];
-            
+            LogEvent($"✓ OnMessageReceived: \"{message.message.Substring(0, Math.Min(50, message.message.Length))}...\"");
+                        
             RecordPerformanceMetric("Message Received");
         }
 
-        private void OnAIMessageReceived(string response)
+        private void OnAIMessageReceived(ChatManager.ChatMessage message)
         {
-            LogEvent($"✓ OnAIMessageReceived: \"{response.Substring(0, Math.Min(50, response.Length))}...\"");
-            
-            var displayMsg = new ChatDisplayMessage("AI", response);
-            chatHistory.Add(displayMsg);
-            
-            availableButtons = new string[0]; // AI messages don't have buttons
-            
+            LogEvent($"✓ OnAIMessageReceived: \"{message.message.Substring(0, Math.Min(50, message.message.Length))}...\"");
+                        
             RecordPerformanceMetric("AI Response Received");
         }
 
         private void OnAIMessageChunkReceived(string chunk)
         {
             LogEvent($"⚡ Stream chunk: \"{chunk.Substring(0, Math.Min(30, chunk.Length))}...\"");
-            
-            // Update the last message if it's streaming, or create new one
-            if (chatHistory.Count > 0 && chatHistory[chatHistory.Count - 1].isStreaming)
-            {
-                chatHistory[chatHistory.Count - 1].message = chunk;
-            }
-            else
-            {
-                var streamMsg = new ChatDisplayMessage("AI (Streaming)", chunk) { isStreaming = true };
-                chatHistory.Add(streamMsg);
-            }
         }
 
         private void OnErrorOccurred(string error)
@@ -397,83 +255,51 @@ namespace GamificationPlayer.TestBed
         {
             GUILayout.BeginHorizontal("box");
             
-            // Environment status
-            GUILayout.Label($"Config: {(useStagingEnvironment ? "Staging" : "Mock")}", GUILayout.Width(100));
-            
-            // Service selection
-            GUILayout.Label("AI:", GUILayout.Width(25));
-            int newAIIndex = EditorGUILayout.Popup(selectedAIServiceIndex, GetServiceNames(aiServiceOptions), GUILayout.Width(120));
-            if (newAIIndex != selectedAIServiceIndex)
-            {
-                selectedAIServiceIndex = newAIIndex;
-                RefreshServices();
-            }
-            
-            GUILayout.Label("Router:", GUILayout.Width(45));
-            int newRouterIndex = EditorGUILayout.Popup(selectedRouterServiceIndex, GetServiceNames(routerServiceOptions), GUILayout.Width(120));
-            if (newRouterIndex != selectedRouterServiceIndex)
-            {
-                selectedRouterServiceIndex = newRouterIndex;
-                RefreshServices();
-            }
-            
             GUILayout.FlexibleSpace();
             
             // Connection status
             GUI.color = isConnected ? Color.green : Color.yellow;
             GUILayout.Label($"● {connectionStatus}", GUILayout.Width(150));
             GUI.color = Color.white;
-            
-            GUILayout.EndHorizontal();
-            
-            // IDs row
-            GUILayout.BeginHorizontal("box");
-            GUILayout.Label($"Conv: {currentConversationId}", GUILayout.Width(200));
-            GUILayout.Label($"Profile: {currentProfileId}", GUILayout.Width(200));
-            
-            if (GUILayout.Button(showDebugPanel ? "Hide Debug" : "Show Debug", GUILayout.Width(100)))
-            {
-                showDebugPanel = !showDebugPanel;
-                windowRect.width = showDebugPanel ? 800 : 420;
-            }
-            
+
             GUILayout.EndHorizontal();
         }
 
         private void DrawChatPanel()
         {
-            GUILayout.Label("Chat History", EditorStyles.boldLabel);
+            GUILayout.Label("Chat History");
             
             // Chat history area
             chatScrollPos = GUILayout.BeginScrollView(chatScrollPos, "box", GUILayout.Height(350));
-            
-            foreach (var msg in chatHistory)
+
+            foreach (var msg in chatManager.GetConversationHistory())
             {
                 GUILayout.BeginVertical("box");
-                
+
                 // Message header
-                GUI.color = msg.sender.Contains("AI") ? Color.cyan : 
-                           msg.sender == "Bot" ? Color.green : Color.white;
-                GUILayout.Label($"{msg.sender} [{msg.timestamp:HH:mm:ss}]", EditorStyles.boldLabel);
+                GUI.color = msg.role.Contains("agent") ? Color.cyan :
+                           msg.role == "pre_defined" ? Color.green : Color.white;
+                GUILayout.Label($"{msg.role} [{msg.timestamp:HH:mm:ss}]");
                 GUI.color = Color.white;
-                
+
                 // Message content
-                GUILayout.TextArea(msg.message, EditorStyles.wordWrappedLabel);
-                
+                GUILayout.TextArea(msg.message);
+
                 // Buttons if available
                 if (msg.buttons != null && msg.buttons.Length > 0)
                 {
                     GUILayout.BeginHorizontal();
                     foreach (var button in msg.buttons)
                     {
-                        if (GUILayout.Button(button, GUILayout.Height(25)))
+                        //Debug.Log("Rendering button: " + button.text);
+                        if (GUILayout.Button(button.text, GUILayout.Height(25)))
                         {
-                            HandleButtonClick(button);
+                            HandleButtonClick(button.identifier);
                         }
                     }
                     GUILayout.EndHorizontal();
                 }
-                
+
                 GUILayout.EndVertical();
                 GUILayout.Space(5);
             }
@@ -493,17 +319,12 @@ namespace GamificationPlayer.TestBed
             }
             GUI.enabled = true;
             
-            if (GUILayout.Button(isRecording ? "●Stop" : "⚫Rec", GUILayout.Width(50)))
-            {
-                isRecording = !isRecording;
-            }
-            
             GUILayout.EndHorizontal();
         }
 
         private void DrawControlsPanel()
         {
-            GUILayout.Label("Controls & Debug", EditorStyles.boldLabel);
+            GUILayout.Label("Controls & Debug");
             
             GUILayout.BeginVertical("box");
             
@@ -517,28 +338,31 @@ namespace GamificationPlayer.TestBed
             
             if (GUILayout.Button("Force New Conversation"))
             {
-                // TODO: Implement force new conversation
                 LogEvent("Force new conversation requested");
-            }
-            
-            if (GUILayout.Button("Clear History"))
-            {
-                chatHistory.Clear();
-                LogEvent("Chat history cleared");
+                chatManager.ForceNewConversation(AIService, routerService, new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
             }
             
             GUILayout.Space(10);
-            
-            // Test buttons
-            GUILayout.Label("Test Buttons:", EditorStyles.boldLabel);
-            string[] testButtons = { "day_one", "day_two", "test_button", "welcome" };
-            
-            GUILayout.BeginHorizontal();
-            foreach (var testBtn in testButtons)
+
+            // Test activities
+            GUILayout.Label("Test Activities:");
+            Dictionary<string, string>[] testActivities =
             {
-                if (GUILayout.Button(testBtn))
+                new Dictionary<string, string> {
+                    { "type", "animatie" },
+                    { "name", "Adem in... adem uit" },
+                    { "intro", "Doe je mee met wat ademwerk? Een paar minuten bewust ademhalen, zorgt direct voor nieuwe energie. Zet de video maar aan en volg de cirkel." },
+                    { "post_activity_question", "Hoe was dat voor je?" },
+                    { "context", "The user just completed a breathing exercise activity. Please ask the post_activity_question" }
+                }
+            };
+
+            GUILayout.BeginHorizontal();
+            foreach (var testActivity in testActivities )
+            {
+                if (GUILayout.Button(testActivity["name"]))
                 {
-                    HandleButtonClick(testBtn);
+                    HandleUserActivity(testActivity);
                 }
             }
             GUILayout.EndHorizontal();
@@ -546,47 +370,36 @@ namespace GamificationPlayer.TestBed
             GUILayout.Space(10);
             
             // Performance metrics
-            GUILayout.Label("Performance:", EditorStyles.boldLabel);
+            GUILayout.Label("Performance:");
             GUILayout.Label($"Last Response: {lastResponseTime:F2}s");
-            GUILayout.Label($"Total API Calls: {totalAPICallsCount}");
             
             GUILayout.EndVertical();
         }
 
         private void DrawDebugPanel()
         {
-            GUILayout.Label("Event Log", EditorStyles.boldLabel);
-            
+            GUILayout.Label("Event Log");
+
             eventLogScrollPos = GUILayout.BeginScrollView(eventLogScrollPos, "box", GUILayout.Height(200));
-            
+
             foreach (var logEntry in eventLog)
             {
-                GUILayout.Label(logEntry, EditorStyles.wordWrappedLabel);
+                GUILayout.Label(logEntry);
             }
-            
+
             GUILayout.EndScrollView();
-            
+
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Clear Log"))
             {
                 eventLog.Clear();
             }
-            
+
             if (GUILayout.Button("Export Log"))
             {
                 ExportEventLog();
             }
             GUILayout.EndHorizontal();
-        }
-
-        private string[] GetServiceNames<T>(List<ServiceOption<T>> options)
-        {
-            string[] names = new string[options.Count];
-            for (int i = 0; i < options.Count; i++)
-            {
-                names[i] = options[i].name + (options[i].isProduction ? " (Prod)" : " (Mock)");
-            }
-            return names;
         }
 
         #endregion
@@ -595,7 +408,7 @@ namespace GamificationPlayer.TestBed
 
         private void StartChatInitialization()
         {
-            if (chatManager == null || currentAIService == null)
+            if (chatManager == null || AIService == null)
             {
                 LogEvent("❌ Cannot initialize: Missing ChatManager or AI service");
                 return;
@@ -603,13 +416,13 @@ namespace GamificationPlayer.TestBed
             
             LogEvent("Starting chat initialization...");
             StartPerformanceTimer();
-            
-            chatManager.InitializeChat(currentAIService);
+
+            chatManager.InitializeChat(AIService, routerService, new ChatManager.ResumeConversationMetadata(), new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
         }
 
         private void SendUserMessage()
         {
-            if (string.IsNullOrEmpty(userInput) || currentAIService == null || currentRouterService == null)
+            if (string.IsNullOrEmpty(userInput) || AIService == null || routerService == null)
                 return;
             
             string message = userInput;
@@ -617,28 +430,36 @@ namespace GamificationPlayer.TestBed
             
             LogEvent($"📤 Sending user message: {message}");
             
-            // Add to chat display immediately
-            chatHistory.Add(new ChatDisplayMessage("User", message));
-            
             StartPerformanceTimer();
-            chatManager.HandleUserMessage(currentAIService, currentRouterService, message);
+            chatManager.HandleUserMessage(AIService, routerService, message);
         }
 
         private void HandleButtonClick(string buttonId)
         {
-            if (currentAIService == null)
+            if (AIService == null)
             {
                 LogEvent("❌ Cannot handle button click: Missing AI service");
                 return;
             }
-            
+
             LogEvent($"🔘 Button clicked: {buttonId}");
-            
-            // Add to chat display
-            chatHistory.Add(new ChatDisplayMessage("User", $"[Button: {buttonId}]"));
-            
+
             StartPerformanceTimer();
-            chatManager.HandleButtonClick(currentAIService, buttonId);
+            chatManager.HandleButtonClick(AIService, buttonId);
+        }
+        
+        private void HandleUserActivity(Dictionary<string, string> userActivityMetadata)
+        {
+            if (AIService == null)
+            {
+                LogEvent("❌ Cannot handle user activity: Missing AI service");
+                return;
+            }
+
+            LogEvent($"🔘 User activity detected: {userActivityMetadata.ToJson()}");
+
+            StartPerformanceTimer();
+            chatManager.HandleUserActivity(AIService, routerService, userActivityMetadata);
         }
 
         #endregion
@@ -653,7 +474,6 @@ namespace GamificationPlayer.TestBed
         private void RecordPerformanceMetric(string operation)
         {
             lastResponseTime = (float)(DateTime.Now - lastOperationStart).TotalSeconds;
-            totalAPICallsCount++;
             
             LogEvent($"⏱ {operation} completed in {lastResponseTime:F2}s");
         }

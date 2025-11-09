@@ -1,22 +1,22 @@
 using System;
 using System.Collections;
+using GamificationPlayer.Chat;
 using GamificationPlayer.Chat.Services;
 using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
-    public class N8nRouterMockService : MonoBehaviour, IChatRouterService
+    public class N8nRouterMockService : IRAGService
     {       
-        public IEnumerator RouteMessage(string userMessage, string conversationHistory, Action<RouterResult> onComplete)
+        public IEnumerator GetContextForUserMessage(string agentName, ChatManager.ChatMessage[] conversationHistory, Action<RAGResult> onComplete)
         {
             // Fast mock response for testing purposes (reduced delay for performance tests)
             yield return new WaitForSeconds(0.1f); // Minimal delay for testing
 
-            string mockAgent = "mock_agent";
             string mockExamples = "Example 1: ...\nExample 2: ...";
             string mockKnowledge = "This is some mock knowledge context.";
 
-            var result = new RouterResult(mockAgent, mockExamples, mockKnowledge);
+            var result = new RAGResult(mockExamples, mockKnowledge);
             onComplete?.Invoke(result); 
         }
     }

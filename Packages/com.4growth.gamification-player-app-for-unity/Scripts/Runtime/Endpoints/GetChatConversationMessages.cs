@@ -11,7 +11,7 @@ namespace GamificationPlayer
         public IEnumerator CoGetChatConversationMessages(GetChatConversationMessagesCallback onReady = null,
             Guid chatConversationId = default,
             int page = 1,
-            int perPage = 25)
+            int perPage = 100)
         {
             yield return CoGetChatConversationMessages(chatConversationId, page, perPage, onReady);
         }

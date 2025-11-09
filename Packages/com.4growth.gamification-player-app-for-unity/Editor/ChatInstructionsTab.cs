@@ -455,7 +455,7 @@ namespace GamificationPlayer.Editor
             
             if (GUILayout.Button("Delete", GUILayout.Width(60)))
             {
-                DeleteInstruction(instruction.id);
+                DeleteInstruction(instruction);
             }
             
             EditorGUILayout.EndHorizontal();
@@ -730,14 +730,14 @@ namespace GamificationPlayer.Editor
                 }
             });
         }
-        
-        private void DeleteInstruction(string instructionId)
+
+        private void DeleteInstruction(ChatInstructionData instruction)
         {
             if (EditorUtility.DisplayDialog("Delete Instruction",
                 "Are you sure you want to delete this instruction? This action cannot be undone.",
                 "Delete", "Cancel"))
             {
-                api.DeleteInstruction(instructionId, (success, error) =>
+                api.DeleteInstruction(instruction, (success, error) =>
                 {
                     if (success)
                     {

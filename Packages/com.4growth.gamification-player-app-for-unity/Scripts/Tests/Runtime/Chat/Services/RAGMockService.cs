@@ -6,9 +6,13 @@ using UnityEngine;
 
 namespace GamificationPlayer.Tests
 {
-    public class N8nRouterMockService : IRAGService
+    public class RAGMockService : IRAGService
     {       
-        public IEnumerator GetContextForUserMessage(string agentName, ChatManager.ChatMessage[] conversationHistory, Action<RAGResult> onComplete)
+        public IEnumerator GetContextForUserMessage(string agentName,
+            string fewShotPrompt,
+            string dataBankPrompt,
+            ChatManager.ChatMessage[] conversationHistory,
+            Action<RAGResult> onComplete)
         {
             // Fast mock response for testing purposes (reduced delay for performance tests)
             yield return new WaitForSeconds(0.1f); // Minimal delay for testing

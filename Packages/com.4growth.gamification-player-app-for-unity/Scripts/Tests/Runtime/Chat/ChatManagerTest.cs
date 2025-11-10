@@ -34,7 +34,7 @@ namespace GamificationPlayer.Tests
             chatManager.IsLogging = true;
 
             // Set mock services
-            chatRouterService = new N8nRouterMockService();
+            chatRouterService = new RAGMockService();
             chatAIService = new OpenAIChatMockService();
 
             // Initialize ChatManager with mock dependencies
@@ -188,7 +188,7 @@ namespace GamificationPlayer.Tests
             try
             {
                 // Act
-                chatManager.HandleButtonClick(chatAIService, "greeting_message");
+                chatManager.HandleButtonClick(chatAIService, ChatManager.PredefinedMessageIdentifiers.week1_day0.ToString());
 
                 // Wait for predefined message (max 10 seconds)
                 float timeout = 10f;

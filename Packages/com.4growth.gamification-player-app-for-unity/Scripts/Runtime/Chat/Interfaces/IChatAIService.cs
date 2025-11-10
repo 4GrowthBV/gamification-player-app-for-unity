@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEngine;
 
 namespace GamificationPlayer.Chat.Services
 {
@@ -41,15 +42,15 @@ namespace GamificationPlayer.Chat.Services
             Action<AIResponseResult> onComplete);
 
         /// <summary>
-        /// Get AI agent's name based on conversation history
+        /// Get AI agent's name and prompts for fewshot and data bank based on conversation history
         /// </summary>
         /// <param name="conversationHistory">Recent conversation history for context</param>
-        /// <param name="getAIAgentNameInstruction">Instruction to get AI agent's name</param>
-        /// <param name="onComplete">Callback with AI agent name result</param>
+        /// <param name="aiInstruction">Instruction to get AI agent's name and prompts for fewshot and data bank</param>
+        /// <param name="onComplete">Callback with AI agent name and prompts</param>
         /// <returns>Coroutine for async operation</returns>
-        IEnumerator GetAIAgentName(ChatManager.ChatMessage[] conversationHistory,
-            string getAIAgentNameInstruction,
-            Action<AIResponseResult> onComplete);
+        IEnumerator GetAIAgentNameAndPrompts(ChatManager.ChatMessage[] conversationHistory,
+            string aiInstruction,
+            Action<AINameAndPromptsResult> onComplete);
     }
 
     /// <summary>
@@ -72,6 +73,55 @@ namespace GamificationPlayer.Chat.Services
         public static AIResponseResult Error(string errorMessage)
         {
             return new AIResponseResult("")
+            {
+                success = false,
+                errorMessage = errorMessage
+            };
+        }
+    }
+
+    [Serializable]
+    public class AINameAndPromptsResult
+    {
+        private class AINameAndPromptsDTO
+        {
+            public string agent;
+            public string fewShot;
+            public string dataBank;
+        }
+
+        public string agentName;
+        public string fewShotPrompt;
+        public string dataBankPrompt;
+        public bool success;
+        public string errorMessage;
+
+        public AINameAndPromptsResult(string message)
+        {
+            Debug.Log("AI Name and Prompts response: " + message);
+            var dto = message.FromJson<AINameAndPromptsDTO>();
+            if (dto != null)
+            {
+                Debug.Log($"Parsed AI Name: {dto.agent}, FewShot: {dto.fewShot}, DataBank: {dto.dataBank}");
+                this.agentName = dto.agent;
+                this.fewShotPrompt = dto.fewShot;
+                this.dataBankPrompt = dto.dataBank;
+                this.success = true;
+                this.errorMessage = "";
+            }
+            else
+            {
+                this.agentName = "";
+                this.fewShotPrompt = "";
+                this.dataBankPrompt = "";
+                this.success = false;
+                this.errorMessage = "Failed to parse AI name and prompts response.";
+            }
+        }
+
+        public static AINameAndPromptsResult Error(string errorMessage)
+        {
+            return new AINameAndPromptsResult("")
             {
                 success = false,
                 errorMessage = errorMessage

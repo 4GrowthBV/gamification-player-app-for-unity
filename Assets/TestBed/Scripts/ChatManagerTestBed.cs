@@ -146,6 +146,7 @@ namespace GamificationPlayer.TestBed
             chatManager = gameObject.AddComponent<ChatManager>();
             if (endpoints != null && sessionData != null)
             {
+                chatManager.IsLogging = enableLogging;
                 chatManager.Initialize(endpoints, sessionData);
                 isInitialized = chatManager.IsInitialized();
             }

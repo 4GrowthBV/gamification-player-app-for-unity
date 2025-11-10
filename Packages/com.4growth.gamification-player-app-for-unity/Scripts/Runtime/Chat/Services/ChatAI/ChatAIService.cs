@@ -96,15 +96,30 @@ namespace GamificationPlayer
 
             yield return ExecuteRequest(messages, false, null, onComplete);
         }
-        
-        public IEnumerator GetAIAgentName(ChatManager.ChatMessage[] conversationHistory,
-            string getAIAgentNameInstruction,
-            Action<AIResponseResult> onComplete)
+
+        public IEnumerator GetAIAgentNameAndPrompts(ChatManager.ChatMessage[] conversationHistory,
+            string aiInstruction,
+            Action<AINameAndPromptsResult> onComplete)
         {
-            var systemMsg = $"{getAIAgentNameInstruction}";
+            var systemMsg = aiInstruction;
             var messages = BuildMessages(systemMsg, conversationHistory);
 
-            yield return ExecuteRequest(messages, false, null, onComplete);
+            yield return ExecuteRequest(messages, false, null, (result) =>
+            {
+                if (result.success)
+                {
+                    Debug.Log("AI Agent Name and Prompts response: " + result.response);
+                    onComplete?.Invoke(new AINameAndPromptsResult(result.response));
+                }
+                else
+                {
+                    onComplete?.Invoke(new AINameAndPromptsResult("")
+                    {
+                        success = false,
+                        errorMessage = result.errorMessage
+                    });
+                }
+            });
         }
 
         public IEnumerator GenerateResponse(

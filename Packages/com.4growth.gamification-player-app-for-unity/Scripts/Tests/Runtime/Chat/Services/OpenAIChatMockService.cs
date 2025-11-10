@@ -55,16 +55,17 @@ namespace GamificationPlayer.Tests
             onComplete?.Invoke(result);
         }
 
-        public IEnumerator GetAIAgentName(ChatManager.ChatMessage[] conversationHistory,
-            string getAIAgentNameInstruction,
-            Action<AIResponseResult> onComplete)
+        /// <summary>
+        /// Get AI agent's name and prompts for fewshot and data bank based on conversation history (mock implementation)
+        /// </summary>
+        public IEnumerator GetAIAgentNameAndPrompts(ChatManager.ChatMessage[] conversationHistory, string aiInstruction, Action<AINameAndPromptsResult> onComplete)
         {
-            // Fast mock agent name retrieval for testing
-            yield return new WaitForSeconds(0.05f); // Minimal delay for testing
+            // Fast mock response for testing purposes (reduced delay for performance tests)
+            yield return new WaitForSeconds(0.1f); // Minimal delay for testing
 
-            string mockAgentName = "MockedAgent";
+            string json = "{\"agent\":\"agent_praktisch\",\"Prompt\":\"Wat is het verschil tussen stress en burn-out?\",\"fewShot\":\"verschil stress en burn-out uitleggen\",\"dataBank\":\"stress, burn-out, symptomen stress, symptomen burn-out, psychische klachten, herstel, mentale gezondheid, copingstrategieën\"}";
 
-            var result = new AIResponseResult(mockAgentName);
+            var result = new AINameAndPromptsResult(json);
             onComplete?.Invoke(result);
         }
     }

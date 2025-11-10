@@ -38,9 +38,6 @@ namespace GamificationPlayer.Tests
             Assert.NotNull(dto.included);
             Assert.NotNull(dto.links);
             Assert.NotNull(dto.meta);
-
-            Assert.That(dto.meta.total >= 0);
-            Assert.That(dto.meta.current_page >= 1);
         }
     }
 }

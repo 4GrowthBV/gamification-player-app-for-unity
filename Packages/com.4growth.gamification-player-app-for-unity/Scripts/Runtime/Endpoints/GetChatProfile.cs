@@ -8,9 +8,9 @@ namespace GamificationPlayer
 {
     public partial class GamificationPlayerEndpoints
     {
-        public IEnumerator CoGetChatProfile(Guid chatConversationId, GetChatProfileCallback onReady = null)
+        public IEnumerator CoGetChatProfile(Guid chatProfileId, GetChatProfileCallback onReady = null)
         {
-            string webRequestString = string.Format("{0}/chat-conversations/{1}", environmentConfig.API_URL, chatConversationId);
+            string webRequestString = string.Format("{0}/chat-profiles/{1}", environmentConfig.API_URL, chatProfileId);
 
             if(environmentConfig.TurnOnLogging) Debug.Log(webRequestString);
 
@@ -46,34 +46,16 @@ namespace GamificationPlayer
                     case UnityWebRequest.Result.Success:
                         if (environmentConfig.TurnOnLogging) Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                         
-                        var chatConversation = webRequest.downloadHandler.text.FromJson<GetChatConversationResponseDTO>();
+                        var chatProfile = webRequest.downloadHandler.text.FromJson<GetChatProfileResponseDTO>();
 
-                        foreach (var includedItem in chatConversation.included)
+                        if (chatProfile != null)
                         {
-                            if (includedItem.Type == "chat_profile")
-                            {
-                                obj = new GetChatProfileResponseDTO
-                                {
-                                    data = new GetChatProfileResponseDTO.Data
-                                    {
-                                        id = includedItem.id,
-                                        type = includedItem.type,
-                                        attributes = new GetChatProfileResponseDTO.ProfileAttributes
-                                        {
-                                            profile = includedItem.attributes.ContainsKey("profile") ? includedItem.attributes["profile"].ToString() : null,
-                                            created_at = includedItem.attributes.ContainsKey("created_at") ? includedItem.attributes["created_at"].ToString() : null,
-                                            updated_at = includedItem.attributes.ContainsKey("updated_at") ? includedItem.attributes["updated_at"].ToString() : null
-                                        }
-                                    },
-                                };
-
-                                break;
-                            }
-                        }
-
-                        if (obj != null)
-                        {
+                            obj = chatProfile;
                             sessionData.AddToLog(obj.data, false);
+                        }
+                        else
+                        {
+                            Debug.LogError("Error parsing chat profile response.");
                         }
 
                         break;

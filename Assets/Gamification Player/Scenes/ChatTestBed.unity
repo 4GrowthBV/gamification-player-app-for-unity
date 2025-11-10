@@ -184,10 +184,12 @@ MonoBehaviour:
   vocabAsset: {fileID: 4900000, guid: 0270c463e52fa644395b3bd42377d552, type: 3}
   backend: 512
   ragSettings:
-  - {fileID: 11400000, guid: 771d869d3382887488fcc5aba685c750, type: 2}
-  - {fileID: 11400000, guid: 699f152853d6e9e4db4660a78432f7d6, type: 2}
   - {fileID: 11400000, guid: 282fac1eadcf0e346996527adcede92c, type: 2}
-  - {fileID: 11400000, guid: da8f38aef28206347ab02f5658ce6811, type: 2}
+  - {fileID: 11400000, guid: 699f152853d6e9e4db4660a78432f7d6, type: 2}
+  - {fileID: 11400000, guid: 771d869d3382887488fcc5aba685c750, type: 2}
+  - {fileID: 11400000, guid: 1e31ff0c2771a6f4db263d19685fdb1a, type: 2}
+  - {fileID: 11400000, guid: 965c52911040b1a4580155b5200efdab, type: 2}
+  - {fileID: 11400000, guid: f8255312f181d394f9daa7415ad519ac, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

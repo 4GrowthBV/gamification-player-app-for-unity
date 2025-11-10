@@ -38,8 +38,9 @@ namespace GamificationPlayer.DTO.Chat
             public string id;
             public string type;
             public Attributes attributes;
+            public Dictionary<string, object> relationships;
         }
-
+        
         [Serializable]
         public class IncludedItem : ILoggableData
         {

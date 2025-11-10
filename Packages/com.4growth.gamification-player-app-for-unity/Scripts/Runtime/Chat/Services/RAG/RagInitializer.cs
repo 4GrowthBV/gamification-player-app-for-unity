@@ -18,7 +18,7 @@ namespace GamificationPlayer
 
         private List<Rag> allRags = new List<Rag>();
 
-        void Start()
+        void Awake()
         {
             foreach (var settings in ragSettings)
             {

@@ -13,9 +13,13 @@ namespace GamificationPlayer.Chat.Services
         /// Get context (examples and knowledge) for user message based on the chosen agent's name and conversation history
         /// </summary>
         /// <param name="agentName">The name of the AI agent</param>
+        /// <param name="fewShotPrompt">Few-shot prompt for used to get examples via the RAG service</param>
+        /// <param name="dataBankPrompt">Data bank prompt for used to get knowledge via the RAG service</param>
         /// <param name="conversationHistory">Recent conversation history for context</param>
         /// <param name="onComplete">Callback with router result containing examples and knowledge</param>
         IEnumerator GetContextForUserMessage(string agentName,
+            string fewShotPrompt,
+            string dataBankPrompt,
             ChatManager.ChatMessage[] conversationHistory,
             Action<RAGResult> onComplete);
     }

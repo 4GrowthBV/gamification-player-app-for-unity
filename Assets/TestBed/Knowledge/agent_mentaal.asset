@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0614d873cd999c4aa018dde5c3cb88b, type: 3}
-  m_Name: RagSettings
+  m_Name: agent_mentaal
   m_EditorClassIdentifier: 
-  rAGType: 0
-  agentName: 
+  rAGType: 1
+  agentName: agent_mentaal
   sourceDocs:
-  - {fileID: 4900000, guid: 4412815f17ee9c04eaac0e6465fcec24, type: 3}
+  - {fileID: 4900000, guid: bdbadbb7f6e1f1b40a9dde902a4cc710, type: 3}
   ChunkMaxTokens: 160
   ChunkOverlapTokens: 24
   EmbeddingDim: 384

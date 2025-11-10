@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using GamificationPlayer.Chat.Services;
 using GamificationPlayer.Session;
+using Newtonsoft.Json.Linq;
 
 namespace GamificationPlayer.Chat
 {
@@ -60,10 +61,16 @@ namespace GamificationPlayer.Chat
             organisation_name // name of the organisation
         }
 
-        public enum Agents
+        public enum Instructions
         {
-            agent_memory,
-            buddy_router
+            agent_memory, // is the instruction for updating the profile of the user based on the conversation
+            buddy_router, // is the instruction for routing to the correct AI agent with context based on the conversation
+            general // is the general instruction for generating AI responses, is added to all agent instructions
+        }
+
+        public enum PredefinedMessageIdentifiers
+        {
+            week1_day0,
         }
 
         #region Dependencies
@@ -616,17 +623,26 @@ namespace GamificationPlayer.Chat
             ChatMessage[] conversationContext,
             Action<string, RAGResult> onComplete)
         {
-            instructionsCache.TryGetValue(Agents.buddy_router.ToString(), out var agentNameInstruction);
+            var agentNameInstruction = GetInstruction(Instructions.buddy_router.ToString());
 
-            var agentName = "";
+            string agentName = "";
+            string fewShotPrompt = "";
+            string dataBankPrompt = "";
 
-            yield return StartCoroutine(chatAIService.GetAIAgentName(conversationContext, agentNameInstruction, (result) =>
+            yield return StartCoroutine(chatAIService.GetAIAgentNameAndPrompts(conversationContext,
+                agentNameInstruction,
+                (result) =>
             {
-                // Handle the agent name retrieval if needed
-                agentName = result.response;
+                agentName = result.agentName;
+                fewShotPrompt = result.fewShotPrompt;
+                dataBankPrompt = result.dataBankPrompt;
             }));
 
-            yield return StartCoroutine(ragService.GetContextForUserMessage(agentName, conversationContext, (result) =>
+            yield return StartCoroutine(ragService.GetContextForUserMessage(agentName,
+                fewShotPrompt,
+                dataBankPrompt,
+                conversationContext,
+                (result) =>
             {
                 onComplete(agentName, result);
             }));
@@ -900,6 +916,11 @@ namespace GamificationPlayer.Chat
                 yield return StartCoroutine(endpoints.CoGetChatConversation(Guid.Parse(currentConversationId), (result, dto) =>
                 {
                     conversationExists = result == UnityEngine.Networking.UnityWebRequest.Result.Success && dto?.data != null;
+
+                    if (conversationExists)
+                    {
+                        currentProfileId = dto.included.Where(i => i.Type == "chat_profile").Select(i => i.id).FirstOrDefault();
+                    }
                 }));
 
                 if (conversationExists)
@@ -916,17 +937,26 @@ namespace GamificationPlayer.Chat
                 {
                     if (result == UnityEngine.Networking.UnityWebRequest.Result.Success)
                     {
-                        var conversation = dto.data.FirstOrDefault();
+                        var conversation = dto.data.OrderBy(c => c.attributes.CreatedAt).LastOrDefault();
 
                         currentConversationId = conversation?.id;
 
                         conversationExists = !string.IsNullOrEmpty(currentConversationId);
+
+                        if (conversationExists && conversation.relationships != null)
+                        {
+                            
+
+                            currentProfileId = conversation.relationships
+                                .Where(kvp => kvp.Key == "chat_profile")
+                                .Select(kvp => GetId(kvp.Value)).FirstOrDefault();
+                        }
                     }
                 }));
 
                 if (conversationExists)
                 {
-                    Log($"Using existing conversation: {currentConversationId}");
+                    Log($"Using existing conversation: {currentConversationId} with profile: {currentProfileId}");
                     yield break;
                 }
             }
@@ -950,19 +980,32 @@ namespace GamificationPlayer.Chat
             yield return new WaitUntil(() => conversationCreated);
         }
 
+        private string GetId(object obj)
+        {
+            JObject jObj = obj switch
+            {
+                string s => JObject.Parse(s),
+                JObject j => j,
+                _ => JObject.FromObject(obj)
+            };
+
+            var idToken = jObj.SelectToken("data.id") ?? jObj["id"];
+            return idToken?.ToString();
+        }
+
         /// <summary>
         /// Create or get existing chat profile
         /// </summary>
         /// <param name="forceNew">Whether to force a new profile creation</param>
         private IEnumerator CreateOrGetChatProfile(bool forceNew = false)
         {
-            if (!forceNew && !string.IsNullOrEmpty(currentConversationId))
+            if (!forceNew && !string.IsNullOrEmpty(currentProfileId))
             {
                 // Try to get existing profile using conversation ID
                 bool profileChecked = false;
                 bool profileExists = false;
 
-                yield return StartCoroutine(endpoints.CoGetChatProfile(Guid.Parse(currentConversationId), (result, dto) =>
+                yield return StartCoroutine(endpoints.CoGetChatProfile(Guid.Parse(currentProfileId), (result, dto) =>
                 {
                     if (result == UnityEngine.Networking.UnityWebRequest.Result.Success && dto?.data != null)
                     {
@@ -973,7 +1016,7 @@ namespace GamificationPlayer.Chat
                     }
                     else
                     {
-                        Log($"No existing profile found for conversation {currentConversationId}");
+                        Log($"No existing profile found {currentProfileId}");
                     }
                     profileChecked = true;
                 }));
@@ -1120,7 +1163,7 @@ namespace GamificationPlayer.Chat
             var day = daysDifference % 7;
 
             var weekDayMessages = predefinedMessagesCache.Keys
-                .Where(k => k.StartsWith("week") && k.Contains("_day"))
+                .Where(k => k.StartsWith("week") && k.Contains("_day") && !k.Contains("_a") && !k.Contains("_b") && !k.Contains("_c"))
                 .ToDictionary(k => ExtractWeekDay(k), k => k);
 
             // get closest matching predefined message
@@ -1229,7 +1272,7 @@ namespace GamificationPlayer.Chat
             {
                 var weekStr = parts[0].Replace("week", "");
                 var dayStr = parts[1].Replace("day", "");
-                
+
                 if (int.TryParse(weekStr, out int week) && int.TryParse(dayStr, out int day))
                 {
                     return week * 100 + day; // week2_day3 becomes 203
@@ -1239,14 +1282,15 @@ namespace GamificationPlayer.Chat
         }
 
         /// <summary>
-        /// Generate updated profile using AI service with cached instructions and conversation history
+        /// Generate updated profile using dedicated profile generation method
         /// </summary>
+        /// <param name="aiService">The AI service instance.</param>
         private IEnumerator GenerateUpdatedProfile(IChatAIService aiService)
         {
             Log($"Generating updated profile using dedicated profile method for message");
             
             // Get cached profile generation instructions
-            string profileInstructions = GetProfileGeneratorInstruction();
+            string profileInstructions = GetInstruction(Instructions.agent_memory.ToString());
             
             if (string.IsNullOrEmpty(profileInstructions))
             {
@@ -1375,7 +1419,6 @@ namespace GamificationPlayer.Chat
                                 filteredButtons,
                                 message.attributes.button_name // Store the button_name
                             );
-                            Log($"Cached predefined message for: {message.attributes.identifier}");
                         }
                     }
 
@@ -1478,41 +1521,51 @@ namespace GamificationPlayer.Chat
         /// <returns>The instruction text or empty string if not found</returns>
         private string GetInstruction(string identifier)
         {
-            if (instructionsCache.TryGetValue(identifier, out string instruction))
+            if (string.IsNullOrEmpty(identifier))
+            {
+                LogWarning("GetInstruction called with null or empty identifier");
+                return "";
+            }
+
+            string instruction;
+            if (instructionsCache.TryGetValue(identifier, out instruction))
+            {
+                LogWarning($"No instruction found for identifier: {identifier}");
+            }
+
+            if (identifier == Instructions.general.ToString() ||
+                identifier != Instructions.agent_memory.ToString() ||
+                identifier != Instructions.buddy_router.ToString())
             {
                 return instruction;
             }
-            
-            LogWarning($"No instruction found for identifier: {identifier}");
-            return "";
+
+            if (instructionsCache.TryGetValue(Instructions.general.ToString(), out string generalInstruction))
+            {
+                // add general instruction to the beginning
+                instruction = generalInstruction + "\n\n" + instruction;
+            }
+
+            return instruction;
         }
 
         /// <summary>
-        /// Get agent-specific instruction for AI generation
+        /// Generate AI response with agent-specific instructions, examples, and knowledge
         /// </summary>
-        /// <param name="agentName">The name of the agent</param>
-        /// <returns>Agent instruction or empty string if not found</returns>
-        private string GetAgentInstruction(string agentName)
-        {
-            return GetInstruction(agentName);
-        }
-
-        /// <summary>
-        /// Get profile generator instruction
-        /// </summary>
-        /// <returns>Profile generator instruction or empty string if not found</returns>
-        private string GetProfileGeneratorInstruction()
-        {
-            return GetInstruction(Agents.agent_memory.ToString());
-        }
-
-        /// <summary>
-        /// Enhanced AI response generation with agent-specific instructions and streaming support
-        /// </summary>
-        private IEnumerator GenerateAIResponseWithInstructions(IChatAIService aiService, string agent, string examples, string knowledge, Action<AIResponseResult> onComplete)
+        /// <param name="aiService">The AI service instance.</param>
+        /// <param name="agent">The agent name.</param>
+        /// <param name="examples">The few-shot examples.</param>
+        /// <param name="knowledge">The knowledge context.</param>
+        /// <param name="onComplete">Callback when response is complete.</param>
+        /// <returns>Coroutine for AI response generation.</returns>
+        private IEnumerator GenerateAIResponseWithInstructions(IChatAIService aiService,
+            string agent,
+            string examples,
+            string knowledge,
+            Action<AIResponseResult> onComplete)
         {
             // Get agent-specific instruction
-            string agentInstruction = GetAgentInstruction(agent);
+            string agentInstruction = GetInstruction(agent);
             
             if (string.IsNullOrEmpty(agentInstruction))
             {

@@ -4,7 +4,7 @@
       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "type": "chat_predefined_message",
       "attributes": {
-        "identifier": "greeting_message",
+        "identifier": "week1_day0",
         "content": "Hello! How can I assist you today?",
         "buttons": ["Help", "Support", "FAQ"],
         "button_name": "Quick Actions",

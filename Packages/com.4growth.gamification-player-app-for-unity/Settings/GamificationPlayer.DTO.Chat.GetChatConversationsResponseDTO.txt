@@ -4,29 +4,166 @@
       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "type": "chat_conversation",
       "attributes": {
-        "created_at": "2023-10-19T09:57:11.554Z",
-        "updated_at": "2023-10-19T09:57:11.554Z"
+        "created_at": "2025-11-10T12:04:38.919Z",
+        "updated_at": "2025-11-10T12:04:38.919Z"
+      },
+      "relationships": {
+        "micro_game": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "micro_game"
+          }
+        },
+        "organisation": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "organisation"
+          }
+        },
+        "user": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "user"
+          }
+        },
+        "chat_profile": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "chat_profile"
+          }
+        },
+        "chat_conversation_messages": {
+          "data": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "chat_conversation_message"
+            }
+          ]
+        }
       }
     }
   ],
   "included": [
     {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "type": "chat_conversation_message",
       "attributes": {
-        "role": "user",
-        "message": "Hello, how can I help you?",
-        "created_at": "2023-10-19T09:57:11.554Z",
-        "updated_at": "2023-10-19T09:57:11.554Z"
+        "role": "string",
+        "message": "string",
+        "created_at": "2025-11-10T12:04:38.919Z",
+        "updated_at": "2025-11-10T12:04:38.919Z"
+      },
+      "relationships": {
+        "chat_conversation": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "chat_conversation"
+          }
+        }
       }
     },
     {
-      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "type": "chat_profile",
       "attributes": {
-        "profile": "Assistant profile",
-        "created_at": "2023-10-19T09:57:11.554Z",
-        "updated_at": "2023-10-19T09:57:11.554Z"
+        "profile": "string",
+        "created_at": "2025-11-10T12:04:38.919Z",
+        "updated_at": "2025-11-10T12:04:38.919Z"
+      },
+      "relationships": {
+        "chat_conversation": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "chat_conversation"
+          }
+        }
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "micro_game",
+      "attributes": {
+        "name": "string",
+        "description": "string",
+        "identifier": "string",
+        "star_thresholds": [
+          0
+        ],
+        "web_gl_location": "string",
+        "extra_data": {}
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "organisation",
+      "attributes": {
+        "name": "string",
+        "subdomain": "string",
+        "default_language": "string",
+        "available_languages": [
+          "string"
+        ],
+        "logo": "string",
+        "background_image": "string",
+        "background_mobile_image": "string",
+        "background_tablet_image": "string",
+        "background_desktop_image": "string",
+        "primary_color": "string",
+        "secondary_color": "string",
+        "accent_color": "string",
+        "background_color": "string",
+        "card_background_color": "string",
+        "primary_font_color": "string",
+        "secondary_font_color": "string",
+        "primary_font_family": "string",
+        "secondary_font_family": "string",
+        "card_border_radius": "string",
+        "registration_enabled": true,
+        "anonymous_enabled": true,
+        "allow_upgrade_to_registered_user": true,
+        "reseller_enabled": true,
+        "introduction": "string",
+        "webhook_url": "string",
+        "webhook_events": [
+          "string"
+        ],
+        "timezone": "string",
+        "ios_app_url": "string",
+        "android_app_url": "string",
+        "branchio_url": "string",
+        "open_graph_image": "string",
+        "open_graph_description": "string"
+      },
+      "relationships": {
+        "reseller": {
+          "data": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "type": "organisation"
+          }
+        }
+      }
+    },
+    {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "type": "user",
+      "attributes": {
+        "name": "string",
+        "email": "user@example.com",
+        "language": [
+          "string"
+        ],
+        "login_token": "string",
+        "avatar": "string"
+      },
+      "relationships": {
+        "tags": {
+          "data": [
+            {
+              "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "type": "tag"
+            }
+          ]
+        }
       }
     }
   ],
@@ -37,9 +174,20 @@
     "next": "string"
   },
   "meta": {
-    "current_page": 1,
-    "last_page": 1,
-    "per_page": 25,
-    "total": 1
+    "current_page": 0,
+    "from": 0,
+    "last_page": 0,
+    "links": [
+      {
+        "url": "string",
+        "label": "string",
+        "page": 0,
+        "active": true
+      }
+    ],
+    "path": "string",
+    "per_page": 0,
+    "to": 0,
+    "total": 0
   }
 }

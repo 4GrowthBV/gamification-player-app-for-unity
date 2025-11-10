@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using GamificationPlayer.DTO.Chat;
+using GamificationPlayer.Chat;
 
 namespace GamificationPlayer.Tests
 {
@@ -13,7 +14,7 @@ namespace GamificationPlayer.Tests
         [Test]
         public void TestConstructor()
         {
-            var identifier = "greeting_message";
+            var identifier = ChatManager.PredefinedMessageIdentifiers.week1_day0.ToString();
             var content = "Hello! How can I assist you today?";
             var buttons = new List<string> { "Help", "Support", "FAQ" };
             var buttonName = "Quick Actions";

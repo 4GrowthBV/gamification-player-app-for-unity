@@ -8,6 +8,7 @@ using GamificationPlayer.DTO.Chat;
 using GamificationPlayer.Session;
 using NUnit.Framework;
 using UnityEngine;
+using GamificationPlayer.Chat;
 
 namespace GamificationPlayer.Tests
 {
@@ -486,7 +487,7 @@ namespace GamificationPlayer.Tests
                 type = "chatPredefinedMessage",
                 attributes = new CreateChatPredefinedMessageResponseDTO.PredefinedMessageAttributes
                 {
-                    identifier = "greeting_message",
+                    identifier = ChatManager.PredefinedMessageIdentifiers.week1_day0.ToString(),
                     content = "Hello! How can I help you today?",
                     buttons = new string[] { "Help", "About", "Contact" },
                     button_name = "Help",

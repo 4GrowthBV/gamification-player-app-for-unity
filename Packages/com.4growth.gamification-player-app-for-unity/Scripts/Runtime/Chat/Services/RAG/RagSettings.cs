@@ -28,6 +28,9 @@ namespace GamificationPlayer
         [Header("Documents to Index")]
         public TextAsset[] sourceDocs;
 
+        [Header("Index")]
+        public TextAsset IndexFile;  // prebuilt index file (optional)
+
         [Header("Chunking")]
         public int ChunkMaxTokens = 160;     // ~ short paragraph
         public int ChunkOverlapTokens = 24;  // token overlap

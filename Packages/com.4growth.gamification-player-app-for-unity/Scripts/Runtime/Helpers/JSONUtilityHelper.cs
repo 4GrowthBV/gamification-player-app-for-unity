@@ -9,23 +9,11 @@ namespace GamificationPlayer
         {
             var json = JsonConvert.SerializeObject(toJSON);
 
-            //var newJSON = json.Replace("\"\"", "null");
-
             return json;
         }
 
         public static TType FromJson<TType>(this string json, bool changeEmptyArrayToObject = true)
         {
-            /*            
-            newJSON = newJSON.Replace("null", "\"\"");
-
-            if(changeEmptyArrayToObject)
-            {
-                newJSON = newJSON.Replace("[]", "{}");
-            }*/
-
-            //Debug.Log($"Deserializing JSON: {json}");
-
             var obj = JsonConvert.DeserializeObject<TType>(json);
 
             return obj;

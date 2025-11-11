@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -66,6 +67,7 @@ namespace GamificationPlayer
         private readonly string model;
         private readonly int maxTokens;
         private readonly float temperature;
+        private readonly bool isLoggingEnabled;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
@@ -75,12 +77,17 @@ namespace GamificationPlayer
         public ChatAIService(string apiKey,
             string model = "gpt-4.1-mini",
             int maxTokens = 500,
-            float temperature = 0.7f)
+            float temperature = 0.7f,
+            bool isLoggingEnabled = false)
         {
+            if (string.IsNullOrEmpty(apiKey))
+                throw new ArgumentException("API Key cannot be null or empty.", nameof(apiKey));
+
             this.apiKey = apiKey;
             this.model = model;
             this.maxTokens = maxTokens;
             this.temperature = temperature;
+            this.isLoggingEnabled = isLoggingEnabled;
         }
 
         // -------------------- PUBLIC API --------------------
@@ -108,7 +115,6 @@ namespace GamificationPlayer
             {
                 if (result.success)
                 {
-                    Debug.Log("AI Agent Name and Prompts response: " + result.response);
                     onComplete?.Invoke(new AINameAndPromptsResult(result.response));
                 }
                 else
@@ -146,12 +152,19 @@ namespace GamificationPlayer
 
         private OpenAIMessage[] BuildMessages(string systemMessage, ChatManager.ChatMessage[] history)
         {
-            var list = new List<OpenAIMessage>
-            {
-                new OpenAIMessage { role = "developer", content = systemMessage }
-            };
+            var hasUserMessage = history.Any(msg => msg.role.Contains(ChatManager.RolePrefix.user.ToString()));
+
+            var list = new List<OpenAIMessage>();
+
             foreach (var msg in history)
                 list.Add(new OpenAIMessage { role = GetRole(msg), content = msg.message });
+                
+            // If no user message found, add a default one to prompt the AI
+            if (!hasUserMessage)
+                list.Add(new OpenAIMessage { role = "user", content = "Please respond based on the above context." });
+
+            list.Add(new OpenAIMessage { role = "developer", content = systemMessage });
+
             return list.ToArray();
         }
 
@@ -172,7 +185,6 @@ namespace GamificationPlayer
 
         private IEnumerator ExecuteRequest(OpenAIMessage[] messages, bool stream, Action<string> onStreamChunk, Action<AIResponseResult> onComplete)
         {
-            Debug.Log("Executing OpenAI request...");
             var request = new OpenAIChatRequest
             {
                 model = model,
@@ -200,9 +212,12 @@ namespace GamificationPlayer
                 www.SetRequestHeader("Content-Type", "application/json");
                 www.SetRequestHeader("Authorization", "Bearer " + apiKey);
 
-                Debug.Log("Sending OneShotRequest..." + jsonBody);
+                if (isLoggingEnabled)
+                {
+                    Debug.Log($"[ChatAIService] OneShotRequest Body: {jsonBody}");
+                }
+
                 yield return www.SendWebRequest();
-                Debug.Log("OneShotRequest completed.");
 
                 if (www.result != UnityWebRequest.Result.Success)
                 {
@@ -211,7 +226,12 @@ namespace GamificationPlayer
                 }
 
                 string text = www.downloadHandler.text;
-                Debug.Log("OneShotRequest response: " + text);
+
+                if (isLoggingEnabled)
+                {
+                    Debug.Log($"[ChatAIService] OneShotRequest Response: {text}");
+                }
+
                 var parsed = JsonUtility.FromJson<OpenAIOneShotResponse>(text);
                 string content = parsed?.choices?[0]?.message?.content ?? "";
                 onComplete?.Invoke(new AIResponseResult(content));

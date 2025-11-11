@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GamificationPlayer
 {
@@ -72,9 +73,9 @@ namespace GamificationPlayer
             }
         }
 
-        public static RagIndex Load(string path)
+        public static RagIndex Load(TextAsset textAsset)
         {
-            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            using var fs = new MemoryStream(textAsset.bytes);
             using var br = new BinaryReader(fs, Encoding.UTF8);
 
             int count = br.ReadInt32();

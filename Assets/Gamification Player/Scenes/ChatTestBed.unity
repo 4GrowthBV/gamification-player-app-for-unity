@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1291537214}
   - component: {fileID: 1291537215}
-  - component: {fileID: 1291537216}
   m_Layer: 0
   m_Name: ChatManagerTestBed
   m_TagString: Untagged
@@ -167,29 +166,6 @@ MonoBehaviour:
   enableLogging: 1
   autoInitialize: 1
   environmentConfig: {fileID: 11400000, guid: 65bbabc1756fb234b9d91fc1526a95d7, type: 2}
-  agentRagInitializer: {fileID: 1291537216}
---- !u!114 &1291537216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291537212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c6064d07daa605458629df9d475fd62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  modelAsset: {fileID: 5022602860645237092, guid: f9376437bb3e52745bc73a097730a676, type: 3}
-  vocabAsset: {fileID: 4900000, guid: 0270c463e52fa644395b3bd42377d552, type: 3}
-  backend: 512
-  ragSettings:
-  - {fileID: 11400000, guid: 282fac1eadcf0e346996527adcede92c, type: 2}
-  - {fileID: 11400000, guid: 699f152853d6e9e4db4660a78432f7d6, type: 2}
-  - {fileID: 11400000, guid: 771d869d3382887488fcc5aba685c750, type: 2}
-  - {fileID: 11400000, guid: 1e31ff0c2771a6f4db263d19685fdb1a, type: 2}
-  - {fileID: 11400000, guid: 965c52911040b1a4580155b5200efdab, type: 2}
-  - {fileID: 11400000, guid: f8255312f181d394f9daa7415ad519ac, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

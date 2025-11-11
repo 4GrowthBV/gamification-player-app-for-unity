@@ -12,12 +12,12 @@ namespace GamificationPlayer
 
         private readonly RAGType rAGType;
         private readonly string agentName;
-        private readonly MiniLMEmbedder _embedder;
+        private readonly IEmbedder _embedder;
         private readonly RagIndex _index;
 
         public Rag(RAGType rAGType,
             string agentName,
-            MiniLMEmbedder embedder,
+            IEmbedder embedder,
             RagIndex index)
         {
             this.rAGType = rAGType;

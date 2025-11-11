@@ -98,11 +98,9 @@ namespace GamificationPlayer.Chat.Services
 
         public AINameAndPromptsResult(string message)
         {
-            Debug.Log("AI Name and Prompts response: " + message);
             var dto = message.FromJson<AINameAndPromptsDTO>();
             if (dto != null)
             {
-                Debug.Log($"Parsed AI Name: {dto.agent}, FewShot: {dto.fewShot}, DataBank: {dto.dataBank}");
                 this.agentName = dto.agent;
                 this.fewShotPrompt = dto.fewShot;
                 this.dataBankPrompt = dto.dataBank;

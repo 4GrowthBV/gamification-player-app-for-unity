@@ -71,6 +71,7 @@ namespace GamificationPlayer.Chat
         public enum PredefinedMessageIdentifiers
         {
             week1_day0,
+            offtopic
         }
 
         #region Dependencies
@@ -503,6 +504,7 @@ namespace GamificationPlayer.Chat
 
                 yield return StartCoroutine(SaveInitialMetadata(initialMetadata));
                 yield return StartCoroutine(StartPredefinedMessage(aiService, "week1_day0"));
+                OnChatInitialized?.Invoke();
             }
             else if (isNewDay)
             {
@@ -512,6 +514,7 @@ namespace GamificationPlayer.Chat
                 {
                     Log($"New day detected, loading: {nextDayIdentifier}");
                     yield return StartCoroutine(StartPredefinedMessage(aiService, nextDayIdentifier));
+                    OnChatInitialized?.Invoke();
                 }
                 else
                 {
@@ -524,16 +527,17 @@ namespace GamificationPlayer.Chat
                 if (resumeMetadata == null)
                 {
                     Log("Resuming conversation without resume metadata");
+
                     OnChatInitialized?.Invoke();
                 }
                 else
                 {
                     Log("Resuming conversation with resume metadata");
-                }
 
-                yield return StartCoroutine(HandleUserActivityCoroutine(aiService, ragService, resumeMetadata.ToDictionary()));
+                    yield return StartCoroutine(HandleUserActivityCoroutine(aiService, ragService, resumeMetadata.ToDictionary()));
                 
-                OnChatInitialized?.Invoke();
+                    OnChatInitialized?.Invoke();
+                }
             }
 
             Log("Chat system initialized successfully with parallel optimization");
@@ -575,6 +579,13 @@ namespace GamificationPlayer.Chat
             }
 
             Log($"Phase 1 completed: Agent selected = {agentName}");
+
+            if(agentName == "offtopic")
+            {
+                Log("Agent routed to 'offtopic', skipping AI response generation.");
+                yield return StartCoroutine(StartPredefinedMessage(aiService, "offtopic"));
+                yield break;
+            }
 
             // Phase 2: Generate AI response with enhanced instructions (sequential - needs rag result)
             Log("Phase 2: Generating AI response with agent-specific instructions...");
@@ -637,6 +648,12 @@ namespace GamificationPlayer.Chat
                 fewShotPrompt = result.fewShotPrompt;
                 dataBankPrompt = result.dataBankPrompt;
             }));
+
+            if(agentName == "offtopic")
+            {
+                onComplete("offtopic", new RAGResult("offtopic", "offtopic"));
+                yield break;
+            }
 
             yield return StartCoroutine(ragService.GetContextForUserMessage(agentName,
                 fewShotPrompt,
@@ -702,8 +719,6 @@ namespace GamificationPlayer.Chat
             IRAGService ragService,
             Dictionary<string, string> activityMetadata)
         {
-            Log($"Processing user activity: {activityMetadata.ToJson()}");
-
             var message = new ChatMessage(activityMetadata);
 
             if (!message.userActivityMetadata.ContainsKey(MetadataKeys.start_conversation_date.ToString()))
@@ -720,6 +735,10 @@ namespace GamificationPlayer.Chat
             {
                 message.userActivityMetadata[MetadataKeys.user_name.ToString()] = GetUserName();
             }
+
+            message.message = message.userActivityMetadata.ToJson();
+
+            Log($"Processing user activity: {message.message}");
             
             // Add activity as user message
             conversationHistory.Add(message);
@@ -745,6 +764,12 @@ namespace GamificationPlayer.Chat
             }
 
             Log($"Phase 1 completed: Agent selected = {agentName}");
+
+            if(agentName == "offtopic")
+            {
+                Log("Agent routed to 'offtopic', skipping AI response generation.");
+                yield break;
+            }
 
             // Phase 2: Generate AI response with enhanced instructions (sequential - needs rag result)
             Log("Phase 2: Generating AI response with agent-specific instructions...");
@@ -834,7 +859,6 @@ namespace GamificationPlayer.Chat
 
             // Notify UI
             OnMessageReceived?.Invoke(message);
-            OnChatInitialized?.Invoke();
         }
 
         /// <summary>
@@ -945,8 +969,6 @@ namespace GamificationPlayer.Chat
 
                         if (conversationExists && conversation.relationships != null)
                         {
-                            
-
                             currentProfileId = conversation.relationships
                                 .Where(kvp => kvp.Key == "chat_profile")
                                 .Select(kvp => GetId(kvp.Value)).FirstOrDefault();
@@ -1119,7 +1141,10 @@ namespace GamificationPlayer.Chat
             // we have to check if latest message is a predefined message so we can load the buttons
             if (GetConversationHistory().Count > 0)
             {
-                var lastMessage = GetConversationHistory().OrderBy(m => m.timestamp).Last();
+                var lastMessage = GetConversationHistory()
+                    .Where(m => m.role != RolePrefix.user_activity.ToString())
+                    .OrderBy(m => m.timestamp).Last();
+                    
                 if (lastMessage.role.Contains(RolePrefix.pre_defined.ToString()))
                 {
                     var identifier = lastMessage.role.Split('-').Last(); // extract identifier from role
@@ -1496,7 +1521,6 @@ namespace GamificationPlayer.Chat
                             !string.IsNullOrEmpty(instruction.attributes?.instruction))
                         {
                             instructionsCache[instruction.attributes.identifier] = instruction.attributes.instruction;
-                            Log($"Cached instruction for: {instruction.attributes.identifier}");
                         }
                     }
 
@@ -1528,7 +1552,7 @@ namespace GamificationPlayer.Chat
             }
 
             string instruction;
-            if (instructionsCache.TryGetValue(identifier, out instruction))
+            if (!instructionsCache.TryGetValue(identifier, out instruction))
             {
                 LogWarning($"No instruction found for identifier: {identifier}");
             }

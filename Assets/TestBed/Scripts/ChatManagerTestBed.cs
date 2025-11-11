@@ -18,7 +18,6 @@ namespace GamificationPlayer.TestBed
         [SerializeField] private bool enableLogging = true;
         [SerializeField] private bool autoInitialize = true;
         [SerializeField] private EnvironmentConfig environmentConfig;
-        [SerializeField] private RagInitializer agentRagInitializer;
 
         #region Core Components
         private ChatManager chatManager;
@@ -28,7 +27,7 @@ namespace GamificationPlayer.TestBed
 
         #region Services
         private IChatAIService AIService;
-        private IRAGService routerService;
+        private IRAGService ragService;
         #endregion
 
         #region Chat State
@@ -110,9 +109,11 @@ namespace GamificationPlayer.TestBed
 
         private void SetupServiceOptions()
         {
-            AIService = new ChatAIService("");
+            AIService = new ChatAIService("",
+                isLoggingEnabled: enableLogging);
             
-            routerService = new RAGService(agentRagInitializer.GetAllRags());
+            // RAG service will be initialized asynchronously
+            ragService = null;
         }
 
         private void InitializeCoreComponents()
@@ -158,8 +159,51 @@ namespace GamificationPlayer.TestBed
             
             if (isInitialized)
             {
+                LogEvent("Auto-initializing RAG system...");
+                yield return StartCoroutine(InitializeRAGSystem());
+                
                 LogEvent("Auto-initializing chat...");
                 StartChatInitialization();
+            }
+        }
+
+        private IEnumerator InitializeRAGSystem()
+        {
+            LogEvent("Starting RAG system initialization...");
+            
+            // Use async RAG initialization from Resources (WebGL compatible)
+            // Note: Model loads from StreamingAssets, but config comes from Resources
+            var initTask = RAGManager.InitializeFromResourcesAsync();
+            
+            while (!initTask.IsCompleted)
+            {
+                yield return null;
+            }
+            
+            try
+            {
+                if (initTask.Exception != null)
+                {
+                    LogEvent($"❌ RAG initialization failed: {initTask.Exception.GetBaseException().Message}");
+                    // Continue without RAG service
+                    ragService = null;
+                }
+                else if (initTask.Result)
+                {
+                    LogEvent("✅ RAG system initialized successfully");
+                    ragService = RAGManager.CreateRAGService(enableLogging);
+                    LogEvent($"RAG Status: {RAGManager.GetStatusInfo()}");
+                }
+                else
+                {
+                    LogEvent($"❌ RAG initialization failed: {RAGManager.LastError}");
+                    ragService = null;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                LogEvent($"❌ RAG initialization error: {ex.Message}");
+                ragService = null;
             }
         }
 
@@ -292,7 +336,6 @@ namespace GamificationPlayer.TestBed
                     GUILayout.BeginHorizontal();
                     foreach (var button in msg.buttons)
                     {
-                        //Debug.Log("Rendering button: " + button.text);
                         if (GUILayout.Button(button.text, GUILayout.Height(25)))
                         {
                             HandleButtonClick(button.identifier);
@@ -340,7 +383,7 @@ namespace GamificationPlayer.TestBed
             if (GUILayout.Button("Force New Conversation"))
             {
                 LogEvent("Force new conversation requested");
-                chatManager.ForceNewConversation(AIService, routerService, new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
+                chatManager.ForceNewConversation(AIService, ragService, new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
             }
             
             GUILayout.Space(10);
@@ -418,12 +461,12 @@ namespace GamificationPlayer.TestBed
             LogEvent("Starting chat initialization...");
             StartPerformanceTimer();
 
-            chatManager.InitializeChat(AIService, routerService, new ChatManager.ResumeConversationMetadata(), new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
+            chatManager.InitializeChat(AIService, ragService, new ChatManager.ResumeConversationMetadata(), new ChatManager.InitialMetadata("Herstel Buddy", "Frank", DateTime.Now));
         }
 
         private void SendUserMessage()
         {
-            if (string.IsNullOrEmpty(userInput) || AIService == null || routerService == null)
+            if (string.IsNullOrEmpty(userInput) || AIService == null || ragService == null)
                 return;
             
             string message = userInput;
@@ -432,7 +475,7 @@ namespace GamificationPlayer.TestBed
             LogEvent($"📤 Sending user message: {message}");
             
             StartPerformanceTimer();
-            chatManager.HandleUserMessage(AIService, routerService, message);
+            chatManager.HandleUserMessage(AIService, ragService, message);
         }
 
         private void HandleButtonClick(string buttonId)
@@ -460,7 +503,7 @@ namespace GamificationPlayer.TestBed
             LogEvent($"🔘 User activity detected: {userActivityMetadata.ToJson()}");
 
             StartPerformanceTimer();
-            chatManager.HandleUserActivity(AIService, routerService, userActivityMetadata);
+            chatManager.HandleUserActivity(AIService, ragService, userActivityMetadata);
         }
 
         #endregion

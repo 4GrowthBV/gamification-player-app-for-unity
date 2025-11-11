@@ -12,8 +12,6 @@ namespace GamificationPlayer
         {           
             UnityMainThreadDispatcher.Instance.Enqueue(() =>
             {
-                Debug.Log("WebGLChatBridge received stream chunk: " + text);
-
                 OnStreamChunk?.Invoke(text);
             });
         }
@@ -22,8 +20,6 @@ namespace GamificationPlayer
         {
             UnityMainThreadDispatcher.Instance.Enqueue(() =>
             {
-                Debug.Log("WebGLChatBridge stream complete: " + text);
-
                 OnStreamComplete?.Invoke(new AIResponseResult(text));
             });
         }

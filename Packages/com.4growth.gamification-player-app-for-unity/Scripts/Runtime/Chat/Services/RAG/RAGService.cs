@@ -16,14 +16,17 @@ namespace GamificationPlayer
         // RAG instances for fetching examples & knowledge per agent
         private readonly List<IRAG> rAGs;
 
+        private readonly bool isLoggingEnabled;
+
         /// <summary>
         /// Constructor for RAGService
         /// </summary>
-        /// <param name="ragExamples">RAG instances for fetching examples per agent</param>
-        /// <param name="ragKnowledge">RAG instances for fetching knowledge per agent</param>
-        public RAGService(List<IRAG> rAGs)
+        /// <param name="rAGs">List of RAG instances</param>
+        /// <param name="isLoggingEnabled">Enable logging for debugging</param>
+        public RAGService(List<IRAG> rAGs, bool isLoggingEnabled = false)
         {
             this.rAGs = rAGs;
+            this.isLoggingEnabled = isLoggingEnabled;
         }
 
         /// <summary>
@@ -43,14 +46,15 @@ namespace GamificationPlayer
         {
             var lastMessage = conversationHistory.Last();
 
-            Debug.Log($"RAGService: Getting context for agent '{agentName}' with fewShotPrompt '{fewShotPrompt}' and dataBankPrompt '{dataBankPrompt}' based on message: {lastMessage.message}");
-
             var examplesBasedOnMessage = GetRagForAgentAndType(agentName, RAGType.Examples)?.Ask(fewShotPrompt, 5);
 
             var knowledgeBasedOnMessage = GetRagForAgentAndType(agentName, RAGType.Knowledge)?.Ask(dataBankPrompt, 5);
 
-            Debug.Log($"RAGService: Retrieved examples: {examplesBasedOnMessage}");
-            Debug.Log($"RAGService: Retrieved knowledge: {knowledgeBasedOnMessage}");
+            if (isLoggingEnabled)
+            {
+                Debug.Log($"[RAGService] Retrieved examples: {examplesBasedOnMessage}");
+                Debug.Log($"[RAGService] Retrieved knowledge: {knowledgeBasedOnMessage}");
+            }
 
             onComplete?.Invoke(new RAGResult(examplesBasedOnMessage, knowledgeBasedOnMessage));
 
@@ -64,13 +68,12 @@ namespace GamificationPlayer
         /// <param name="ragType"></param>
         private IRAG GetRagForAgentAndType(string agentName, RAGType ragType)
         {
-            Debug.Log($"RAGService: Looking for RAG with agentName '{agentName}' and ragType '{ragType}'");
-
             var rag = rAGs.FirstOrDefault(rag => rag.AgentName == agentName && rag.RAGType == ragType);
 
-            Debug.Log(rag != null
-                ? $"RAGService: Found RAG for agentName '{agentName}' and ragType '{ragType}'"
-                : $"RAGService: No RAG found for agentName '{agentName}' and ragType '{ragType}'");
+            if (isLoggingEnabled)
+            {
+                Debug.Log($"[RAGService] GetRagForAgentAndType - Agent: {agentName}, RAGType: {ragType}, Found: {rag != null}");
+            }
 
             return rag;
         }

@@ -229,7 +229,7 @@ namespace GamificationPlayer.TestBed
             ChatManager.OnErrorOccurred -= OnErrorOccurred;
         }
 
-        private void OnChatInitialized()
+        private void OnChatInitialized(bool expectNewMessage)
         {
             LogEvent("✓ OnChatInitialized");
             isConnected = true;

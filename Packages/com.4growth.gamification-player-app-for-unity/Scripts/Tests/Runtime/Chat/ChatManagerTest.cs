@@ -82,7 +82,7 @@ namespace GamificationPlayer.Tests
             bool errorOccurred = false;
             string errorMessage = "";
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             System.Action<string> onError = (msg) => { errorOccurred = true; errorMessage = msg; };
 
             ChatManager.OnChatInitialized += onInitialized;
@@ -339,7 +339,7 @@ namespace GamificationPlayer.Tests
                 messageReceived = true; 
                 receivedMessage = msg; 
             };
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
 
             ChatManager.OnMessageReceived += onMessage;
             ChatManager.OnChatInitialized += onInitialized;
@@ -378,7 +378,7 @@ namespace GamificationPlayer.Tests
             bool chatInitialized = false;
             float startTime = Time.realtimeSinceStartup;
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             ChatManager.OnChatInitialized += onInitialized;
 
             try
@@ -460,7 +460,7 @@ namespace GamificationPlayer.Tests
             bool chatInitialized = false;
             bool errorOccurred = false;
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             System.Action<string> onError = (msg) => errorOccurred = true;
 
             ChatManager.OnChatInitialized += onInitialized;

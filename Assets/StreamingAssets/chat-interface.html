@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatManager Web Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4757;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #2ed573;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background: #f1f2f6;
+            color: #2c3e50;
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
+            border-bottom-left-radius: 6px;
+        }
+
+        .message.streaming {
+            position: relative;
+        }
+
+        .streaming-content {
+            display: inline;
+        }
+
+        .streaming-cursor {
+            display: inline;
+            animation: blink 1s infinite;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .message-header {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .message-buttons {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .message-button {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .message-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .message-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-input {
+            border-top: 1px solid #e1e8ed;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            min-width: 80px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .control-button {
+            background: #f1f2f6;
+            border: 1px solid #ddd;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: #e1e8ed;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #f1f2f6;
+            padding: 12px 16px;
+            border-radius: 18px;
+            border-bottom-left-radius: 6px;
+            max-width: 70px;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #95a5a6;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🤖 ChatManager Web Interface</h1>
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-header">System</div>
+                Welcome! Initializing ChatManager...
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-container">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    class="message-input" 
+                    placeholder="Type your message..."
+                    disabled
+                >
+                <button id="sendButton" class="send-button" disabled>Send</button>
+            </div>
+            <div class="controls">
+                <button class="control-button" onclick="initializeChat()">Initialize Chat</button>
+                <button class="control-button" onclick="forceNewConversation()">New Conversation</button>
+                <button class="control-button" onclick="getStatus()">Get Status</button>
+                <button class="control-button" onclick="testActivity()">Test Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="debug-toggle" onclick="toggleDebug()">Debug</button>
+    <div class="debug-panel" id="debugPanel"></div>
+
+    <script>
+        // Chat state
+        let isConnected = false;
+        let isInitialized = false;
+        let currentButtons = [];
+        
+        // Streaming state
+        let isStreaming = false;
+        let streamingMessage = '';
+        let streamingMessageElement = null;
+        
+        // Debug logging
+        let debugLogs = [];
+        let debugVisible = false;
+
+        // DOM elements
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const debugPanel = document.getElementById('debugPanel');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            disableInput(); // Disable input until chat is initialized
+            log('Web interface initialized');
+        });
+
+        function setupEventListeners() {
+            // Send message on Enter or button click
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            sendButton.addEventListener('click', sendMessage);
+
+            // Listen for messages from Unity via Vuplex
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.eventType) {
+                    handleUnityMessage(event.data);
+                }
+            });
+        }
+
+        // Communication with Unity
+        function sendToUnity(action, data = {}) {
+            const message = {
+                action: action,
+                ...data
+            };
+            
+            log(`Sending to Unity: ${action}`, message);
+            
+            if (!window._pullMessages) {
+                window._pullMessages = [];
+            }
+            
+            var json = JSON.stringify(message);
+
+            window._pullMessages.push(json);
+        }
+
+        function handleUnityMessage(eventData) {
+            log(`Received from Unity: ${eventData.eventType}`, eventData.data);
+            
+            switch (eventData.eventType) {
+                case 'testbed_initialized':
+                    updateStatus('Ready', true);
+                    break;
+                    
+                case 'chat_initialized':
+                    handleChatInitialized(eventData.data);
+                    break;
+                    
+                case 'message_received':
+                    handleMessageReceived(eventData.data);
+                    break;
+                    
+                case 'ai_message_received':
+                    handleAIMessageReceived(eventData.data);
+                    break;
+                    
+                case 'ai_message_final':
+                    handleAIMessageFinal(eventData.data);
+                    break;
+                    
+                case 'ai_streaming_started':
+                    handleStreamingStarted(eventData.data);
+                    break;
+                    
+                case 'ai_message_chunk':
+                    handleMessageChunk(eventData.data);
+                    break;
+                    
+                case 'ai_streaming_complete':
+                    handleStreamingComplete(eventData.data);
+                    break;
+                    
+                case 'error_occurred':
+                    handleError(eventData.data);
+                    break;
+                    
+                case 'status_update':
+                    handleStatusUpdate(eventData.data);
+                    break;
+                    
+                case 'conversation_history':
+                    handleConversationHistory(eventData.data);
+                    break;
+                    
+                case 'performance_metric':
+                    handlePerformanceMetric(eventData.data);
+                    break;
+                    
+                case 'debug_log':
+                    handleDebugLog(eventData.data);
+                    break;
+                    
+                case 'rag_status':
+                    handleRAGStatus(eventData.data);
+                    break;
+                    
+                default:
+                    log(`Unknown event: ${eventData.eventType}`);
+            }
+        }
+
+        // Event handlers
+        function handleChatInitialized(data) {
+            updateStatus('Connected', true);
+            isInitialized = true;
+            
+            if (data.conversationHistory) {
+                clearMessages();
+                data.conversationHistory.forEach(msg => {
+                    addMessage(msg.message, msg.role, msg.timestamp, msg.buttons);
+                });
+            }
+            
+            addSystemMessage('Chat initialized successfully!');
+            
+            // Enable input only if no new message is expected
+            if (!data.expectNewMessage) {
+                enableInputIfReady();
+            }
+            // If expectNewMessage is true, input will be enabled when the message completes
+        }
+
+        function handleMessageReceived(message) {
+            hideTypingIndicator();
+            addMessage(message.message, 'bot', message.timestamp, message.buttons);
+            
+            // Re-enable input for next message
+            enableInput();
+        }
+
+        function handleAIMessageReceived(message) {
+            hideTypingIndicator();
+            
+            // Only add message if not streaming (to avoid duplication)
+            if (!isStreaming && !streamingMessageElement) {
+                addMessage(message.message, 'ai', message.timestamp);
+            } else {
+                // Update streaming message with final content if different
+                if (streamingMessageElement && streamingMessage !== message.message) {
+                    const contentElement = streamingMessageElement.querySelector('.streaming-content');
+                    if (contentElement) {
+                        contentElement.textContent = message.message;
+                    }
+                }
+            }
+            
+            // Re-enable input for next message
+            enableInput();
+        }
+
+        function handleStreamingStarted(data) {
+            log('AI streaming started');
+            isStreaming = true;
+            streamingMessage = '';
+            hideTypingIndicator();
+            disableInput(); // Disable input during streaming
+            
+            // Create streaming message element
+            streamingMessageElement = document.createElement('div');
+            streamingMessageElement.className = 'message ai streaming';
+            streamingMessageElement.innerHTML = `
+                <div class="message-header">🤖 AI Assistant • ${formatTime(data.timestamp)}</div>
+                <div class="streaming-content"></div>
+                <div class="streaming-cursor">|</div>
+            `;
+            chatMessages.appendChild(streamingMessageElement);
+            scrollToBottom();
+        }
+
+        function handleMessageChunk(data) {
+            if (!isStreaming || !streamingMessageElement) {
+                log('Received chunk but not in streaming mode');
+                return;
+            }
+            
+            streamingMessage += data.chunk;
+            const contentElement = streamingMessageElement.querySelector('.streaming-content');
+            if (contentElement) {
+                contentElement.textContent = streamingMessage;
+            }
+            
+            scrollToBottom();
+            log(`Streaming chunk: ${data.chunk}`);
+        }
+
+        function handleStreamingComplete(data) {
+            log('AI streaming completed');
+            isStreaming = false;
+            
+            if (streamingMessageElement) {
+                // Remove streaming cursor and finalize message
+                const cursor = streamingMessageElement.querySelector('.streaming-cursor');
+                if (cursor) cursor.remove();
+                
+                streamingMessageElement.classList.remove('streaming');
+                // Note: Don't set streamingMessageElement to null here
+                // It will be cleaned up by handleAIMessageFinal
+            }
+            
+            streamingMessage = '';
+        }
+
+        function handleAIMessageFinal(message) {
+            log('Received final AI message to replace streaming content');
+            
+            if (streamingMessageElement) {
+                // Replace streaming content with final formatted message
+                const contentElement = streamingMessageElement.querySelector('.streaming-content');
+                if (contentElement) {
+                    contentElement.textContent = message.message;
+                }
+                
+                // Update timestamp to final message timestamp
+                const headerElement = streamingMessageElement.querySelector('.message-header');
+                if (headerElement) {
+                    headerElement.textContent = `🤖 AI Assistant • ${formatTime(message.timestamp)}`;
+                }
+                
+                // Clean up streaming state
+                streamingMessageElement = null;
+            } else {
+                // Fallback: add as regular message if no streaming element exists
+                addMessage(message.message, 'ai', message.timestamp);
+            }
+            
+            // Re-enable input for next message
+            enableInput();
+        }
+
+        function handleError(errorData) {
+            hideTypingIndicator();
+            addSystemMessage(`❌ Error: ${errorData.error}`, 'error');
+            enableInput();
+        }
+
+        function handleStatusUpdate(status) {
+            updateStatus(status.connectionStatus, status.isConnected);
+            log('Status update', status);
+        }
+
+        function handleConversationHistory(data) {
+            clearMessages();
+            if (data.history) {
+                data.history.forEach(msg => {
+                    addMessage(msg.message, msg.role, msg.timestamp, msg.buttons);
+                });
+            }
+        }
+
+        function handlePerformanceMetric(data) {
+            log(`Performance: ${data.operation} took ${data.responseTime}s`);
+        }
+
+        function handleDebugLog(data) {
+            log(data.message, null, true);
+        }
+
+        function handleRAGStatus(data) {
+            const ragStatus = data.status === 'ready' ? '✅ RAG Ready' : 
+                             data.status === 'failed' ? '❌ RAG Failed' : 
+                             '⚠️ RAG Error';
+            addSystemMessage(ragStatus);
+        }
+
+        // UI functions
+        function updateStatus(text, connected) {
+            statusText.textContent = text;
+            isConnected = connected;
+            
+            if (connected) {
+                statusDot.classList.add('connected');
+            } else {
+                statusDot.classList.remove('connected');
+            }
+        }
+
+        function enableInput() {
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            messageInput.focus();
+        }
+        
+        function enableInputIfReady() {
+            // Only enable input if we're initialized, connected, and not currently streaming
+            if (isInitialized && isConnected && !isStreaming) {
+                enableInput();
+            }
+        }
+
+        function disableInput() {
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+        }
+
+        function showTypingIndicator() {
+            typingIndicator.classList.add('show');
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.classList.remove('show');
+        }
+
+        function addMessage(text, sender, timestamp, buttons = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            let senderLabel = sender;
+            if (sender === 'user') senderLabel = 'You';
+            else if (sender === 'ai' || sender.includes('agent')) senderLabel = '🤖 AI Assistant';
+            else if (sender.includes('pre_defined')) senderLabel = '📋 System';
+            else if (sender === 'bot') senderLabel = '🤖 Bot';
+            
+            let html = `
+                <div class="message-header">${senderLabel} ${timestamp ? `• ${formatTime(timestamp)}` : ''}</div>
+                <div>${text}</div>
+            `;
+            
+            if (buttons && buttons.length > 0) {
+                html += '<div class="message-buttons">';
+                buttons.forEach(button => {
+                    html += `<button class="message-button" onclick="clickButton('${button.identifier}')">${button.text}</button>`;
+                });
+                html += '</div>';
+                currentButtons = buttons;
+            }
+            
+            messageDiv.innerHTML = html;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addSystemMessage(text, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-header">System</div>
+                <div>${text}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function clearMessages() {
+            chatMessages.innerHTML = '';
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString();
+        }
+
+        // Chat actions
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !isConnected) return;
+            
+            // Add user message to UI
+            addMessage(message, 'user', new Date().toISOString());
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Send to Unity
+            sendToUnity('send_message', { message: message });
+            
+            // Show typing indicator
+            showTypingIndicator();
+            disableInput();
+            
+            // Re-enable input after a delay (in case no response comes)
+            setTimeout(() => {
+                enableInputIfReady();
+            }, 30000);
+        }
+
+        function clickButton(buttonId) {
+            if (!isConnected) return;
+            
+            log(`Clicking button: ${buttonId}`);
+            
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.message-button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // Send to Unity
+            sendToUnity('click_button', { buttonId: buttonId });
+            
+            // Show typing indicator
+            showTypingIndicator();
+        }
+
+        function initializeChat() {
+            sendToUnity('initialize_chat', {});
+            addSystemMessage('Initializing chat...');
+        }
+
+        function forceNewConversation() {
+            sendToUnity('force_new_conversation', {});
+            clearMessages();
+            addSystemMessage('Starting new conversation...');
+        }
+
+        function getStatus() {
+            sendToUnity('get_status', {});
+        }
+
+        function testActivity() {
+            const activityData = {
+                type: 'test_activity',
+                name: 'Web Interface Test',
+                context: 'User clicked test activity button from web interface',
+                timestamp: new Date().toISOString()
+            };
+            
+            sendToUnity('user_activity', { activityData: JSON.stringify(activityData) });
+            addSystemMessage('Test activity sent!');
+        }
+
+        // Debug functions
+        function log(message, data = null, isUnityLog = false) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            debugLogs.push({ timestamp, message, data, isUnityLog });
+            
+            // Keep log size manageable
+            if (debugLogs.length > 100) {
+                debugLogs.shift();
+            }
+            
+            console.log(logEntry, data);
+            updateDebugPanel();
+        }
+
+        function toggleDebug() {
+            debugVisible = !debugVisible;
+            debugPanel.style.display = debugVisible ? 'block' : 'none';
+            updateDebugPanel();
+        }
+
+        function updateDebugPanel() {
+            if (!debugVisible) return;
+            
+            const html = debugLogs.map(log => {
+                const prefix = log.isUnityLog ? '[Unity]' : '[Web]';
+                return `<div>${prefix} ${log.message}</div>`;
+            }).join('');
+            
+            debugPanel.innerHTML = html;
+            debugPanel.scrollTop = debugPanel.scrollHeight;
+        }
+    </script>
+</body>
+</html>

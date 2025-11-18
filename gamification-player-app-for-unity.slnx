@@ -1,7 +1,9 @@
 ﻿<Solution>
   <Project Path="com.4growth.gamification-player-app-for-unity.csproj" />
+  <Project Path="Vuplex.WebView.csproj" />
   <Project Path="com.4growth.gamification-player-app-for-unity.Tests.csproj" />
-  <Project Path="com.4growth.gamification-player-app-for-unity.Editor.csproj" />
+  <Project Path="Vuplex.WebViewDemos.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="com.4growth.gamification-player-app-for-unity.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
 </Solution>

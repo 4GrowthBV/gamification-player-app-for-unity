@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VuplexBridge JavaScript API - Usage Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .chat-container {
+            display: flex;
+            gap: 20px;
+            height: 600px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        
+        .debug-panel {
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f8f8;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.bot {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .message.ai {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.streaming {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .message-buttons {
+            margin-top: 10px;
+        }
+        
+        .message-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .message-button:hover {
+            background: #0056b3;
+        }
+        
+        .input-area {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .input-area button {
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .input-area button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .controls button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .controls button:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-indicator {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .status-indicator.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-indicator.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .debug-log {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .api-example {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        
+        h1, h2, h3 {
+            color: #333;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VuplexBridge JavaScript API - Usage Example</h1>
+        
+        <div class="warning">
+            <strong>Note:</strong> This example demonstrates the VuplexBridge JavaScript API. 
+            In a Unity WebView, the bridge will automatically connect to Unity's ChatManager system.
+        </div>
+        
+        <div class="controls">
+            <!-- PUBLIC API - Send Actions to Unity -->
+            <button onclick="testSendMessage()">Send Test Message</button>
+            <button onclick="testClickButton()">Click Button</button>
+            <button onclick="testSendUserActivity()">Send User Activity</button>
+            <button onclick="testStartNewConversation()">New Conversation</button>
+            <button onclick="testRequestConversationHistory()">Get History</button>
+            <button onclick="testRequestStatus()">Get Status</button>
+            
+            <!-- PUBLIC API - State Getters -->
+            <button onclick="testGetIsConnected()">Check Connected</button>
+            <button onclick="testGetIsInitialized()">Check Initialized</button>
+            
+            <!-- PUBLIC API - Event Registration (Demo) -->
+            <button onclick="testEventRegistration()">Test Event Registration</button>
+            <button onclick="testEventUnregistration()">Test Event Unregistration</button>
+            
+            <!-- Utility Functions -->
+            <button onclick="toggleDebug()">Toggle Debug</button>
+            <button onclick="testParameterValidation()">Test Parameter Validation</button>
+            <button onclick="clearChat()">Clear Chat</button>
+            
+            <div class="status-indicator" id="statusIndicator">Disconnected</div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <p style="text-align: center; color: #666; font-style: italic;">
+                    Chat messages will appear here...
+                </p>
+            </div>
+            
+            <div class="debug-panel">
+                <h3>Debug Panel</h3>
+                <div class="debug-log" id="debugLog">Debug messages will appear here...</div>
+                <button onclick="clearDebugLog()" style="margin-top: 10px; width: 100%;">Clear Debug</button>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Type your message here..." 
+                disabled
+                onkeypress="handleKeyPress(event)"
+            >
+            <button id="sendButton" onclick="sendMessage()" disabled>Send</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>VuplexBridge PUBLIC API Testing Interface</h2>
+        
+        <div class="warning">
+            <strong>Interactive Testing:</strong> Use the buttons above to test all PUBLIC API methods. 
+            Watch the debug panel for results and validation. Each button demonstrates real API usage.
+        </div>
+        
+        <div class="api-example">
+            <h3>1. Initialize the Bridge</h3>
+            <p>Create a VuplexBridge instance with optional debug logging:</p>
+            <code>const bridge = new VuplexBridge({ debug: true });</code>
+        </div>
+        
+        <div class="api-example">
+            <h3>2. Register Event Handlers</h3>
+            <p>Listen for events from Unity ChatManager:</p>
+            <pre><code>// Chat initialization
+bridge.on('chat_initialized', (data) => {
+  console.log('Chat ready!', data.expectNewMessage);
+  enableUserInput(!data.expectNewMessage);
+});
+
+// Receive bot messages
+bridge.on('message_received', (data) => {
+  displayMessage('bot', data.message, data.buttons);
+});
+
+// Handle AI streaming
+bridge.on('ai_streaming_started', () => {
+  startStreamingDisplay();
+});
+
+bridge.on('ai_message_chunk', (data) => {
+  updateStreamingMessage(data.chunk);
+});
+
+bridge.on('ai_message_final', (data) => {
+  finalizeStreamingMessage(data.message);
+});</code></pre>
+        </div>
+        
+        <div class="api-example">
+            <h3>3. Send Actions to Unity</h3>
+            <p>Trigger actions in Unity ChatManager:</p>
+            <pre><code>// Send user message
+bridge.sendMessage("Hello, how can you help me?");
+
+// Click a button
+bridge.clickButton("feeling_good");
+
+// Send user activity data
+bridge.sendUserActivity({
+  type: 'page_view',
+  name: 'Settings Page',
+  context: 'User navigated to settings'
+});
+
+// Start new conversation
+bridge.startNewConversation();
+
+// Request conversation history
+bridge.requestConversationHistory();</code></pre>
+        </div>
+        
+        <div class="api-example">
+            <h3>4. Available Events from Unity</h3>
+            <ul>
+                <li><code>chat_initialized</code> - Chat system ready</li>
+                <li><code>message_received</code> - Predefined bot message</li>
+                <li><code>ai_message_received</code> - AI response (non-streaming)</li>
+                <li><code>ai_streaming_started</code> - AI streaming begins</li>
+                <li><code>ai_message_chunk</code> - Streaming chunk</li>
+                <li><code>ai_streaming_complete</code> - Streaming finished</li>
+                <li><code>ai_message_final</code> - Final message after streaming</li>
+                <li><code>error_occurred</code> - Error in ChatManager</li>
+                <li><code>conversation_history</code> - Complete chat history</li>
+                <li><code>status_update</code> - System status</li>
+                <li><code>rag_status</code> - RAG system status</li>
+            </ul>
+        </div>
+        
+        <div class="api-example">
+            <h3>5. Event Data Validation</h3>
+            <p>The bridge automatically validates event data using schemas:</p>
+            <pre><code>// Get schema for an event type
+const schema = getEventSchema('chat_initialized');
+console.log(schema.required); // ['status', 'connectionStatus', 'expectNewMessage']
+
+// Validation happens automatically
+bridge.on('message_received', (data, fullEvent) => {
+  // Data is validated before your handler is called
+  // Check console for validation warnings if data is invalid
+});</code></pre>
+        </div>
+    </div>
+
+    <!-- Include the VuplexBridge API -->
+    <script src="VuplexBridge.js"></script>
+    
+    <script>
+        // Global variables
+        let bridge;
+        let streamingMessageId = null;
+        
+        // Initialize the bridge when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeBridge();
+        });
+        
+        function initializeBridge() {
+            // Create bridge instance with debug enabled by default
+            bridge = new VuplexBridge({ debug: true });
+            
+            // Register all event handlers
+            setupEventHandlers();
+            
+            appendToDebugLog('VuplexBridge initialized and ready');
+        }
+        
+        function setupEventHandlers() {
+            // Initialization events
+            bridge.on('chat_initialized', (data) => {
+                appendToDebugLog(`Chat initialized: ${JSON.stringify(data, null, 2)}`);
+                updateConnectionStatus(true);
+                
+                // Enable/disable input based on expectNewMessage
+                const shouldEnableInput = !data.expectNewMessage;
+                enableUserInput(shouldEnableInput);
+                
+                if (data.conversationHistory && data.conversationHistory.length > 0) {
+                    displayConversationHistory(data.conversationHistory);
+                }
+            });
+            
+            // Message events  
+            bridge.on('message_received', (data) => {
+                appendToDebugLog(`Bot message: ${JSON.stringify(data, null, 2)}`);
+                displayMessage('bot', data.message, data.buttons, data.timestamp);
+                enableUserInput(true);
+            });
+            
+            bridge.on('ai_message_received', (data) => {
+                appendToDebugLog(`AI message: ${JSON.stringify(data, null, 2)}`);
+                displayMessage('ai', data.message, null, data.timestamp);
+                enableUserInput(true);
+            });
+            
+            // Streaming events
+            bridge.on('ai_streaming_started', (data) => {
+                appendToDebugLog(`AI streaming started: ${JSON.stringify(data)}`);
+                streamingMessageId = startStreamingMessage();
+            });
+            
+            bridge.on('ai_message_chunk', (data) => {
+                if (streamingMessageId) {
+                    updateStreamingMessage(streamingMessageId, data.chunk);
+                }
+            });
+            
+            bridge.on('ai_streaming_complete', (data) => {
+                appendToDebugLog(`AI streaming complete: ${JSON.stringify(data)}`);
+            });
+            
+            bridge.on('ai_message_final', (data) => {
+                appendToDebugLog(`AI final message: ${JSON.stringify(data, null, 2)}`);
+                if (streamingMessageId) {
+                    finalizeStreamingMessage(streamingMessageId, data.message);
+                    streamingMessageId = null;
+                }
+                enableUserInput(true);
+            });
+            
+            // Error and status events
+            bridge.on('error_occurred', (data) => {
+                appendToDebugLog(`Error: ${JSON.stringify(data)}`);
+                displayErrorMessage(data.error);
+            });
+            
+            bridge.on('status_update', (data) => {
+                appendToDebugLog(`Status update: ${JSON.stringify(data)}`);
+            });
+            
+            bridge.on('conversation_history', (data) => {
+                appendToDebugLog(`Conversation history: ${data.history.length} messages`);
+                displayConversationHistory(data.history);
+            });
+            
+            bridge.on('rag_status', (data) => {
+                appendToDebugLog(`RAG status: ${JSON.stringify(data)}`);
+            });
+        }
+        
+        // UI Functions
+        function displayMessage(type, message, buttons = null, timestamp = null) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            let html = `<div>${escapeHtml(message)}</div>`;
+            
+            if (timestamp) {
+                html += `<div style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;">${timestamp}</div>`;
+            }
+            
+            if (buttons && buttons.length > 0) {
+                html += '<div class="message-buttons">';
+                buttons.forEach(button => {
+                    html += `<button class="message-button" onclick="clickButton('${button.identifier}')">${escapeHtml(button.text)}</button>`;
+                });
+                html += '</div>';
+            }
+            
+            messageDiv.innerHTML = html;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function displayUserMessage(message) {
+            displayMessage('user', message, null, new Date().toLocaleTimeString());
+        }
+        
+        function displayErrorMessage(error) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.style.background = '#f8d7da';
+            messageDiv.style.color = '#721c24';
+            messageDiv.innerHTML = `<strong>Error:</strong> ${escapeHtml(error)}`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function startStreamingMessage() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            const messageId = 'streaming_' + Date.now();
+            messageDiv.id = messageId;
+            messageDiv.className = 'message ai streaming';
+            messageDiv.innerHTML = '<div>AI is typing...</div>';
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return messageId;
+        }
+        
+        function updateStreamingMessage(messageId, chunk) {
+            const messageElement = document.getElementById(messageId);
+            if (messageElement) {
+                const currentText = messageElement.textContent || '';
+                messageElement.innerHTML = `<div>${escapeHtml(currentText + chunk)}</div>`;
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            }
+        }
+        
+        function finalizeStreamingMessage(messageId, finalMessage) {
+            const messageElement = document.getElementById(messageId);
+            if (messageElement) {
+                messageElement.className = 'message ai';
+                messageElement.innerHTML = `<div>${escapeHtml(finalMessage)}</div><div style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;">${new Date().toLocaleTimeString()}</div>`;
+            }
+        }
+        
+        function displayConversationHistory(history) {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = ''; // Clear existing messages
+            
+            history.forEach(msg => {
+                let type = 'bot';
+                if (msg.role === 'user') {
+                    type = 'user';
+                } else if (msg.role.includes('ai') || msg.role.includes('coach')) {
+                    type = 'ai';
+                }
+                displayMessage(type, msg.message, msg.buttons, msg.timestamp);
+            });
+        }
+        
+        function enableUserInput(enabled) {
+            const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendButton');
+            
+            input.disabled = !enabled;
+            button.disabled = !enabled;
+            
+            if (enabled) {
+                input.focus();
+            }
+            
+            appendToDebugLog(`Input ${enabled ? 'enabled' : 'disabled'}`);
+        }
+        
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.textContent = connected ? 'Connected' : 'Disconnected';
+            indicator.className = `status-indicator ${connected ? 'connected' : 'disconnected'}`;
+        }
+        
+        // User Actions
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message && bridge) {
+                displayUserMessage(message);
+                bridge.sendMessage(message);
+                input.value = '';
+                enableUserInput(false); // Disable until response
+            }
+        }
+        
+        function clickButton(buttonId) {
+            if (bridge) {
+                appendToDebugLog(`Button clicked: ${buttonId}`);
+                bridge.clickButton(buttonId);
+                enableUserInput(false); // Disable until response
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Debug and Demo Functions
+        function toggleDebug() {
+            if (bridge) {
+                const newDebugState = !bridge.debug;
+                bridge.setDebug(newDebugState);
+                appendToDebugLog(`Debug logging ${newDebugState ? 'enabled' : 'disabled'}`);
+            }
+        }
+        
+        // ========================================
+        // PUBLIC API TESTING FUNCTIONS
+        // ========================================
+        
+        // PUBLIC API - Send Actions to Unity
+        function testSendMessage() {
+            try {
+                const testMessage = "This is a test message sent via bridge.sendMessage()";
+                bridge.sendMessage(testMessage);
+                appendToDebugLog(`✓ sendMessage() called with: "${testMessage}"`);
+            } catch (error) {
+                appendToDebugLog(`✗ sendMessage() error: ${error.message}`);
+            }
+        }
+        
+        function testClickButton() {
+            try {
+                const testButtonId = "test_button_id";
+                bridge.clickButton(testButtonId);
+                appendToDebugLog(`✓ clickButton() called with: "${testButtonId}"`);
+            } catch (error) {
+                appendToDebugLog(`✗ clickButton() error: ${error.message}`);
+            }
+        }
+        
+        function testSendUserActivity() {
+            try {
+                const activityData = {
+                    type: 'api_test',
+                    name: 'VuplexBridge API Test',
+                    context: 'Testing sendUserActivity() method',
+                    timestamp: new Date().toISOString(),
+                    customProperty: 'This demonstrates additional properties'
+                };
+                bridge.sendUserActivity(activityData);
+                appendToDebugLog(`✓ sendUserActivity() called with: ${JSON.stringify(activityData, null, 2)}`);
+            } catch (error) {
+                appendToDebugLog(`✗ sendUserActivity() error: ${error.message}`);
+            }
+        }
+        
+        function testStartNewConversation() {
+            try {
+                bridge.startNewConversation();
+                appendToDebugLog(`✓ startNewConversation() called`);
+            } catch (error) {
+                appendToDebugLog(`✗ startNewConversation() error: ${error.message}`);
+            }
+        }
+        
+        function testRequestConversationHistory() {
+            try {
+                bridge.requestConversationHistory();
+                appendToDebugLog(`✓ requestConversationHistory() called`);
+            } catch (error) {
+                appendToDebugLog(`✗ requestConversationHistory() error: ${error.message}`);
+            }
+        }
+        
+        function testRequestStatus() {
+            try {
+                bridge.requestStatus();
+                appendToDebugLog(`✓ requestStatus() called`);
+            } catch (error) {
+                appendToDebugLog(`✗ requestStatus() error: ${error.message}`);
+            }
+        }
+        
+        // PUBLIC API - State Getters
+        function testGetIsConnected() {
+            try {
+                const isConnected = bridge.getIsConnected();
+                appendToDebugLog(`✓ getIsConnected() returned: ${isConnected}`);
+            } catch (error) {
+                appendToDebugLog(`✗ getIsConnected() error: ${error.message}`);
+            }
+        }
+        
+        function testGetIsInitialized() {
+            try {
+                const isInitialized = bridge.getIsInitialized();
+                appendToDebugLog(`✓ getIsInitialized() returned: ${isInitialized}`);
+            } catch (error) {
+                appendToDebugLog(`✗ getIsInitialized() error: ${error.message}`);
+            }
+        }
+        
+        // PUBLIC API - Event Registration Testing
+        let testEventHandler = null;
+        
+        function testEventRegistration() {
+            try {
+                // Create a test handler
+                testEventHandler = (data, fullEvent) => {
+                    appendToDebugLog(`🎯 Test handler fired for '${fullEvent.eventType}': ${JSON.stringify(data)}`);
+                };
+                
+                // Register for multiple event types
+                const testEvents = ['chat_initialized', 'message_received', 'ai_message_received'];
+                testEvents.forEach(eventType => {
+                    bridge.on(eventType, testEventHandler);
+                });
+                
+                appendToDebugLog(`✓ on() registered test handler for events: ${testEvents.join(', ')}`);
+            } catch (error) {
+                appendToDebugLog(`✗ on() error: ${error.message}`);
+            }
+        }
+        
+        function testEventUnregistration() {
+            try {
+                if (testEventHandler) {
+                    const testEvents = ['chat_initialized', 'message_received', 'ai_message_received'];
+                    testEvents.forEach(eventType => {
+                        bridge.off(eventType, testEventHandler);
+                    });
+                    
+                    appendToDebugLog(`✓ off() unregistered test handler for events: ${testEvents.join(', ')}`);
+                    testEventHandler = null;
+                } else {
+                    appendToDebugLog(`⚠ No test handler to unregister. Call 'Test Event Registration' first.`);
+                }
+            } catch (error) {
+                appendToDebugLog(`✗ off() error: ${error.message}`);
+            }
+        }
+        
+        // ========================================
+        // UTILITY AND HELPER FUNCTIONS
+        // ========================================
+        
+        function clearChat() {
+            document.getElementById('chatMessages').innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Chat messages will appear here...</p>';
+            streamingMessageId = null;
+            appendToDebugLog('Chat cleared');
+        }
+        
+        // Test parameter validation (should show errors)
+        function testParameterValidation() {
+            appendToDebugLog('--- Testing Parameter Validation ---');
+            
+            // Test invalid sendMessage parameters
+            try {
+                bridge.sendMessage(''); // Empty string
+            } catch (error) {
+                appendToDebugLog(`✓ sendMessage('') correctly threw: ${error.message}`);
+            }
+            
+            try {
+                bridge.sendMessage(null); // Null
+            } catch (error) {
+                appendToDebugLog(`✓ sendMessage(null) correctly threw: ${error.message}`);
+            }
+            
+            // Test invalid clickButton parameters
+            try {
+                bridge.clickButton(''); // Empty string
+            } catch (error) {
+                appendToDebugLog(`✓ clickButton('') correctly threw: ${error.message}`);
+            }
+            
+            // Test invalid sendUserActivity parameters
+            try {
+                bridge.sendUserActivity({}); // Missing required fields
+            } catch (error) {
+                appendToDebugLog(`✓ sendUserActivity({}) correctly threw: ${error.message}`);
+            }
+            
+            try {
+                bridge.sendUserActivity('not an object'); // Wrong type
+            } catch (error) {
+                appendToDebugLog(`✓ sendUserActivity('string') correctly threw: ${error.message}`);
+            }
+            
+            appendToDebugLog('--- Parameter Validation Testing Complete ---');
+        }
+        
+        function appendToDebugLog(message) {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.textContent += `[${timestamp}] ${message}\n`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        function clearDebugLog() {
+            document.getElementById('debugLog').textContent = '';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

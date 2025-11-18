@@ -184,7 +184,7 @@ PlayerSettings:
   CreateWallpaper: 0
   androidSplitApplicationBinary: 0
   keepLoadedShadersAlive: 0
-  StripUnusedMeshComponents: 1
+  StripUnusedMeshComponents: 0
   strictShaderVariantMatching: 0
   VertexChannelCompressionMask: 4054
   iPhoneSdkVersion: 988
@@ -840,7 +840,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: APPLICATION:Minimal
+  webGLTemplate: APPLICATION:Default
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 1
@@ -863,6 +863,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     Android: VUPLEX_CCU;VUPLEX_STANDALONE
     Standalone: VUPLEX_CCU;VUPLEX_STANDALONE
+    WebGL: VUPLEX_STANDALONE
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

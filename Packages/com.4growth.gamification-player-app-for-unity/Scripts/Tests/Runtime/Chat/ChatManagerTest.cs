@@ -82,7 +82,7 @@ namespace GamificationPlayer.Tests
             bool errorOccurred = false;
             string errorMessage = "";
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             System.Action<string> onError = (msg) => { errorOccurred = true; errorMessage = msg; };
 
             ChatManager.OnChatInitialized += onInitialized;
@@ -336,10 +336,10 @@ namespace GamificationPlayer.Tests
             ChatManager.ChatMessage receivedMessage = null;
 
             System.Action<ChatManager.ChatMessage> onMessage = (msg) => { 
-                messageReceived = true; 
                 receivedMessage = msg; 
+                messageReceived = true; 
             };
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
 
             ChatManager.OnMessageReceived += onMessage;
             ChatManager.OnChatInitialized += onInitialized;
@@ -352,7 +352,7 @@ namespace GamificationPlayer.Tests
                 // Wait for initialization and day_one message (max 15 seconds)
                 float timeout = 15f;
                 float elapsed = 0f;
-                while (!chatInitialized && elapsed < timeout)
+                while ((!chatInitialized || !messageReceived) && elapsed < timeout)
                 {
                     elapsed += Time.deltaTime;
                     yield return null;
@@ -378,7 +378,7 @@ namespace GamificationPlayer.Tests
             bool chatInitialized = false;
             float startTime = Time.realtimeSinceStartup;
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             ChatManager.OnChatInitialized += onInitialized;
 
             try
@@ -460,7 +460,7 @@ namespace GamificationPlayer.Tests
             bool chatInitialized = false;
             bool errorOccurred = false;
 
-            System.Action onInitialized = () => chatInitialized = true;
+            System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
             System.Action<string> onError = (msg) => errorOccurred = true;
 
             ChatManager.OnChatInitialized += onInitialized;

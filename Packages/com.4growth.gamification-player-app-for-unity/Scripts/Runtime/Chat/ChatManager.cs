@@ -298,6 +298,7 @@ namespace GamificationPlayer.Chat
         /// Parameter: AI response text
         /// UI should display this as a bot message without buttons
         /// </summary>
+        /// <param name="aiMessage">AI response text</param>
         public static event Action<ChatMessage> OnAIMessageReceived;
         
         /// <summary>
@@ -305,13 +306,15 @@ namespace GamificationPlayer.Chat
         /// Parameter: Error message for user display
         /// UI should show error notification to user
         /// </summary>
+        /// <param name="errorMessage">Error message for user display</param>
         public static event Action<string> OnErrorOccurred;
         
         /// <summary>
         /// Triggered when chat system is fully initialized and ready
         /// UI should enable chat input and show conversation if resuming
         /// </summary>
-        public static event Action OnChatInitialized;
+        /// <param name="expectNewMessage"></param>
+        public static event Action<bool> OnChatInitialized;
 
         /// <summary>
         /// Triggered when a streaming chunk of AI response is received (optional for real-time updates)
@@ -493,6 +496,8 @@ namespace GamificationPlayer.Chat
                 yield break;
             }
 
+            Log("Chat system initialized successfully with parallel optimization");
+
             // Phase 3: Handle daily continuation or initial setup
             Log("Phase 3: Handling daily continuation logic...");
             bool isNewDay = DetectNewDay();
@@ -502,9 +507,10 @@ namespace GamificationPlayer.Chat
                 // First time user - start with week1_day0
                 Log("First time user detected, loading week1_day0 message");
 
+                OnChatInitialized?.Invoke(true);
+
                 yield return StartCoroutine(SaveInitialMetadata(initialMetadata));
                 yield return StartCoroutine(StartPredefinedMessage(aiService, "week1_day0"));
-                OnChatInitialized?.Invoke();
             }
             else if (isNewDay)
             {
@@ -513,13 +519,16 @@ namespace GamificationPlayer.Chat
                 if (!string.IsNullOrEmpty(nextDayIdentifier))
                 {
                     Log($"New day detected, loading: {nextDayIdentifier}");
+
+                    OnChatInitialized?.Invoke(true);
+
                     yield return StartCoroutine(StartPredefinedMessage(aiService, nextDayIdentifier));
-                    OnChatInitialized?.Invoke();
                 }
                 else
                 {
                     Log("New day detected but no daily message available, resuming conversation");
-                    OnChatInitialized?.Invoke();
+
+                    OnChatInitialized?.Invoke(false);
                 }
             }
             else
@@ -528,19 +537,17 @@ namespace GamificationPlayer.Chat
                 {
                     Log("Resuming conversation without resume metadata");
 
-                    OnChatInitialized?.Invoke();
+                    OnChatInitialized?.Invoke(false);
                 }
                 else
                 {
                     Log("Resuming conversation with resume metadata");
 
+                    OnChatInitialized?.Invoke(true);
+
                     yield return StartCoroutine(HandleUserActivityCoroutine(aiService, ragService, resumeMetadata.ToDictionary()));
-                
-                    OnChatInitialized?.Invoke();
                 }
             }
-
-            Log("Chat system initialized successfully with parallel optimization");
         }
 
         /// <summary>

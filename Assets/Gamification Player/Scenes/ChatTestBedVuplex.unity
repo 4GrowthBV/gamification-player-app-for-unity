@@ -137,7 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114949863196309792, guid: 3e10f3b6a733e441c8352020cff2f1f6, type: 3}
       propertyPath: InitialUrl
-      value: streaming-assets://chat-interface.html
+      value: http://localhost:8000/VuplexBridge-Example.html
       objectReference: {fileID: 0}
     - target: {fileID: 114949863196309792, guid: 3e10f3b6a733e441c8352020cff2f1f6, type: 3}
       propertyPath: Resolution
@@ -428,8 +428,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1658065076}
   - component: {fileID: 1658065077}
+  - component: {fileID: 1658065078}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ChatManagerVuplexTestBed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -463,8 +464,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableLogging: 1
-  autoInitialize: 1
   environmentConfig: {fileID: 11400000, guid: 65bbabc1756fb234b9d91fc1526a95d7, type: 2}
+  vuplexBridge: {fileID: 1658065078}
+  webViewPrefab: {fileID: 573755592}
+--- !u!114 &1658065078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1658065075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f7b065a2bfb06449890997e16230628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableLogging: 1
   webViewPrefab: {fileID: 573755592}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

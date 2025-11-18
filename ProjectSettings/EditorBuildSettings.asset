@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Gamification Player/Scenes/ChatTestBed.unity
-    guid: 1683c674a282d4f4ebea0a246022145b
+    path: Assets/Gamification Player/Scenes/ChatTestBedVuplex.unity
+    guid: f7db2f777c99014459512c99fe616de0
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

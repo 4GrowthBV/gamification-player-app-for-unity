@@ -11,13 +11,14 @@ namespace GamificationPlayer.Chat
 {
     public class VuplexBridge : MonoBehaviour
     {
-        [Header("Configuration")]
         [SerializeField] 
         private bool enableLogging = true;
         
-        [Header("Vuplex WebView")]
         [SerializeField]
         private CanvasWebViewPrefab webViewPrefab;
+
+        [SerializeField]
+        private bool forceNewConversation = false;
 
         private ChatManager chatManager;
         private IWebView webView;
@@ -52,7 +53,11 @@ namespace GamificationPlayer.Chat
         {            
             yield return StartCoroutine(InitializeRAGSystem());
 
-            chatManager.InitializeChat(aiService, ragService, resumeMetadata, initialMetadata);
+            chatManager.InitializeChat(aiService, 
+                ragService, 
+                resumeMetadata, 
+                initialMetadata,
+                forceNewConversation);
         }
 
         private IEnumerator InitializeRAGSystem()

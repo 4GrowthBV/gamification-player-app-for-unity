@@ -2,7 +2,8 @@
     "name": "com.4growth.gamification-player-app-for-unity",
     "rootNamespace": "GamificationPlayer",
     "references": [
-        "GUID:63a57c8b658089e49a173b0f0c4870a7"
+        "Unity.InferenceEngine",
+        "Vuplex.WebView"
     ],
     "includePlatforms": [
         "Android",

@@ -336,8 +336,8 @@ namespace GamificationPlayer.Tests
             ChatManager.ChatMessage receivedMessage = null;
 
             System.Action<ChatManager.ChatMessage> onMessage = (msg) => { 
-                messageReceived = true; 
                 receivedMessage = msg; 
+                messageReceived = true; 
             };
             System.Action<bool> onInitialized = (expectNewMessage) => chatInitialized = true;
 
@@ -352,7 +352,7 @@ namespace GamificationPlayer.Tests
                 // Wait for initialization and day_one message (max 15 seconds)
                 float timeout = 15f;
                 float elapsed = 0f;
-                while (!chatInitialized && elapsed < timeout)
+                while ((!chatInitialized || !messageReceived) && elapsed < timeout)
                 {
                     elapsed += Time.deltaTime;
                     yield return null;

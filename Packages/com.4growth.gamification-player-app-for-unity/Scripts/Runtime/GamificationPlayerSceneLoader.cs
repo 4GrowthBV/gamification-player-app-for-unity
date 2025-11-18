@@ -15,7 +15,7 @@ namespace GamificationPlayer
             {
                 if(SceneManager.GetAllScenes().Any(s => s.name != "GamificationPlayer"))
                 {
-                    //SceneManager.LoadSceneAsync("GamificationPlayer", LoadSceneMode.Additive);
+                    SceneManager.LoadSceneAsync("GamificationPlayer", LoadSceneMode.Additive);
                 }
             }
         }

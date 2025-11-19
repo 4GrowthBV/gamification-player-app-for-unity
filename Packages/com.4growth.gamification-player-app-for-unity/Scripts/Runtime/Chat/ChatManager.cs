@@ -757,7 +757,7 @@ namespace GamificationPlayer.Chat
             {
                 Log("Resuming conversation with user activity, notifying UI...");
 
-                OnChatInitialized?.Invoke(false);
+                OnChatInitialized?.Invoke(true);
             }
 
             // Phase 1: Execute user activity processing in parallel

@@ -547,11 +547,7 @@ namespace GamificationPlayer.Chat
                 }
                 else
                 {
-                    Log("Resuming conversation with resume metadata");
-
-                    OnChatInitialized?.Invoke(true);
-
-                    yield return StartCoroutine(HandleUserActivityCoroutine(aiService, ragService, resumeMetadata.ToDictionary()));
+                    yield return StartCoroutine(HandleUserActivityCoroutine(aiService, ragService, resumeMetadata.ToDictionary(), true));
                 }
             }
         }
@@ -730,7 +726,8 @@ namespace GamificationPlayer.Chat
         /// <param name="activityMetadata">Optional metadata dictionary for additional context.</param>
         private IEnumerator HandleUserActivityCoroutine(IChatAIService aiService,
             IRAGService ragService,
-            Dictionary<string, string> activityMetadata)
+            Dictionary<string, string> activityMetadata,
+            bool isInitialisationFlow = false)
         {
             var message = new ChatMessage(activityMetadata);
 
@@ -755,6 +752,13 @@ namespace GamificationPlayer.Chat
             
             // Add activity as user message
             conversationHistory.Add(message);
+
+            if(isInitialisationFlow)
+            {
+                Log("Resuming conversation with user activity, notifying UI...");
+
+                OnChatInitialized?.Invoke(false);
+            }
 
             // Phase 1: Execute user activity processing in parallel
             Log("Starting parallel user activity processing...");

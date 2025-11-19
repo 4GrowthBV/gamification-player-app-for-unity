@@ -124,7 +124,7 @@ namespace GamificationPlayer.Chat
         private void OnChatInitialized(bool expectNewMessage)
         {            
             // Get the actual loaded conversation history
-            var history = chatManager.GetConversationHistory();
+            var history = chatManager.GetConversationHistory(false);
             var initData = new WebInitializationData(history, expectNewMessage);
 
             Debug.Log("✅ Chat initialized successfully: " + JsonConvert.SerializeObject(initData));
@@ -288,7 +288,7 @@ namespace GamificationPlayer.Chat
 
         private void SendConversationHistory()
         {
-            var history = chatManager.GetConversationHistory();
+            var history = chatManager.GetConversationHistory(false);
             var webHistory = new WebChatMessage[history.Count];
             
             for (int i = 0; i < history.Count; i++)

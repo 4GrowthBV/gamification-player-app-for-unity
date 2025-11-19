@@ -421,10 +421,16 @@ namespace GamificationPlayer.Chat
         /// <summary>
         /// Get the current conversation history
         /// </summary>
+        /// <param name="withUserActivity">Whether to include user activity messages in the history</param>
         /// <returns>Read-only list of chat messages</returns>
-        public List<ChatMessage> GetConversationHistory()
+        public List<ChatMessage> GetConversationHistory(bool withUserActivity = true)
         {
-            return new List<ChatMessage>(conversationHistory.OrderBy(m => m.timestamp));
+            if(withUserActivity)
+            {
+                return new List<ChatMessage>(conversationHistory.OrderBy(m => m.timestamp));
+            }
+
+            return new List<ChatMessage>(conversationHistory.Where(m => m.role != RolePrefix.user_activity.ToString()).OrderBy(m => m.timestamp));
         }
 
         /// <summary>
@@ -572,7 +578,7 @@ namespace GamificationPlayer.Chat
 
             yield return StartCoroutine(ExecuteInParallel(
                 SaveUserMessageToConversation(message),
-                AgentNameAndContextMessageWrapper(aiService, ragService, GetConversationHistory().ToArray(), (name, result) =>
+                AgentNameAndContextMessageWrapper(aiService, ragService, GetConversationHistory(true).ToArray(), (name, result) =>
                 {
                     ragResult = result;
                     agentName = name;
@@ -757,7 +763,7 @@ namespace GamificationPlayer.Chat
 
             yield return StartCoroutine(ExecuteInParallel(
                 SaveUserMessageToConversation(message),
-                AgentNameAndContextMessageWrapper(aiService, ragService, GetConversationHistory().ToArray(), (name, result) =>
+                AgentNameAndContextMessageWrapper(aiService, ragService, GetConversationHistory(true).ToArray(), (name, result) =>
                 {
                     ragResult = result;
                     agentName = name;
@@ -1146,10 +1152,9 @@ namespace GamificationPlayer.Chat
             yield return new WaitUntil(() => historyLoaded);
 
             // we have to check if latest message is a predefined message so we can load the buttons
-            if (GetConversationHistory().Count > 0)
+            if (GetConversationHistory(false).Count > 0)
             {
-                var lastMessage = GetConversationHistory()
-                    .Where(m => m.role != RolePrefix.user_activity.ToString())
+                var lastMessage = GetConversationHistory(false)
                     .OrderBy(m => m.timestamp).Last();
                     
                 if (lastMessage.role.Contains(RolePrefix.pre_defined.ToString()))
@@ -1335,7 +1340,7 @@ namespace GamificationPlayer.Chat
             
             yield return StartCoroutine(aiService.GenerateProfile(
                 currentProfile,
-                GetConversationHistory().ToArray(),
+                GetConversationHistory(true).ToArray(),
                 profileInstructions,
                 (result) => profileResult = result));
 
@@ -1611,7 +1616,7 @@ namespace GamificationPlayer.Chat
                 examples,
                 knowledge,
                 currentProfile,
-                GetConversationHistory().ToArray(), // Add conversation history
+                GetConversationHistory(true).ToArray(), // Add conversation history
                 OnStreamChunk, // Handle streaming chunks
                 onComplete
             ));

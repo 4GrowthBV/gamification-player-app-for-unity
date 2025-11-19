@@ -317,7 +317,7 @@ namespace GamificationPlayer.TestBed
             // Chat history area
             chatScrollPos = GUILayout.BeginScrollView(chatScrollPos, "box", GUILayout.Height(350));
 
-            foreach (var msg in chatManager.GetConversationHistory())
+            foreach (var msg in chatManager.GetConversationHistory(false))
             {
                 GUILayout.BeginVertical("box");
 

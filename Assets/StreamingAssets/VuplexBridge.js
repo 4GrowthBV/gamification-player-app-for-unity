@@ -282,7 +282,6 @@ const UNITY_EVENTS = {
     
     // Messages
     MESSAGE_RECEIVED: 'message_received',
-    AI_MESSAGE_RECEIVED: 'ai_message_received', 
     AI_MESSAGE_FINAL: 'ai_message_final',
     
     // Streaming
@@ -345,17 +344,6 @@ const EVENT_SCHEMAS = {
                 { identifier: 'feeling_good', text: 'Good' },
                 { identifier: 'feeling_bad', text: 'Not so good' }
             ]
-        }
-    },
-    
-    'ai_message_received': {
-        required: ['role', 'message', 'timestamp'],
-        optional: ['buttonName', 'userActivityMetadata'],
-        description: 'AI-generated response (non-streaming)',
-        example: {
-            role: 'wellness_coach',
-            message: 'I understand how you feel. Let me help you...',
-            timestamp: '2024-01-01 12:00:00'
         }
     },
     

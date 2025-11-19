@@ -150,12 +150,9 @@ namespace GamificationPlayer.Chat
                 // Send final formatted message to replace streaming content
                 var webMessage = new WebChatMessage(message);
                 SendToWeb(SentToWebEventType.ai_message_final, webMessage);
-            }
-            else
+            } else
             {
-                // No streaming occurred, send as regular AI message
-                var webMessage = new WebChatMessage(message);
-                SendToWeb(SentToWebEventType.ai_message_received, webMessage);
+                Debug.LogError("❌ AI message received without active streaming");
             }
         }
 

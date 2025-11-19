@@ -22,7 +22,6 @@ namespace GamificationPlayer.Chat
         
         // Message events
         message_received,
-        ai_message_received,
         ai_message_final,
         ai_streaming_started,
         ai_message_chunk,

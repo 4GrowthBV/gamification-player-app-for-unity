@@ -463,11 +463,7 @@
                 case 'message_received':
                     handleMessageReceived(eventData.data);
                     break;
-                    
-                case 'ai_message_received':
-                    handleAIMessageReceived(eventData.data);
-                    break;
-                    
+
                 case 'ai_message_final':
                     handleAIMessageFinal(eventData.data);
                     break;
@@ -537,26 +533,6 @@
         function handleMessageReceived(message) {
             hideTypingIndicator();
             addMessage(message.message, 'bot', message.timestamp, message.buttons);
-            
-            // Re-enable input for next message
-            enableInput();
-        }
-
-        function handleAIMessageReceived(message) {
-            hideTypingIndicator();
-            
-            // Only add message if not streaming (to avoid duplication)
-            if (!isStreaming && !streamingMessageElement) {
-                addMessage(message.message, 'ai', message.timestamp);
-            } else {
-                // Update streaming message with final content if different
-                if (streamingMessageElement && streamingMessage !== message.message) {
-                    const contentElement = streamingMessageElement.querySelector('.streaming-content');
-                    if (contentElement) {
-                        contentElement.textContent = message.message;
-                    }
-                }
-            }
             
             // Re-enable input for next message
             enableInput();

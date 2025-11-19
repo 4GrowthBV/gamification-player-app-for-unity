@@ -333,7 +333,6 @@ bridge.requestConversationHistory();</code></pre>
             <ul>
                 <li><code>chat_initialized</code> - Chat system ready</li>
                 <li><code>message_received</code> - Predefined bot message</li>
-                <li><code>ai_message_received</code> - AI response (non-streaming)</li>
                 <li><code>ai_streaming_started</code> - AI streaming begins</li>
                 <li><code>ai_message_chunk</code> - Streaming chunk</li>
                 <li><code>ai_streaming_complete</code> - Streaming finished</li>
@@ -402,12 +401,6 @@ bridge.on('message_received', (data, fullEvent) => {
             bridge.on('message_received', (data) => {
                 appendToDebugLog(`Bot message: ${JSON.stringify(data, null, 2)}`);
                 displayMessage('bot', data.message, data.buttons, data.timestamp);
-                enableUserInput(true);
-            });
-            
-            bridge.on('ai_message_received', (data) => {
-                appendToDebugLog(`AI message: ${JSON.stringify(data, null, 2)}`);
-                displayMessage('ai', data.message, null, data.timestamp);
                 enableUserInput(true);
             });
             
@@ -694,7 +687,7 @@ bridge.on('message_received', (data, fullEvent) => {
                 };
                 
                 // Register for multiple event types
-                const testEvents = ['chat_initialized', 'message_received', 'ai_message_received'];
+                const testEvents = ['chat_initialized', 'message_received'];
                 testEvents.forEach(eventType => {
                     bridge.on(eventType, testEventHandler);
                 });
@@ -708,7 +701,7 @@ bridge.on('message_received', (data, fullEvent) => {
         function testEventUnregistration() {
             try {
                 if (testEventHandler) {
-                    const testEvents = ['chat_initialized', 'message_received', 'ai_message_received'];
+                    const testEvents = ['chat_initialized', 'message_received'];
                     testEvents.forEach(eventType => {
                         bridge.off(eventType, testEventHandler);
                     });

@@ -195,6 +195,11 @@ namespace GamificationPlayer
             };
             string jsonBody = JsonUtility.ToJson(request);
 
+            if (isLoggingEnabled)
+            {
+                Debug.Log($"[ChatAIService] GenerateResponse Body: {jsonBody}");
+            }
+
             if (stream)
                 yield return StreamRequest(jsonBody, onStreamChunk, onComplete);
             else
@@ -311,6 +316,11 @@ namespace GamificationPlayer
             };
 
             string jsonBody = JsonUtility.ToJson(body);
+
+            if (isLoggingEnabled)
+            {
+                Debug.Log($"[ChatAIService] GenerateResponse Body: {jsonBody}");
+            }
 
             // check if WebGLChatBridge exists in the scene
             if (GameObject.FindFirstObjectByType<WebGLChatBridge>() == null)
